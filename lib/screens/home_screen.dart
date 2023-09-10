@@ -3,6 +3,7 @@ import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
 import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
 import 'package:e_learning_app/screens/home_screen_content.dart';
+import 'package:e_learning_app/screens/Community_Screen.dart';
 import 'package:flutter/material.dart';
 
 import 'components/appbar.dart';
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Your Home screen widget here
     HomeScreenContent(),
     Text('Favorite Screen'),
-    Text('Community Screen'),
+    CommunityScreen(),
     ProfileScreen(), // Your ProfileScreen widget here
   ];
 
