@@ -5,7 +5,6 @@ import 'components/answer_widget.dart';
 import 'components/question_widget.dart';
 
 class CommunityScreen extends StatelessWidget {
-
   final List<Question> questions = [
     Question(
       "How do I create a Flutter app?",
@@ -32,6 +31,29 @@ class CommunityScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Text box for entering a question
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Write your question here...',
+                  ),
+                ),
+                SizedBox(height: 16.0), // Add some spacing
+                // Button to submit the question
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle question submission here
+                  },
+                  child: Text('Submit'),
+                ),
+                SizedBox(height: 16.0), // Add some spacing
+              ],
+            ),
+          ),
           for (var question in questions)
             QuestionWidget(question),
         ],

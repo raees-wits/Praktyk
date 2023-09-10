@@ -17,12 +17,18 @@ class QuestionWidget extends StatelessWidget {
           question.question,
           style: TextStyle(fontSize: 16.0),
         ),
-        trailing: TextButton(
-          onPressed: () {
-            // Handle the button press action here
-            _showAnswerDialog(context);
-          },
-          child: Text("Answer this question"),
+        trailing: Row( // Wrap in a Row widget
+          mainAxisSize: MainAxisSize.min, // Ensure the Row takes minimum space
+          children: [
+            TextButton(
+              onPressed: () {
+                // Handle the button press action here
+                _showAnswerDialog(context);
+              },
+              child: Text("Answer this question"),
+            ),
+            Icon(Icons.expand_more), // Add the dropdown icon
+          ],
         ),
         children: <Widget>[
           ListView(
