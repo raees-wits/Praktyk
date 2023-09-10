@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'account_center_screen.dart';  // Replace with the actual path
-
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super (key: key);
@@ -107,6 +107,12 @@ class _ProfileScreenState extends State<ProfileScreen>{
               password = result['password'] ?? password;
             });
           }
+        }
+        else if (text == "Settings") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
         }
       },
       child: ListTile(
