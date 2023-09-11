@@ -31,13 +31,24 @@ class QuestionWidget extends StatelessWidget {
           ],
         ),
         children: <Widget>[
-          ListView(
+          ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            children: [
-              for (var answer in question.answers)
-                AnswerWidget(answer),
-            ],
+            itemCount: question.answers.length,
+            itemBuilder: (context, index) {
+              final answer = question.answers[index];
+              return AnswerWidget(
+                answer: answer, // Pass the answer to AnswerWidget
+                onUpvote: () {
+                  // Handle upvote logic here
+                  // You can update the vote count for the answer
+                },
+                onDownvote: () {
+                  // Handle downvote logic here
+                  // You can update the vote count for the answer
+                },
+              );
+            },
           ),
         ],
       ),
