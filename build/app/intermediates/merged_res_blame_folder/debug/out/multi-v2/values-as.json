@@ -4,7 +4,7 @@
             "outputFile": "com.example.e_learning_app-mergeDebugResources-9:/values-as/values-as.xml",
             "map": [
                 {
-                    "source": "/Users/Pastorjoy/.gradle/caches/transforms-3/03c3e6831c1b52820d6969bb986c9982/transformed/core-1.6.0/res/values-as/values-as.xml",
+                    "source": "C:\\Users\\Oriin\\.gradle\\caches\\transforms-3\\03c3e6831c1b52820d6969bb986c9982\\transformed\\core-1.6.0\\res\\values-as\\values-as.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

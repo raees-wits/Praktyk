@@ -1,6 +1,7 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
+import 'package:e_learning_app/screens/avatar_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'components/appbar.dart';
@@ -13,9 +14,27 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+AvatarScreen avatar = new AvatarScreen();
 
 class _HomeScreenState extends State<HomeScreen> {
+  late TextEditingController controller;
+
+  @override
+  void initState(){
+    super.initState();
+
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+
+    super.dispose();
+  }
+
   int _selectedIndex = 0;
+  String avatarPrompt = avatar.prompt;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,15 +112,39 @@ class _HomeScreenState extends State<HomeScreen> {
                       const Spacer(),
                       Column(
                         children: [
-                          Container(
-                            height: 70,
-                            width: 70,
-                            decoration: BoxDecoration(
-                                color: kpurple,
-                                borderRadius: BorderRadius.circular(15.0)),
-                            child: Image.asset(
-                              "assets/images/profile.png",
-                            ),
+                          InkWell(
+                          onTap : () async{
+                            final newAvatarPrompt = (await showDialog<String>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Avatar Prompt'),
+                                  content: TextField(
+                                    autofocus: true,
+                                    decoration: InputDecoration(hintText: 'Enter an Avatar Prompt'),
+                                    controller: controller,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: confirmPrompt,
+                                        child: Text('Confirm'))
+                                  ],
+                                ),
+                              ))!;
+                            if(newAvatarPrompt == null || newAvatarPrompt.isEmpty)return;
+                            setState(() => avatarPrompt=newAvatarPrompt);
+
+                            print(avatarPrompt);
+                            },
+                            child: Container(
+                                height: 70,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                    color: kpurple,
+                                    borderRadius: BorderRadius.circular(15.0)),
+                                child: Image.network(
+                                  "https://robohash.org/$avatarPrompt?set=any",
+                                ),
+                              )
                           ),
                         ],
                       ),
@@ -154,5 +197,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void confirmPrompt(){
+    Navigator.of(context).pop(controller.text);
+    controller.clear();
   }
 }
