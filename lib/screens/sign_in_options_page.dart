@@ -71,8 +71,8 @@ class _SignInOptionsState extends State<SignInOptions> {
                 ),
                 SizedBox(height: 20),
                 SizedBox(
-                  height: 40,
                   width: 300,
+                  height: 40,
                   child: ElevatedButton(
                      onPressed: () => print("Login Pressed"),
                       child: Text("Login"),
@@ -80,7 +80,7 @@ class _SignInOptionsState extends State<SignInOptions> {
                         backgroundColor: Color(0xFFff6374),
                         padding: EdgeInsets.all(15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
