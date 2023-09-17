@@ -6,6 +6,35 @@ class QuestionWidget extends StatelessWidget {
   final String questionId;
   final String questionText;
 
+  Future<void> _upvoteAnswer(String questionId, String answerId) async {
+    final answerRef = FirebaseFirestore.instance
+        .collection('questions')
+        .doc(questionId)
+        .collection('answers')
+        .doc(answerId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final answerDoc = await transaction.get(answerRef);
+      final currentUpvotes = answerDoc['upvotes'] ?? 0;
+      transaction.update(answerRef, {'upvotes': currentUpvotes + 1});
+    });
+  }
+
+  Future<void> _downvoteAnswer(String questionId, String answerId) async {
+    final answerRef = FirebaseFirestore.instance
+        .collection('questions')
+        .doc(questionId)
+        .collection('answers')
+        .doc(answerId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final answerDoc = await transaction.get(answerRef);
+      final currentDownvotes = answerDoc['downvotes'] ?? 0;
+      transaction.update(answerRef, {'downvotes': currentDownvotes + 1});
+    });
+  }
+
+
   QuestionWidget({required this.questionId, required this.questionText});
 
   @override
@@ -43,16 +72,23 @@ class QuestionWidget extends StatelessWidget {
               }
               final answers = snapshot.data!.docs;
               List<Widget> answerWidgets = [];
-              for (var answer in answers) {
-                final answerText = answer['text'];
+              for (var answerDoc in answers) {
+                final answerText = answerDoc['text'];
+                final upvotes = answerDoc['upvotes'];
+                final downvotes = answerDoc['downvotes'];
+
                 answerWidgets.add(
                   AnswerWidget(
                     answer: answerText,
-                    onUpvote: () {
+                    upvotes: upvotes,
+                    downvotes: downvotes,
+                    onUpvote: () async {
                       // Handle upvote logic here
+                      await _upvoteAnswer(questionId, answerDoc.id);
                     },
-                    onDownvote: () {
+                    onDownvote: () async {
                       // Handle downvote logic here
+                      await _downvoteAnswer(questionId, answerDoc.id);
                     },
                   ),
                 );
@@ -62,6 +98,7 @@ class QuestionWidget extends StatelessWidget {
               );
             },
           ),
+
         ],
       ),
     );
@@ -100,6 +137,8 @@ class QuestionWidget extends StatelessWidget {
                       .collection('answers')
                       .add({
                     'text': answerText,
+                    'upvotes': 0, // Initial upvotes count
+                    'downvotes': 0, // Initial downvotes count
                     'timestamp': FieldValue.serverTimestamp(),
                   });
                   Navigator.of(context).pop();

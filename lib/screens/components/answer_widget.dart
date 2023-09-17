@@ -1,45 +1,47 @@
 import 'package:flutter/material.dart';
 
-class AnswerWidget extends StatefulWidget {
+class AnswerWidget extends StatelessWidget {
   final String answer;
+  final int upvotes;
+  final int downvotes;
   final VoidCallback onUpvote;
   final VoidCallback onDownvote;
 
   AnswerWidget({
     required this.answer,
+    required this.upvotes,
+    required this.downvotes,
     required this.onUpvote,
     required this.onDownvote,
   });
 
   @override
-  _AnswerWidgetState createState() => _AnswerWidgetState();
-}
-
-class _AnswerWidgetState extends State<AnswerWidget> {
-  @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(10.0),
       child: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(Icons.thumb_up),
-                  onPressed: widget.onUpvote,
+                  onPressed: onUpvote,
                 ),
+                Text('$upvotes'), // Display upvote count
                 IconButton(
                   icon: Icon(Icons.thumb_down),
-                  onPressed: widget.onDownvote,
+                  onPressed: onDownvote,
                 ),
+                Text('$downvotes'), // Display downvote count
               ],
             ),
-            SizedBox(width: 10), // Add spacing between voting and answer
+            SizedBox(width: 10.0), // Add spacing between buttons and text
             Expanded(
               child: Text(
-                widget.answer,
+                answer,
                 style: TextStyle(fontSize: 14.0),
               ),
             ),
