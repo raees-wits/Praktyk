@@ -1,12 +1,16 @@
-com.example.e_learning_app-core-1.6.0-0 /Users/Pastorjoy/.gradle/caches/transforms-3/03c3e6831c1b52820d6969bb986c9982/transformed/core-1.6.0/res
-com.example.e_learning_app-jetified-window-1.0.0-beta04-1 /Users/Pastorjoy/.gradle/caches/transforms-3/44c8c212e46a1bdb8e2f1f34ce55f426/transformed/jetified-window-1.0.0-beta04/res
-com.example.e_learning_app-jetified-window-java-1.0.0-beta04-2 /Users/Pastorjoy/.gradle/caches/transforms-3/51395fdc3c7e6e01eff936a294dd62dc/transformed/jetified-window-java-1.0.0-beta04/res
-com.example.e_learning_app-jetified-annotation-experimental-1.1.0-3 /Users/Pastorjoy/.gradle/caches/transforms-3/b4944ebabe285ce393c6ed341ad8a5e6/transformed/jetified-annotation-experimental-1.1.0/res
-com.example.e_learning_app-debug-4 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/android/app/src/debug/res
-com.example.e_learning_app-main-5 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/android/app/src/main/res
-com.example.e_learning_app-pngs-6 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/generated/res/pngs/debug
-com.example.e_learning_app-resValues-7 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/generated/res/resValues/debug
-com.example.e_learning_app-rs-8 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/generated/res/rs/debug
-com.example.e_learning_app-mergeDebugResources-9 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/intermediates/incremental/debug/mergeDebugResources/merged.dir
-com.example.e_learning_app-mergeDebugResources-10 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/intermediates/incremental/debug/mergeDebugResources/stripped.dir
-com.example.e_learning_app-merged_res-11 /Users/Pastorjoy/Desktop/School/Year3/Semester 2/Software Design Project/uidesign/e_learning_app-master/build/app/intermediates/merged_res/debug
+com.example.e_learning_app-jetified-window-java-1.0.0-beta04-0 C:\Users\joshu\.gradle\caches\transforms-3\0feb25f5f6f986807b556430da6875f6\transformed\jetified-window-java-1.0.0-beta04\res
+com.example.e_learning_app-jetified-firebase-common-20.3.3-1 C:\Users\joshu\.gradle\caches\transforms-3\11d66434709e828eceedf161014690a9\transformed\jetified-firebase-common-20.3.3\res
+com.example.e_learning_app-jetified-annotation-experimental-1.1.0-2 C:\Users\joshu\.gradle\caches\transforms-3\2180de8b8002fb294a684bb5be7642d6\transformed\jetified-annotation-experimental-1.1.0\res
+com.example.e_learning_app-core-1.6.0-3 C:\Users\joshu\.gradle\caches\transforms-3\25e40e9ae6c849e71bc55eea7bccfa73\transformed\core-1.6.0\res
+com.example.e_learning_app-jetified-window-1.0.0-beta04-4 C:\Users\joshu\.gradle\caches\transforms-3\87b89d164bee9476a6fcbdceab00e7d1\transformed\jetified-window-1.0.0-beta04\res
+com.example.e_learning_app-jetified-play-services-basement-18.1.0-5 C:\Users\joshu\.gradle\caches\transforms-3\9b317b22b35e8b3cbd542c0a3d802eb3\transformed\jetified-play-services-basement-18.1.0\res
+com.example.e_learning_app-debug-6 C:\Users\joshu\Documents\GitHub\Praktyk\android\app\src\debug\res
+com.example.e_learning_app-main-7 C:\Users\joshu\Documents\GitHub\Praktyk\android\app\src\main\res
+com.example.e_learning_app-google-services-8 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\generated\res\google-services\debug
+com.example.e_learning_app-pngs-9 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\generated\res\pngs\debug
+com.example.e_learning_app-resValues-10 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\generated\res\resValues\debug
+com.example.e_learning_app-rs-11 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\generated\res\rs\debug
+com.example.e_learning_app-mergeDebugResources-12 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.e_learning_app-mergeDebugResources-13 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.e_learning_app-merged_res-14 C:\Users\joshu\Documents\GitHub\Praktyk\build\app\intermediates\merged_res\debug
+com.example.e_learning_app-packaged_res-15 C:\Users\joshu\Documents\GitHub\Praktyk\build\firebase_core\intermediates\packaged_res\debug

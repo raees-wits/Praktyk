@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "500539272721",
+    "project_id": "praktyk-cb1c1",
+    "storage_bucket": "praktyk-cb1c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500539272721:android:860a43c817912d935e4bb0",
+        "android_client_info": {
+          "package_name": "com.example.e_learning_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFmh-Rp4DK_4GI5mNl2zKZwDslvoB1ehM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

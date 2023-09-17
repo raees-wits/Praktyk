@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.e_learning_app-mergeDebugResources-9:/values-pt/values-pt.xml",
+            "outputFile": "com.example.e_learning_app-mergeDebugResources-12:/values-pt/values-pt.xml",
             "map": [
                 {
-                    "source": "/Users/Pastorjoy/.gradle/caches/transforms-3/03c3e6831c1b52820d6969bb986c9982/transformed/core-1.6.0/res/values-pt/values-pt.xml",
+                    "source": "C:\\Users\\joshu\\.gradle\\caches\\transforms-3\\25e40e9ae6c849e71bc55eea7bccfa73\\transformed\\core-1.6.0\\res\\values-pt\\values-pt.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
