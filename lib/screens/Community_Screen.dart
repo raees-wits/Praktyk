@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'components/Question.dart';
 import 'components/answer_widget.dart';
 import 'components/question_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class CommunityScreen extends StatelessWidget {
   final List<Question> questions = [
@@ -47,6 +49,13 @@ class CommunityScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Handle question submission here
+                    String enteredQuestion = ''; // Store the entered question text here
+                    if (enteredQuestion.isNotEmpty) {
+                      FirebaseFirestore.instance.collection('questions').add({
+                        'text': enteredQuestion,
+                        'timestamp': FieldValue.serverTimestamp(), // Optional, for timestamp
+                      });
+                    }
                   },
                   child: Text('Submit'),
                 ),
