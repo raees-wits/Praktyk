@@ -1,29 +1,42 @@
 import 'package:flutter/material.dart';
-
 import 'components/Question.dart';
-import 'components/answer_widget.dart';
 import 'components/question_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class CommunityScreen extends StatefulWidget {
+  @override
+  _CommunityScreenState createState() => _CommunityScreenState();
+}
 
-class CommunityScreen extends StatelessWidget {
-  final List<Question> questions = [
-    Question(
-      "How do I create a Flutter app?",
-      [
-        "You can create a Flutter app using the Flutter framework.",
-        "Follow the Flutter documentation to get started.",
-      ],
-    ),
-    Question(
-      "What is Dart programming language?",
-      [
-        "Dart is a programming language used in Flutter development.",
-        "It is an object-oriented, class-based language.",
-      ],
-    ),
-    // Add more questions and answers here...
-  ];
+class _CommunityScreenState extends State<CommunityScreen> {
+  final TextEditingController questionController = TextEditingController();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  List<Question> questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadQuestions();
+  }
+
+  Future<void> loadQuestions() async {
+    final querySnapshot = await firestore.collection('questions').get();
+    setState(() {
+      questions = querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Question(
+            data['text'],
+            [] // You can add answers here if needed
+        );
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    questionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +53,31 @@ class CommunityScreen extends StatelessWidget {
               children: [
                 // Text box for entering a question
                 TextFormField(
+                  controller: questionController,
                   decoration: InputDecoration(
                     hintText: 'Write your question here...',
                   ),
                 ),
-                SizedBox(height: 16.0), // Add some spacing
+                SizedBox(height: 16.0),
                 // Button to submit the question
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Handle question submission here
-                    String enteredQuestion = ''; // Store the entered question text here
+                    String enteredQuestion = questionController.text;
                     if (enteredQuestion.isNotEmpty) {
-                      FirebaseFirestore.instance.collection('questions').add({
+                      await firestore.collection('questions').add({
                         'text': enteredQuestion,
-                        'timestamp': FieldValue.serverTimestamp(), // Optional, for timestamp
+                        'timestamp': FieldValue.serverTimestamp(),
                       });
+                      // Clear the text field after submitting
+                      questionController.clear();
+                      // Reload questions to reflect the newly added one
+                      loadQuestions();
                     }
                   },
                   child: Text('Submit'),
                 ),
-                SizedBox(height: 16.0), // Add some spacing
+                SizedBox(height: 16.0),
               ],
             ),
           ),
