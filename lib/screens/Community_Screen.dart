@@ -83,7 +83,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ),
           for (var question in questions)
-            QuestionWidget(question),
+            QuestionWidget(
+              questionId: question.id, // Use the ID of the question document as questionId
+              questionText: question.question,
+            ),
         ],
       ),
     );

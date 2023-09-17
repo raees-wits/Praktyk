@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-
-import 'Question.dart';
-import 'answer_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'answer_widget.dart';
 
 class QuestionWidget extends StatelessWidget {
-  final Question question;
+  final String questionId;
+  final String questionText;
 
-  QuestionWidget(this.question);
+  QuestionWidget({required this.questionId, required this.questionText});
 
   @override
   Widget build(BuildContext context) {
@@ -16,39 +14,51 @@ class QuestionWidget extends StatelessWidget {
       margin: EdgeInsets.all(10.0),
       child: ExpansionTile(
         title: Text(
-          question.question,
+          questionText,
           style: TextStyle(fontSize: 16.0),
         ),
-        trailing: Row( // Wrap in a Row widget
-          mainAxisSize: MainAxisSize.min, // Ensure the Row takes minimum space
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextButton(
               onPressed: () {
-                // Handle the button press action here
                 _showAnswerDialog(context);
               },
               child: Text("Answer this question"),
             ),
-            Icon(Icons.expand_more), // Add the dropdown icon
+            Icon(Icons.expand_more),
           ],
         ),
         children: <Widget>[
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: question.answers.length,
-            itemBuilder: (context, index) {
-              final answer = question.answers[index];
-              return AnswerWidget(
-                answer: answer, // Pass the answer to AnswerWidget
-                onUpvote: () {
-                  // Handle upvote logic here
-                  // You can update the vote count for the answer
-                },
-                onDownvote: () {
-                  // Handle downvote logic here
-                  // You can update the vote count for the answer
-                },
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('questions')
+                .doc(questionId)
+                .collection('answers')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              final answers = snapshot.data!.docs;
+              List<Widget> answerWidgets = [];
+              for (var answer in answers) {
+                final answerText = answer['text'];
+                answerWidgets.add(
+                  AnswerWidget(
+                    answer: answerText,
+                    onUpvote: () {
+                      // Handle upvote logic here
+                    },
+                    onDownvote: () {
+                      // Handle downvote logic here
+                    },
+                  ),
+                );
+              }
+              return Column(
+                children: answerWidgets,
               );
             },
           ),
@@ -57,9 +67,8 @@ class QuestionWidget extends StatelessWidget {
     );
   }
 
-  // Function to show a dialog for answering the question
   void _showAnswerDialog(BuildContext context) {
-    String answerText = ''; // Store the entered answer text here
+    String answerText = '';
 
     showDialog(
       context: context,
@@ -84,12 +93,11 @@ class QuestionWidget extends StatelessWidget {
             TextButton(
               child: Text("Submit"),
               onPressed: () async {
-                // Handle the submitted answer here
                 if (answerText.isNotEmpty) {
                   await FirebaseFirestore.instance
                       .collection('questions')
-                      .doc(question.id) // Assuming each question has an ID
-                      .collection('answers') // Subcollection for answers
+                      .doc(questionId)
+                      .collection('answers')
                       .add({
                     'text': answerText,
                     'timestamp': FieldValue.serverTimestamp(),
