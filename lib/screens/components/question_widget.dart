@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'Question.dart';
 import 'answer_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class QuestionWidget extends StatelessWidget {
   final Question question;
@@ -57,12 +59,17 @@ class QuestionWidget extends StatelessWidget {
 
   // Function to show a dialog for answering the question
   void _showAnswerDialog(BuildContext context) {
+    String answerText = ''; // Store the entered answer text here
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Answer this question"),
           content: TextField(
+            onChanged: (text) {
+              answerText = text;
+            },
             decoration: InputDecoration(
               hintText: "Type your answer here...",
             ),
@@ -76,10 +83,19 @@ class QuestionWidget extends StatelessWidget {
             ),
             TextButton(
               child: Text("Submit"),
-              onPressed: () {
+              onPressed: () async {
                 // Handle the submitted answer here
-                // You can save it to a database or update the UI as needed
-                Navigator.of(context).pop();
+                if (answerText.isNotEmpty) {
+                  await FirebaseFirestore.instance
+                      .collection('questions')
+                      .doc(question.id) // Assuming each question has an ID
+                      .collection('answers') // Subcollection for answers
+                      .add({
+                    'text': answerText,
+                    'timestamp': FieldValue.serverTimestamp(),
+                  });
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],

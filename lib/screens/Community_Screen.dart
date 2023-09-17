@@ -25,6 +25,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       questions = querySnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return Question(
+            doc.id, // Use the document ID as the unique ID
             data['text'],
             [] // You can add answers here if needed
         );
