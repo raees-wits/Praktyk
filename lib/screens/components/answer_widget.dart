@@ -17,6 +17,9 @@ class AnswerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate cumulative vote count
+    int totalVotes = upvotes - downvotes;
+
     return Card(
       margin: EdgeInsets.all(10.0),
       child: Padding(
@@ -30,12 +33,11 @@ class AnswerWidget extends StatelessWidget {
                   icon: Icon(Icons.thumb_up),
                   onPressed: onUpvote,
                 ),
-                Text('$upvotes'), // Display upvote count
+                Text('$totalVotes'), // Display total vote count
                 IconButton(
                   icon: Icon(Icons.thumb_down),
                   onPressed: onDownvote,
                 ),
-                Text('$downvotes'), // Display downvote count
               ],
             ),
             SizedBox(width: 10.0), // Add spacing between buttons and text
