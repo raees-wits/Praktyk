@@ -80,15 +80,17 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 itemCount: questions.length,
                 itemBuilder: (BuildContext context, int index) {
                   final question = questions[index];
-                  final answer = answers[matchingPairs[index] ?? -1];
+                  final matchingIndex = matchingPairs[index];
+                  final answer = matchingIndex != null ? answers[matchingIndex] : null;
 
                   return ListTile(
                     title: Text("$index. $question"),
-                    subtitle: Text(matchingPairs[index] != null ? "${String.fromCharCode(matchingPairs[index]! + 65)}. $answer" : ""),
+                    subtitle: Text(answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
                   );
                 },
               ),
             ),
+
           ],
         ),
       ),
