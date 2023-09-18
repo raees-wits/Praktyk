@@ -102,7 +102,7 @@ class HomeScreenContent extends StatelessWidget {
 //use shrinkwrap and physical scroll
                 CategoryList(),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
               ],
             ),

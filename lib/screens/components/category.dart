@@ -1,5 +1,7 @@
 import 'package:e_learning_app/model/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:e_learning_app/model/category_modal.dart';
+import 'package:e_learning_app/screens/category_tree.dart'; // Import the CategoryTree screen
 
 class CategoryList extends StatelessWidget {
   const CategoryList({
@@ -25,7 +27,9 @@ class CategoryCard extends StatelessWidget {
     Key? key,
     required this.product,
   }) : super(key: key);
+
   final Product product;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -60,6 +64,24 @@ class CategoryCard extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+
+            // This button is for redirects to the categorytree where users can select the task they want to
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryTree(
+                      categories: categories, // Pass the list of categories
+                    ),
+                  ),
+                );
+              },
+              child: Text('Explore All Categories'),
+            )
           ],
         ),
       ),
