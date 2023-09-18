@@ -1,3 +1,5 @@
+import 'package:e_learning_app/screens/forgot_password_screen.dart';
+import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             height: 60,
             child: TextField(
-
               //obscure text to hide password
-
               obscureText: true,
               style: TextStyle(
                   color: Colors.black87
@@ -119,7 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () => print("Forgot password pressed"),
+        onPressed: () {
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForgotPasswordScreen())
+          );
+        },
         child: Text(
             'Forgot Password?',
             style: TextStyle(
@@ -167,7 +173,12 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () => print('Login pressed'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen())
+          );
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           padding: EdgeInsets.all(15),
@@ -265,7 +276,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
 
                       //sign in text below
-
                       Text(
                         'Sign In/Teken Aan',
                         style: TextStyle(
@@ -275,15 +285,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-
-
                       //builds email input box on screen
                       //note: sized boxes height parameter used for spacing in column
                       SizedBox(height: 50),
                       buildEmail(),
 
                       //Password box on screen
-
                       SizedBox(height: 20),
                       buildPassword(),
                       buildForgotPassBtn(),
