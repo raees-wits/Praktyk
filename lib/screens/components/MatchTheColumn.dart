@@ -11,8 +11,11 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   List<String> answers = ["Answer 1", "Answer 2", "Answer 3"];
 
   // Selected question and answer indices
-  int selectedQuestionIndex = -1;
-  int selectedAnswerIndex = -1;
+  int? selectedQuestionIndex;
+  int? selectedAnswerIndex;
+
+  // Map to store matching pairs
+  Map<int, int> matchingPairs = {};
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         onTap: () {
           // Handle taps on the entire screen if needed
         },
-        child: Stack(
+        child: Column(
           children: [
             Row(
               children: [
@@ -64,12 +67,26 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 ),
               ],
             ),
-            // Draw lines using CustomPaint
-            CustomPaint(
-              painter: LinePainter(
-                selectedQuestionIndex,
-                selectedAnswerIndex,
-                columnCount: 2, // Number of columns
+            SizedBox(height: 20), // Add spacing between questions/answers and matchings
+            Text(
+              "Matchings:",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: questions.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final question = questions[index];
+                  final answer = answers[matchingPairs[index] ?? -1];
+
+                  return ListTile(
+                    title: Text("$index. $question"),
+                    subtitle: Text(matchingPairs[index] != null ? "${String.fromCharCode(matchingPairs[index]! + 65)}. $answer" : ""),
+                  );
+                },
               ),
             ),
           ],
@@ -82,8 +99,15 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedQuestionIndex = index;
+          if (selectedAnswerIndex != null) {
+            matchingPairs[index] = selectedAnswerIndex!;
+            selectedQuestionIndex = null;
+            selectedAnswerIndex = null;
+          } else {
+            selectedQuestionIndex = index;
+          }
         });
+        print("Selected Question X: ${index * 40.0}");
       },
       child: Container(
         padding: EdgeInsets.all(8),
@@ -100,8 +124,15 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedAnswerIndex = index;
+          if (selectedQuestionIndex != null) {
+            matchingPairs[selectedQuestionIndex!] = index;
+            selectedQuestionIndex = null;
+            selectedAnswerIndex = null;
+          } else {
+            selectedAnswerIndex = index;
+          }
         });
+        print("Selected Answer X: ${(index + 2) * 40.0}");
       },
       child: Container(
         padding: EdgeInsets.all(8),
@@ -112,40 +143,6 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         ),
       ),
     );
-  }
-}
-
-class LinePainter extends CustomPainter {
-  final int selectedQuestionIndex;
-  final int selectedAnswerIndex;
-  final int columnCount;
-
-  LinePainter(this.selectedQuestionIndex, this.selectedAnswerIndex, {required this.columnCount});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 5.0;
-
-    if (selectedQuestionIndex != -1 && selectedAnswerIndex != -1) {
-      final start = Offset(
-        size.width / (columnCount + 1), // Divide the screen into columns
-        50.0 + selectedQuestionIndex * 40,
-      );
-      final end = Offset(
-        size.width - (size.width / (columnCount + 1)),
-        50.0 + selectedAnswerIndex * 40,
-      );
-
-      canvas.drawLine(start, end, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
   }
 }
 
