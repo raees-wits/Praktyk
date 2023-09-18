@@ -4,10 +4,26 @@ import 'package:e_learning_app/model/product_model.dart';
 import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
 import 'components/appbar.dart';
 import 'components/category.dart';
+import 'components/goals_overlay.dart';
 import 'components/sorting.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreenContent extends StatelessWidget {
+class HomeScreenContent extends StatefulWidget {
+  const HomeScreenContent({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenContentState createState() => _HomeScreenContentState();
+}
+
+class _HomeScreenContentState extends State<HomeScreenContent> {
+  bool showGoalsOverlay = false; // Track whether the overlay should be shown
+
+  void _toggleGoalsOverlay() {
+    setState(() {
+      showGoalsOverlay = !showGoalsOverlay;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -68,7 +84,10 @@ class HomeScreenContent extends StatelessWidget {
                   height: 20,
                 ),
                 //sorting
-                Sorting(),
+                Sorting(
+                  showGoalsOverlay: showGoalsOverlay,
+                  toggleGoalsOverlay: _toggleGoalsOverlay,
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -93,6 +112,15 @@ class HomeScreenContent extends StatelessWidget {
                     ),
                   ],
                 ),
+
+                // Show the overlay when showGoalsOverlay is true
+                if (showGoalsOverlay)
+                  Container(
+                    color: Colors.black.withOpacity(0.5), // Semi-transparent black background
+                    child: const Center(
+                      child: GoalsOverlayWidget(), // Use GoalsOverlayWidget
+                    ),
+                  ),
 
                 //now we create model of our images and colors which we will use in our app
                 const SizedBox(
