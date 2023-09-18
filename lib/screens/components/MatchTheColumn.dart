@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class MatchTheColumnPage extends StatefulWidget {
+  const MatchTheColumnPage({Key? key}) : super(key: key);
+
   @override
   _MatchTheColumnPageState createState() => _MatchTheColumnPageState();
 }
 
 class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
-  // Lists to hold questions and answers
-  List<String> questions = ["Question 1", "Question 2", "Question 3"];
-  List<String> answers = ["Answer 1", "Answer 2", "Answer 3"];
-
-  // Selected question and answer indices
-  int? selectedQuestionIndex;
-  int? selectedAnswerIndex;
-
-  // Map to store matching pairs
+  List<String> questions = [];
+  List<String> answers = [];
   Map<int, int> matchingPairs = {};
+  int correctMatches = 0;
+
+  int? selectedQuestionIndex; // Define selectedQuestionIndex
+  int? selectedAnswerIndex;   // Define selectedAnswerIndex
+
+  @override
+  void initState() {
+    super.initState();
+    fetchRandomQuestionsAndAnswers();
+  }
+
+  Future<void> fetchRandomQuestionsAndAnswers() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('Match The Column')
+          .limit(4) // Fetch 4 random pairs
+          .get();
+
+      final random = Random();
+
+      querySnapshot.docs.forEach((doc) {
+        questions.add(doc['Question'] as String);
+        answers.add(doc['Answer'] as String);
+      });
+
+      // Shuffle the questions and answers
+      questions.shuffle(random);
+      answers.shuffle(random);
+
+      setState(() {});
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,26 +107,89 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: questions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final question = questions[index];
-                  final matchingIndex = matchingPairs[index];
-                  final answer = matchingIndex != null ? answers[matchingIndex] : null;
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: questions.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final question = questions[index];
+                        final matchingIndex = matchingPairs[index];
+                        final answer =
+                        matchingIndex != null ? answers[matchingIndex] : null;
 
-                  return ListTile(
-                    title: Text("$index. $question"),
-                    subtitle: Text(answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
-                  );
-                },
+                        return ListTile(
+                          title: Text("$index. $question"),
+                          subtitle: Text(
+                              answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
+                        );
+                      },
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      checkMatchingPairs();
+                    },
+                    child: Text(
+                      "Confirm",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-
           ],
         ),
       ),
     );
   }
+
+  void checkMatchingPairs() async {
+    int correctMatchesCount = 0;
+
+    for (int i = 0; i < questions.length; i++) {
+      final matchingIndex = matchingPairs[i];
+
+      // Ensure matchingIndex is not null and within bounds
+      if (matchingIndex != null && matchingIndex >= 0 && matchingIndex < answers.length) {
+        final matchingAnswer = answers[matchingIndex];
+        final originalQuestion = questions[i]; // Use the original question
+
+        // Fetch the document IDs for the Question and Answer
+        final questionQuery = await FirebaseFirestore.instance
+            .collection('Match The Column')
+            .where('Question', isEqualTo: originalQuestion)
+            .limit(1)
+            .get();
+
+        final answerQuery = await FirebaseFirestore.instance
+            .collection('Match The Column')
+            .where('Answer', isEqualTo: matchingAnswer)
+            .limit(1)
+            .get();
+
+        if (questionQuery.docs.isNotEmpty && answerQuery.docs.isNotEmpty) {
+          final questionDocumentId = questionQuery.docs[0].id;
+          final answerDocumentId = answerQuery.docs[0].id;
+
+          // Check if the document IDs match
+          if (questionDocumentId == answerDocumentId) {
+            correctMatchesCount++;
+          }
+        }
+      }
+    }
+
+    setState(() {
+      correctMatches = correctMatchesCount;
+    });
+
+    print("Correct Matches: $correctMatchesCount");
+  }
+
 
   Widget buildQuestion(int index) {
     return GestureDetector(
