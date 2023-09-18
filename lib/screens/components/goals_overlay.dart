@@ -61,7 +61,7 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
                     ),
                   ],
                 ),
-                Text(
+                const Text(
                   'Daily Challenges',
                   style: TextStyle(
                     fontSize: 20.0,

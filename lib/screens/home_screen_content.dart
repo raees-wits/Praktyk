@@ -141,8 +141,20 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           if (showGoalsOverlay)
             Container(
               color: Colors.black.withOpacity(0.5), // Semi-transparent black background
-              child: GoalsOverlayWidget(
-                onClose: _closeGoalsOverlay, // Pass the close callback
+              child: Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.9, // Adjust the width as needed
+                  heightFactor: 0.9, // Adjust the height as needed
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0), // Adjust the radius as needed
+                    child: Container(
+                      color: Colors.white, // Background color of the overlay
+                      child: GoalsOverlayWidget(
+                        onClose: _closeGoalsOverlay, // Pass the close callback
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
         ],
