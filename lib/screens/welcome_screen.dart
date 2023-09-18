@@ -2,7 +2,7 @@
 
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
-import 'package:e_learning_app/screens/sign_in_options_page.dart';
+import 'package:e_learning_app/screens/login_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -83,7 +83,7 @@ class WelcomeScreen extends StatelessWidget {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SignInOptions()));
+                                          builder: (context) => LoginScreen()));
                                 },
                                 child: Text(
                                   "Begin",
