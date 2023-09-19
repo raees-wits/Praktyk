@@ -120,28 +120,35 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                   child: Transform.scale(
                     scale: 0.8, // Adjust the scale factor as needed
                     child: Container(
-                      padding: EdgeInsets.all(16), // Add padding for the box
+                      // Remove padding here
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black), // Add a border
+                        border: Border.all(
+                          color: Colors.black, // Border color
+                          width: 2.0, // Border width (adjust as needed)
+                        ),
                       ),
                       child: buildQuestionColumn(),
                     ),
                   ),
                 ),
-                // Right Column - Answers
+                //Right column - Answers
                 Expanded(
                   flex: 1,
                   child: Transform.scale(
                     scale: 0.8, // Adjust the scale factor as needed
                     child: Container(
-                      padding: EdgeInsets.all(16), // Add padding for the box
+                      // Remove padding here
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black), // Add a border
+                        border: Border.all(
+                          color: Colors.black, // Border color
+                          width: 2.0, // Border width (adjust as needed)
+                        ),
                       ),
                       child: buildAnswerColumn(),
                     ),
                   ),
                 ),
+
               ],
             ),
             SizedBox(height: 20), // Add spacing between questions/answers and matchings
@@ -259,10 +266,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         print("Selected Question X: ${index * 40.0}");
       },
       child: SizedBox(
-        width: 150, // Set your desired width
+        width: double.infinity, // Set the width to match the column
         height: 50, // Set your desired height
         child: Container(
-          padding: EdgeInsets.all(8),
+          // Remove the padding
           color: isMatched
               ? questionButtonColors[index]
               : (selectedQuestionIndex == index
@@ -289,10 +296,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         print("Selected Answer X: ${(index + 2) * 40.0}");
       },
       child: SizedBox(
-        width: 150, // Set your desired width
+        width: double.infinity, // Set the width to match the column
         height: 50, // Set your desired height
         child: Container(
-          padding: EdgeInsets.all(8),
+          // Remove the padding
           color: selectedAnswerIndex == index
               ? questionButtonColors[selectedQuestionIndex ?? 0]
               : answerButtonColors[index],
@@ -306,6 +313,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       ),
     );
   }
+
 
 }
 
