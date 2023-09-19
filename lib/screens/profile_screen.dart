@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'account_center_screen.dart';  // Replace with the actual path
-import 'profile_settings_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super (key: key);
