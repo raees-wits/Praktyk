@@ -216,12 +216,16 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     if (selectedQuestionIndex != null && selectedAnswerIndex != null) {
       matchingPairs[selectedQuestionIndex!] = selectedAnswerIndex!;
       answerButtonColors[selectedAnswerIndex!] = questionButtonColors[selectedQuestionIndex!];
-      selectedQuestionIndex = null;
+      // Remove the color change from here
+      // selectedQuestionIndex = null;
       selectedAnswerIndex = null;
     }
   }
 
+
   Widget buildQuestion(int index) {
+    final isMatched = matchingPairs.containsKey(index);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -232,7 +236,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       },
       child: Container(
         padding: EdgeInsets.all(8),
-        color: selectedQuestionIndex == index ? questionButtonColors[index] : Colors.white,
+        color: isMatched ? questionButtonColors[index] : (selectedQuestionIndex == index ? questionButtonColors[index] : Colors.white),
         child: Text(
           questions[index],
           style: TextStyle(fontSize: 18),
@@ -240,6 +244,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       ),
     );
   }
+
 
   Widget buildAnswer(int index) {
     return GestureDetector(
