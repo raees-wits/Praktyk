@@ -41,68 +41,100 @@ class QuestionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(10.0),
-      child: ExpansionTile(
-        title: Text(
-          questionText,
-          style: TextStyle(fontSize: 16.0),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextButton(
-              onPressed: () {
-                _showAnswerDialog(context);
-              },
-              child: Text("Answer this question"),
-            ),
-            Icon(Icons.expand_more),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
         children: <Widget>[
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('questions')
-                .doc(questionId)
-                .collection('answers')
-                .orderBy('timestamp', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              final answers = snapshot.data!.docs;
-              List<Widget> answerWidgets = [];
-              for (var answerDoc in answers) {
-                final answerText = answerDoc['text'];
-                final upvotes = answerDoc['upvotes'];
-                final downvotes = answerDoc['downvotes'];
-
-                answerWidgets.add(
-                  AnswerWidget(
-                    answer: answerText,
-                    upvotes: upvotes,
-                    downvotes: downvotes,
-                    onUpvote: () async {
-                      // Handle upvote logic here
-                      await _upvoteAnswer(questionId, answerDoc.id);
-                    },
-                    onDownvote: () async {
-                      // Handle downvote logic here
-                      await _downvoteAnswer(questionId, answerDoc.id);
-                    },
-                  ),
-                );
-              }
-              return Column(
-                children: answerWidgets,
-              );
-            },
+          // Question Text
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              questionText,
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold, // Make it bold for emphasis
+              ),
+            ),
           ),
+          // Asked by Text
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+            child: Text(
+              "Asked by John Doe", // Replace with the actual name if available
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey, // Smaller text and in gray color
+              ),
+            ),
+          ),
+          // Answer Button
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _showAnswerDialog(context);
+                  },
+                  child: Text("Answer this question"),
+                ),
+              ],
+            ),
+          ),
+          // Answers in ExpansionTile
+          ExpansionTile(
+            title: Text(
+              "Answers",
+              style: TextStyle(fontSize: 16.0),
+            ),
+            children: <Widget>[
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('questions')
+                    .doc(questionId)
+                    .collection('answers')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+                  final answers = snapshot.data!.docs;
 
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: answers.length,
+                    itemBuilder: (context, index) {
+                      final answerDoc = answers[index];
+                      final answerText = answerDoc['text'];
+                      final upvotes = answerDoc['upvotes'];
+                      final downvotes = answerDoc['downvotes'];
+
+                      return AnswerWidget(
+                        answer: answerText,
+                        upvotes: upvotes,
+                        downvotes: downvotes,
+                        onUpvote: () async {
+                          // Handle upvote logic here
+                          await _upvoteAnswer(questionId, answerDoc.id);
+                        },
+                        onDownvote: () async {
+                          // Handle downvote logic here
+                          await _downvoteAnswer(questionId, answerDoc.id);
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
+
 
   void _showAnswerDialog(BuildContext context) {
     String answerText = '';
