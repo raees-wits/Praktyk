@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,6 +10,12 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  bool isValidEmail(String? value) {
+    final emailRegExp = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    return emailRegExp.hasMatch(value ?? '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,47 +40,52 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 25, vertical: 120),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Forgot Password',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 50),
-                buildTextField("Email Address", emailController),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Fluttertoast.showToast(
-                      msg: "Email sent",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blueAccent,
-                      textColor: Colors.white,
-                      fontSize: 16,
-                    );
-                  },
-                  child: Text(
-                    "Reset Password",
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Forgot Password',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.all(15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                  SizedBox(height: 50),
+                  buildTextField("Email Address", emailController),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Fluttertoast.showToast(
+                          msg: "Email sent",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.blueAccent,
+                          textColor: Colors.white,
+                          fontSize: 16,
+                        );
+                      }
+                    },
+                    child: Text(
+                      "Reset Password",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -82,9 +94,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget buildTextField(String hint, TextEditingController controller) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       keyboardType: hint == "Email Address" ? TextInputType.emailAddress : TextInputType.text,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter an email';
+        }
+        if (!isValidEmail(value)) {
+          return 'Please enter a valid email';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         labelText: hint,
         fillColor: Colors.white,
@@ -106,3 +127,5 @@ void main() {
     home: ForgotPasswordScreen(),
   ));
 }
+
+
