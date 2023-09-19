@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
@@ -35,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
   String avatarPrompt = avatar.prompt;
+  String avatarPromptType = "Humans";
+  String avatarPromptTypeNumber = '5';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const Spacer(),
                       Column(
+                        mainAxisSize : MainAxisSize.min,
                         children: [
                           InkWell(
                           onTap : () async{
@@ -118,10 +123,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: Text('Avatar Prompt'),
-                                  content: TextField(
-                                    autofocus: true,
-                                    decoration: InputDecoration(hintText: 'Enter an Avatar Prompt'),
-                                    controller: controller,
+                                  content: Column(
+                                    children: [
+                                      DropdownButton(
+                                          items: <String>["Robots","Monsters","Heads","Kittens","Humans"]
+                                              .map<DropdownMenuItem<String>>((String value){
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value: avatarPromptType,
+                                          onChanged: (String? newValue){
+                                            setState(() {
+                                              avatarPromptType = newValue!;
+
+                                              if(newValue=="Robots"){
+                                                avatarPromptTypeNumber = '1';
+                                              }
+
+                                              if(newValue=="Monsters"){
+                                                avatarPromptTypeNumber = '2';
+                                              }
+
+                                              if(newValue=="Heads"){
+                                                avatarPromptTypeNumber = '3';
+                                              }
+
+                                              if(newValue=="Kittens"){
+                                                avatarPromptTypeNumber = '4';
+                                              }
+
+                                              if(newValue=="Humans"){
+                                                avatarPromptTypeNumber = '5';
+                                              }
+                                              print(avatarPromptTypeNumber);
+                                            });
+                                          }),
+                                      TextField(
+                                        autofocus: true,
+                                        decoration: InputDecoration(hintText: 'Enter an Avatar Prompt'),
+                                        controller: controller,
+                                      )
+                                    ]
                                   ),
                                   actions: [
                                     TextButton(
@@ -142,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: kpurple,
                                     borderRadius: BorderRadius.circular(15.0)),
                                 child: Image.network(
-                                  "https://robohash.org/$avatarPrompt?set=any",
+                                  "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
                                 ),
                               )
                           ),
@@ -202,5 +246,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void confirmPrompt(){
     Navigator.of(context).pop(controller.text);
     controller.clear();
+  }
+
+  void changePromptType(){
+
   }
 }
