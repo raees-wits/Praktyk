@@ -73,7 +73,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Column buildQuestionColumn() {
     return Column(
       children: [
-        Text(
+        const Text(
           "Questions",
           style: TextStyle(
             fontSize: 24,
@@ -88,7 +88,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Column buildAnswerColumn() {
     return Column(
       children: [
-        Text(
+        const Text(
           "Answers",
           style: TextStyle(
             fontSize: 24,
@@ -106,7 +106,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Match the Column"),
+        title: const Text("Match the Column"),
       ),
       body: GestureDetector(
         onTap: () {
@@ -114,9 +114,9 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         },
         child: Column(
           children: [
-            SizedBox(height: 40), // Add spacing between the top of the page and the columns
+            const SizedBox(height: 40), // Add spacing between the top of the page and the columns
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0), // Add padding on all sides
+              padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add padding on all sides
               child: Container(
                 width: double.infinity, // Set the width to match the screen width
                 child: Row(
@@ -149,8 +149,8 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20), // Add spacing between questions/answers and matchings
-            Text(
+            const SizedBox(height: 20), // Add spacing between questions/answers and matchings
+            const Text(
               "Matchings:",
               style: TextStyle(
                 fontSize: 24,
@@ -161,7 +161,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
             Column(
               children: [
                 Wrap(
-                  runSpacing: 20.0, // Add spacing between rows
+                  //runSpacing: 5.0, // Add spacing between rows
                   children: List.generate(questions.length, (index) {
                     final question = questions[index];
                     final matchingIndex = matchingPairs[index];
@@ -178,7 +178,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     );
                   }),
                 ),
-                SizedBox(height: 10), // Add spacing between "Matchings" and "Confirm" button
+                const SizedBox(height: 10), // Add spacing between "Matchings" and "Confirm" button
                 TextButton(
                   onPressed: () {
                     checkMatchingPairs();
@@ -187,7 +187,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       resultMessage = "You have $correctMatches correct matches";
                     });
                   },
-                  child: Text(
+                  child: const Text(
                     "Confirm",
                     style: TextStyle(
                       fontSize: 18,
@@ -198,7 +198,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 // Display the result message under the button
                 Text(
                   resultMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.green, // You can choose your desired color
                   ),
@@ -295,7 +295,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
           child: Center(
             child: Text(
               questions[index],
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ),
         ),
@@ -328,7 +328,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
           child: Center(
             child: Text(
               answers[index],
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ),
         ),
@@ -341,7 +341,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: MatchTheColumnPage(),
   ));
 }
