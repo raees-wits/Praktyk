@@ -124,7 +124,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black, // Border color
-                          width: 2.0, // Border width (adjust as needed)
+                          width: 1.0, // Border width (adjust as needed)
                         ),
                       ),
                       child: buildQuestionColumn(),
@@ -141,7 +141,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black, // Border color
-                          width: 2.0, // Border width (adjust as needed)
+                          width: 1.0, // Border width (adjust as needed)
                         ),
                       ),
                       child: buildAnswerColumn(),
@@ -269,12 +269,17 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         width: double.infinity, // Set the width to match the column
         height: 50, // Set your desired height
         child: Container(
-          // Remove the padding
-          color: isMatched
-              ? questionButtonColors[index]
-              : (selectedQuestionIndex == index
-              ? questionButtonColors[index]
-              : Colors.white),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black, // Border color
+              width: 1.0, // Border width
+            ),
+            color: isMatched
+                ? questionButtonColors[index]
+                : (selectedQuestionIndex == index
+                ? questionButtonColors[index]
+                : Colors.white),
+          ),
           child: Center(
             child: Text(
               questions[index],
@@ -299,10 +304,15 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         width: double.infinity, // Set the width to match the column
         height: 50, // Set your desired height
         child: Container(
-          // Remove the padding
-          color: selectedAnswerIndex == index
-              ? questionButtonColors[selectedQuestionIndex ?? 0]
-              : answerButtonColors[index],
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black, // Border color
+              width: 1.0, // Border width
+            ),
+            color: selectedAnswerIndex == index
+                ? questionButtonColors[selectedQuestionIndex ?? 0]
+                : answerButtonColors[index],
+          ),
           child: Center(
             child: Text(
               answers[index],
@@ -313,6 +323,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       ),
     );
   }
+
 
 
 }
