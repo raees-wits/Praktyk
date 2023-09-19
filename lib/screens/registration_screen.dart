@@ -1,3 +1,4 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -33,10 +34,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 //***this creates the colour gradient in the bg***
                 // use color-hex.com for color selections
                 colors: [
-                  Color(0x6671b8ff),
-                  Color(0x9971b8ff),
-                  Color(0xcc71b8ff),
-                  Color(0xFF71b8ff),
+                  Color(0x66ff6374),
+                  Color(0x99ff6374),
+                  Color(0xccff6374),
+                  Color(0xFFff6374),
                 ]
             ),
           ),
@@ -164,7 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hint == "Phone Number" ? Icons.phone
                         : (hint == "Email Address" ? Icons.email
                         : Icons.person),
-                    color: Color(0xFF71b8ff)
+                    color: kpink
                 ),
                 hintText: hint,
                 hintStyle: TextStyle(

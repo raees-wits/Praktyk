@@ -4,6 +4,7 @@ import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget{
 
@@ -13,7 +14,13 @@ class LoginScreen extends StatefulWidget{
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  bool isRememberMe=false;
+  TextEditingController emailController = TextEditingController();
+  bool isRememberMe = false;
+
+  bool isValidEmail(String email) {
+    final RegExp regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    return regex.hasMatch(email);
+  }
 
   Widget buildEmail(){
     return Column(
@@ -103,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   contentPadding: EdgeInsets.only(top: 14),
                   prefixIcon: Icon(
                       Icons.lock,
-                      color: Color(0xFF71b8ff)
+                      color: kpink
                   ),
                   hintText: 'Password',
                   hintStyle: TextStyle(
@@ -175,10 +182,23 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen())
-          );
+          if (isValidEmail(emailController.text)) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          } else {
+            // You can display a message or alert here.
+            Fluttertoast.showToast(
+              msg: "Invalid email address",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 4,
+              backgroundColor: Colors.redAccent,
+              textColor: Colors.white,
+              fontSize: 16,
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -190,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           'LOGIN',
           style:TextStyle(
-              color: Color(0xFF71b8ff),
+              color: kpink,
               fontSize: 18,
               fontWeight: FontWeight.bold
           ),
@@ -256,10 +276,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       //***this creates the colour gradient in the bg***
                       //use color-hex.com for color selections
                       colors: [
-                        Color(0x6671b8ff),
-                        Color(0x9971b8ff),
-                        Color(0xcc71b8ff),
-                        Color(0xFF71b8ff),
+                        Color(0x66ff6374),
+                        Color(0x99ff6374),
+                        Color(0xccff6374),
+                        Color(0xFFff6374),
                       ]
                   ),
                 ),
