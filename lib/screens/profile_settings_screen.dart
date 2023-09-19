@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_change_password_screen.dart'; // Import the new screen
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool isDarkMode = false;
   bool notify = false;
+  String accountCenterPassword = "initialPassword"; // Define it here or pass it as an argument
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +22,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             title: Text('Change Password'),
             leading: Icon(Icons.lock),
-            onTap: () {
-              // Navigate to Change Password screen
+            onTap: () async {
+              final newPassword = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangePasswordScreen(
+                    currentPassword: accountCenterPassword,
+                  ),
+                ),
+              );
+              if (newPassword != null) {
+                // Update accountCenterPassword
+                setState(() {
+                  accountCenterPassword = newPassword;
+                });
+              }
             },
           ),
           ListTile(
