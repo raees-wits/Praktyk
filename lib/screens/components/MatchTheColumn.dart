@@ -112,6 +112,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         },
         child: Column(
           children: [
+            SizedBox(height: 20), // Add spacing between the top of the page and the columns
             Row(
               children: [
                 // Left Column - Questions
@@ -131,7 +132,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     ),
                   ),
                 ),
-                //Right column - Answers
+                // Right column - Answers
                 Expanded(
                   flex: 1,
                   child: Transform.scale(
@@ -148,7 +149,6 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     ),
                   ),
                 ),
-
               ],
             ),
             SizedBox(height: 20), // Add spacing between questions/answers and matchings
@@ -159,49 +159,48 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Wrap(
-                      runSpacing: 20.0, // Add spacing between rows
-                      children: List.generate(questions.length, (index) {
-                        final question = questions[index];
-                        final matchingIndex = matchingPairs[index];
-                        final answer =
-                        matchingIndex != null ? answers[matchingIndex] : null;
+            // Remove the outer Expanded widget from the "Matchings" section
+            Column(
+              children: [
+                Wrap(
+                  runSpacing: 20.0, // Add spacing between rows
+                  children: List.generate(questions.length, (index) {
+                    final question = questions[index];
+                    final matchingIndex = matchingPairs[index];
+                    final answer =
+                    matchingIndex != null ? answers[matchingIndex] : null;
 
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 2, // Set the width to half the screen width for 2 items per row
-                          child: ListTile(
-                            title: Text("$index. $question"),
-                            subtitle: Text(
-                                answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      checkMatchingPairs();
-                    },
-                    child: Text(
-                      "Confirm",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue,
+                    return Container(
+                      width: MediaQuery.of(context).size.width / 2, // Set the width to half the screen width for 2 items per row
+                      child: ListTile(
+                        title: Text("$index. $question"),
+                        subtitle: Text(
+                            answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
                       ),
+                    );
+                  }),
+                ),
+                SizedBox(height: 10), // Add spacing between "Matchings" and "Confirm" button
+                TextButton(
+                  onPressed: () {
+                    checkMatchingPairs();
+                  },
+                  child: Text(
+                    "Confirm",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.blue,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+
 
   void checkMatchingPairs() async {
     int correctMatchesCount = 0;
