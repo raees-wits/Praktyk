@@ -100,6 +100,8 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     );
   }
 
+  String resultMessage = ""; // Store the result message
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,44 +114,40 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         },
         child: Column(
           children: [
-            SizedBox(height: 20), // Add spacing between the top of the page and the columns
-            Row(
-              children: [
-                // Left Column - Questions
-                Expanded(
-                  flex: 1,
-                  child: Transform.scale(
-                    scale: 0.8, // Adjust the scale factor as needed
-                    child: Container(
-                      // Remove padding here
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black, // Border color
-                          width: 2.0, // Border width (adjust as needed)
+            SizedBox(height: 40), // Add spacing between the top of the page and the columns
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0), // Add padding on all sides
+              child: Container(
+                width: double.infinity, // Set the width to match the screen width
+                child: Row(
+                  children: [
+                    // Left Column - Questions
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Border color
+                            width: 2.0, // Border width (adjust as needed)
+                          ),
                         ),
+                        child: buildQuestionColumn(),
                       ),
-                      child: buildQuestionColumn(),
                     ),
-                  ),
-                ),
-                // Right column - Answers
-                Expanded(
-                  flex: 1,
-                  child: Transform.scale(
-                    scale: 0.8, // Adjust the scale factor as needed
-                    child: Container(
-                      // Remove padding here
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black, // Border color
-                          width: 2.0, // Border width (adjust as needed)
+                    // Right column - Answers
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Border color
+                            width: 2.0, // Border width (adjust as needed)
+                          ),
                         ),
+                        child: buildAnswerColumn(),
                       ),
-                      child: buildAnswerColumn(),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
             SizedBox(height: 20), // Add spacing between questions/answers and matchings
             Text(
@@ -184,6 +182,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 TextButton(
                   onPressed: () {
                     checkMatchingPairs();
+                    // Display the result message when the button is clicked
+                    setState(() {
+                      resultMessage = "You have $correctMatches correct matches";
+                    });
                   },
                   child: Text(
                     "Confirm",
@@ -191,6 +193,14 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       fontSize: 18,
                       color: Colors.blue,
                     ),
+                  ),
+                ),
+                // Display the result message under the button
+                Text(
+                  resultMessage,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.green, // You can choose your desired color
                   ),
                 ),
               ],
