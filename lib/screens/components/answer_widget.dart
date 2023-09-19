@@ -8,7 +8,7 @@ class AnswerWidget extends StatefulWidget {
   AnswerWidget({
     required this.answer,
     required this.onUpvote,
-    required this.onDownvote,
+    required this.onDownvote, required upvotes, required downvotes,
   });
 
   @override
