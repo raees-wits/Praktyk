@@ -1,3 +1,4 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/forgot_password_screen.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/registration_screen.dart';
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   contentPadding: EdgeInsets.only(top: 14),
                   prefixIcon: Icon(
                       Icons.email,
-                      color: Color(0xFF71b8ff)
+                      color: kpink,
                   ),
                   hintText: 'Email',
                   hintStyle: TextStyle(
