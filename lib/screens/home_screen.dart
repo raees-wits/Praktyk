@@ -39,6 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String avatarPrompt = avatar.prompt;
   String avatarPromptType = "Humans";
   String avatarPromptTypeNumber = '5';
+  List<DropdownMenuItem<String>> myAvatarTypes = <String>["Robots","Monsters","Heads","Kittens","Humans"]
+      .map<DropdownMenuItem<String>>((String value){
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,13 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   content: Column(
                                     children: [
                                       DropdownButton(
-                                          items: <String>["Robots","Monsters","Heads","Kittens","Humans"]
-                                              .map<DropdownMenuItem<String>>((String value){
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
+                                          items: myAvatarTypes,
                                           value: avatarPromptType,
                                           onChanged: (String? newValue){
                                             setState(() {
