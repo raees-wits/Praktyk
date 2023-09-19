@@ -70,6 +70,36 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     }
   }
 
+  Column buildQuestionColumn() {
+    return Column(
+      children: [
+        Text(
+          "Questions",
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.blue,
+          ),
+        ),
+        for (int i = 0; i < questions.length; i++) buildQuestion(i),
+      ],
+    );
+  }
+
+  Column buildAnswerColumn() {
+    return Column(
+      children: [
+        Text(
+          "Answers",
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.green,
+          ),
+        ),
+        for (int i = 0; i < answers.length; i++) buildAnswer(i),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,35 +117,29 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 // Left Column - Questions
                 Expanded(
                   flex: 1,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Questions",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.blue,
-                        ),
+                  child: Transform.scale(
+                    scale: 0.8, // Adjust the scale factor as needed
+                    child: Container(
+                      padding: EdgeInsets.all(16), // Add padding for the box
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black), // Add a border
                       ),
-                      for (int i = 0; i < questions.length; i++)
-                        buildQuestion(i),
-                    ],
+                      child: buildQuestionColumn(),
+                    ),
                   ),
                 ),
                 // Right Column - Answers
                 Expanded(
                   flex: 1,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Answers",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.green,
-                        ),
+                  child: Transform.scale(
+                    scale: 0.8, // Adjust the scale factor as needed
+                    child: Container(
+                      padding: EdgeInsets.all(16), // Add padding for the box
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black), // Add a border
                       ),
-                      for (int i = 0; i < answers.length; i++)
-                        buildAnswer(i),
-                    ],
+                      child: buildAnswerColumn(),
+                    ),
                   ),
                 ),
               ],
@@ -234,17 +258,26 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         });
         print("Selected Question X: ${index * 40.0}");
       },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        color: isMatched ? questionButtonColors[index] : (selectedQuestionIndex == index ? questionButtonColors[index] : Colors.white),
-        child: Text(
-          questions[index],
-          style: TextStyle(fontSize: 18),
+      child: SizedBox(
+        width: 150, // Set your desired width
+        height: 50, // Set your desired height
+        child: Container(
+          padding: EdgeInsets.all(8),
+          color: isMatched
+              ? questionButtonColors[index]
+              : (selectedQuestionIndex == index
+              ? questionButtonColors[index]
+              : Colors.white),
+          child: Center(
+            child: Text(
+              questions[index],
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
         ),
       ),
     );
   }
-
 
   Widget buildAnswer(int index) {
     return GestureDetector(
@@ -255,16 +288,25 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         });
         print("Selected Answer X: ${(index + 2) * 40.0}");
       },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        color: selectedAnswerIndex == index ? questionButtonColors[selectedQuestionIndex ?? 0] : answerButtonColors[index],
-        child: Text(
-          answers[index],
-          style: TextStyle(fontSize: 18),
+      child: SizedBox(
+        width: 150, // Set your desired width
+        height: 50, // Set your desired height
+        child: Container(
+          padding: EdgeInsets.all(8),
+          color: selectedAnswerIndex == index
+              ? questionButtonColors[selectedQuestionIndex ?? 0]
+              : answerButtonColors[index],
+          child: Center(
+            child: Text(
+              answers[index],
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
         ),
       ),
     );
   }
+
 }
 
 void main() {
