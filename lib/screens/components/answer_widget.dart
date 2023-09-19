@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AnswerWidget extends StatelessWidget {
+class AnswerWidget extends StatefulWidget {
   final String answer;
   final int upvotes;
   final int downvotes;
@@ -16,34 +16,42 @@ class AnswerWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Calculate cumulative vote count
-    int totalVotes = upvotes - downvotes;
+  _AnswerWidgetState createState() => _AnswerWidgetState();
+}
 
+class _AnswerWidgetState extends State<AnswerWidget> {
+  int totalVotes() {
+    return widget.upvotes - widget.downvotes;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(10.0),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: EdgeInsets.all(10.0),
         child: Row(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(Icons.thumb_up),
-                  onPressed: onUpvote,
+                  onPressed: widget.onUpvote,
                 ),
-                Text('$totalVotes'), // Display total vote count
+                Text(
+                  '${totalVotes()}', // Display total votes
+                  style: TextStyle(fontSize: 14.0),
+                ),
                 IconButton(
                   icon: Icon(Icons.thumb_down),
-                  onPressed: onDownvote,
+                  onPressed: widget.onDownvote,
                 ),
               ],
             ),
-            SizedBox(width: 10.0), // Add spacing between buttons and text
+            SizedBox(width: 10), // Add spacing between voting and answer
             Expanded(
               child: Text(
-                answer,
+                widget.answer,
                 style: TextStyle(fontSize: 14.0),
               ),
             ),

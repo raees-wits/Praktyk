@@ -1,32 +1,50 @@
 import 'package:flutter/material.dart';
 
-class AccountCenterScreen extends StatelessWidget {
-  const AccountCenterScreen({Key? key,required this.initialData}) : super(key: key);
+class AccountCenterScreen extends StatefulWidget {
+  const AccountCenterScreen({Key? key, required this.initialData}) : super(key: key);
 
-
-  final String AccountCenterTitle = "Account Center";
   final Map<String, String> initialData;
 
   @override
+  _AccountCenterScreenState createState() => _AccountCenterScreenState();
+}
+
+class _AccountCenterScreenState extends State<AccountCenterScreen> {
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController emailController2;
+  late TextEditingController passwordController;
+  String userType = "Student"; // Default user type
+  bool obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.initialData['name']);
+    emailController = TextEditingController(text: widget.initialData['email']);
+    emailController2 = TextEditingController(text: widget.initialData['guardian-email']);
+    passwordController = TextEditingController(text: widget.initialData['password']);
+  }
+
+  String obscurePassword(String password) {
+    return password.length > 3
+        ? password.substring(0, 2) +
+        '*' * (password.length - 3) +
+        password.substring(password.length - 1)
+        : password;
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-
-    TextEditingController nameController = TextEditingController(text: initialData['name']);
-    TextEditingController emailController = TextEditingController(text: initialData['email']);
-    TextEditingController emailController2 = TextEditingController(text: initialData['guardian-email']);
-    TextEditingController passwordController = TextEditingController(text: initialData['password']);
-
-
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
         ),
         title: Text(
-          AccountCenterTitle,
+          "Account Center",
           style: Theme.of(context).textTheme.headline6?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -78,7 +96,7 @@ class AccountCenterScreen extends StatelessWidget {
                       controller: nameController,
                       decoration: InputDecoration(
                         label: const Text("Full Name"),
-                        prefixIcon: const Icon(Icons.person_outline),
+                        prefixIcon: const Icon(Icons.drive_file_rename_outline_sharp),
                       ),
                     ),
                     // const SizedBox(height: 20),
@@ -116,14 +134,38 @@ class AccountCenterScreen extends StatelessWidget {
                         return null;
                       },
                     ),
-                    // const SizedBox(height: 20),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        label: const Text("Password"),
-                        prefixIcon: const Icon(Icons.fingerprint_outlined),
+                    ListTile(
+                      title: Text("Password"),
+                      subtitle: Text(
+                        obscureText ? obscurePassword(passwordController.text) : passwordController.text,
                       ),
-                      obscureText: true, // Obscure the password
+                      trailing: IconButton(
+                        icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                    // const SizedBox(height: 20),
+                    Divider(color: Colors.black),  // <-- Add this line
+                    DropdownButtonFormField<String>(
+                      value: userType,
+                      items: ["Teacher", "Student", "Parent"]
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        userType = newValue!;
+                      },
+                      decoration: InputDecoration(
+                        label: const Text("User Type"),
+                        prefixIcon: const Icon(Icons.person),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -138,7 +180,7 @@ class AccountCenterScreen extends StatelessWidget {
                         }),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurpleAccent, side: BorderSide.none, shape: const StadiumBorder()),
-                        child: const Text("Done", style: TextStyle(color: Colors.black)),
+                        child: const Text("Done", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                         ),
                       ),
                   ],

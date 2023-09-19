@@ -2,6 +2,8 @@
 
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
+import 'package:e_learning_app/screens/login_screen.dart';
+
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -66,7 +68,7 @@ class WelcomeScreen extends StatelessWidget {
                           Spacer(
                             flex: 3,
                           ),
-                          //repleace sizebox with spacer
+                          //replace size-box with spacer
                           Row(
                             //button position
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -81,7 +83,7 @@ class WelcomeScreen extends StatelessWidget {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => HomeScreen()));
+                                          builder: (context) => LoginScreen()));
                                 },
                                 child: Text(
                                   "Begin",
