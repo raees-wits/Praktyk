@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             height: 60,
             child: TextField(
+              controller: emailController,  // <-- Add this line
               keyboardType: TextInputType.emailAddress,
               style: TextStyle(
                   color: Colors.black87
