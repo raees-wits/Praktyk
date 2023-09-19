@@ -124,7 +124,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black, // Border color
-                          width: 1.0, // Border width (adjust as needed)
+                          width: 2.0, // Border width (adjust as needed)
                         ),
                       ),
                       child: buildQuestionColumn(),
@@ -141,7 +141,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black, // Border color
-                          width: 1.0, // Border width (adjust as needed)
+                          width: 2.0, // Border width (adjust as needed)
                         ),
                       ),
                       child: buildAnswerColumn(),
@@ -163,20 +163,23 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
               child: Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: questions.length,
-                      itemBuilder: (BuildContext context, int index) {
+                    child: Wrap(
+                      runSpacing: 20.0, // Add spacing between rows
+                      children: List.generate(questions.length, (index) {
                         final question = questions[index];
                         final matchingIndex = matchingPairs[index];
                         final answer =
                         matchingIndex != null ? answers[matchingIndex] : null;
 
-                        return ListTile(
-                          title: Text("$index. $question"),
-                          subtitle: Text(
-                              answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 2, // Set the width to half the screen width for 2 items per row
+                          child: ListTile(
+                            title: Text("$index. $question"),
+                            subtitle: Text(
+                                answer != null ? "${String.fromCharCode(matchingIndex! + 65)}. $answer" : ""),
+                          ),
                         );
-                      },
+                      }),
                     ),
                   ),
                   TextButton(
