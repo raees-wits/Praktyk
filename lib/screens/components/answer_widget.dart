@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AnswerWidget extends StatefulWidget {
-  final String answer;
+  final String? answer;
   final int upvotes;
   final int downvotes;
   final VoidCallback onUpvote;
@@ -28,35 +28,64 @@ class _AnswerWidgetState extends State<AnswerWidget> {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(10.0),
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            Column(
-              children: [
-                IconButton(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.answer != null)
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Text(
+                'Posted by Jane Doe',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          if (widget.answer == null)
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Text(
+                'Be the first to answer!',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          if (widget.answer != null)
+            Padding(
+              padding: EdgeInsets.only(left: 10.0, top: 10.0),
+              child: Text(
+                widget.answer!,
+                style: TextStyle(fontSize:18.0),
+              ),
+            ),
+          SizedBox(height: 2), // Add spacing between answer text and vote buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: IconButton(
                   icon: Icon(Icons.thumb_up),
                   onPressed: widget.onUpvote,
                 ),
-                Text(
-                  '${totalVotes()}', // Display total votes
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                IconButton(
+              ),
+              Text(
+                '${totalVotes()}',
+                style: TextStyle(fontSize: 14.0),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: IconButton(
                   icon: Icon(Icons.thumb_down),
                   onPressed: widget.onDownvote,
                 ),
-              ],
-            ),
-            SizedBox(width: 10), // Add spacing between voting and answer
-            Expanded(
-              child: Text(
-                widget.answer,
-                style: TextStyle(fontSize: 14.0),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
