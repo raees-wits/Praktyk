@@ -15,8 +15,9 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Map<int, int> matchingPairs = {};
   int correctMatches = 0;
 
-  int? selectedQuestionIndex; // Define selectedQuestionIndex
-  int? selectedAnswerIndex;   // Define selectedAnswerIndex
+  List<Color> questionButtonColors = []; // List to store colors of question buttons
+  int? selectedQuestionIndex;
+  int? selectedAnswerIndex;
 
   @override
   void initState() {
@@ -41,6 +42,22 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       // Shuffle the questions and answers
       questions.shuffle(random);
       answers.shuffle(random);
+
+      // Initialize questionButtonColors with different colors
+      questionButtonColors = List.generate(questions.length, (index) {
+        switch (index) {
+          case 0:
+            return Colors.red;
+          case 1:
+            return Colors.blue;
+          case 2:
+            return Colors.yellow;
+          case 3:
+            return Colors.green;
+          default:
+            return Colors.white;
+        }
+      });
 
       setState(() {});
     } catch (e) {
@@ -190,7 +207,6 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     print("Correct Matches: $correctMatchesCount");
   }
 
-
   Widget buildQuestion(int index) {
     return GestureDetector(
       onTap: () {
@@ -207,7 +223,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       },
       child: Container(
         padding: EdgeInsets.all(8),
-        color: selectedQuestionIndex == index ? Colors.blue : Colors.white,
+        color: selectedQuestionIndex == index ? questionButtonColors[index] : Colors.white,
         child: Text(
           questions[index],
           style: TextStyle(fontSize: 18),
