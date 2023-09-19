@@ -41,7 +41,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
         backgroundColor: Colors.deepPurpleAccent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
         ),
         title: Text(
           "Account Center",
@@ -180,7 +180,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         }),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurpleAccent, side: BorderSide.none, shape: const StadiumBorder()),
-                        child: const Text("Done", style: TextStyle(color: Colors.black)),
+                        child: const Text("Done", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                         ),
                       ),
                   ],

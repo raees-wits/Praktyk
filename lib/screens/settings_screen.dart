@@ -15,7 +15,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('Settings', style: Theme.of(context).textTheme.headline6?.copyWith(
+          fontWeight: FontWeight.bold, color: Colors.black,
+        ),
+
+        ),
       ),
       body: ListView(
         children: [
