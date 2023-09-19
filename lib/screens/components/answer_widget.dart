@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 class AnswerWidget extends StatefulWidget {
   final String answer;
+  final int upvotes;
+  final int downvotes;
   final VoidCallback onUpvote;
   final VoidCallback onDownvote;
 
   AnswerWidget({
     required this.answer,
+    required this.upvotes,
+    required this.downvotes,
     required this.onUpvote,
-    required this.onDownvote, required upvotes, required downvotes,
+    required this.onDownvote,
   });
 
   @override
@@ -16,6 +20,10 @@ class AnswerWidget extends StatefulWidget {
 }
 
 class _AnswerWidgetState extends State<AnswerWidget> {
+  int totalVotes() {
+    return widget.upvotes - widget.downvotes;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -29,6 +37,10 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 IconButton(
                   icon: Icon(Icons.thumb_up),
                   onPressed: widget.onUpvote,
+                ),
+                Text(
+                  '${totalVotes()}', // Display total votes
+                  style: TextStyle(fontSize: 14.0),
                 ),
                 IconButton(
                   icon: Icon(Icons.thumb_down),
