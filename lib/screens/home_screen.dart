@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       DropdownButton(
                                           items: myAvatarTypes,
-                                          value: avatarPromptType,
+                                          value: "Avatar Type",
                                           onChanged: (String? newValue){
                                             setState(() {
                                               avatarPromptType = newValue!;
