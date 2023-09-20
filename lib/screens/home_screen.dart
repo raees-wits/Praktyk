@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
@@ -17,9 +19,23 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-
-
 class _HomeScreenState extends State<HomeScreen> {
+  late TextEditingController controller;
+
+  @override
+  void initState(){
+    super.initState();
+
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+
+    super.dispose();
+  }
+
   int _selectedIndex = 0;
 
   // Create a list of widgets to display conditionally based on the selected index
@@ -30,6 +46,18 @@ class _HomeScreenState extends State<HomeScreen> {
     CommunityScreen(),
     ProfileScreen(), // Your ProfileScreen widget here
   ];
+
+  //Initialise Avatar properties
+  String avatarPrompt = "Neo";
+  String avatarPromptType = "Humans";
+  String avatarPromptTypeNumber = '5';
+  List<DropdownMenuItem<String>> myAvatarTypes = <String>["Robots","Monsters","Heads","Kittens","Humans"]
+      .map<DropdownMenuItem<String>>((String value){
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +97,137 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),  // This line switches the content);
+      body: SafeArea(
+        child: ListView(
+          children: [
+            CustomeAppBar(),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Hi PraiseGod",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            "Vandag is 'n goeie dag om \n iets nuuts te leer!",
+                            style: TextStyle(
+                              color: Colors.black54,
+                              wordSpacing: 2.5,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        mainAxisSize : MainAxisSize.min,
+                        children: [
+                          InkWell(
+                          onTap : () async{
+                            final newAvatarPrompt = (await showDialog<String>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Avatar Prompt'),
+                                  content: Column(
+                                    children: [
+                                      DropdownButton(
+                                          items: myAvatarTypes,
+                                          value: avatarPromptType,
+                                          onChanged: (String? newValue){
+                                            setState(() {
+                                              avatarPromptType = newValue!;
+
+                                              if(newValue=="Robots"){
+                                                avatarPromptTypeNumber = '1';
+                                              }
+
+                                              if(newValue=="Monsters"){
+                                                avatarPromptTypeNumber = '2';
+                                              }
+
+                                              if(newValue=="Heads"){
+                                                avatarPromptTypeNumber = '3';
+                                              }
+
+                                              if(newValue=="Kittens"){
+                                                avatarPromptTypeNumber = '4';
+                                              }
+
+                                              if(newValue=="Humans"){
+                                                avatarPromptTypeNumber = '5';
+                                              }
+                                              print(avatarPromptTypeNumber);
+                                            });
+                                          }),
+                                      TextField(
+                                        autofocus: true,
+                                        decoration: InputDecoration(hintText: 'Enter an Avatar Prompt'),
+                                        controller: controller,
+                                      )
+                                    ]
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: confirmPrompt,
+                                        child: Text('Confirm'))
+                                  ],
+                                ),
+                              ))!;
+                            if(newAvatarPrompt == null || newAvatarPrompt.isEmpty)return;
+                            setState(() => avatarPrompt=newAvatarPrompt);
+
+                            print(avatarPrompt);
+                            },
+                            child: Container(
+                                height: 70,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                    color: kpurple,
+                                    borderRadius: BorderRadius.circular(15.0)),
+                                child: Image.network(
+                                  "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
+                                ),
+                              )
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //sorting
+                  Sorting(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //category list
 
     );
+  }
+
+  void confirmPrompt(){
+    Navigator.of(context).pop(controller.text);
+    controller.clear();
+  }
+
+  void changePromptType(){
+
   }
 }
