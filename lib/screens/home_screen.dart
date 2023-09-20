@@ -1,4 +1,4 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),  // This line switches the content);
+      //body: _widgetOptions.elementAt(_selectedIndex),  // This line switches the content);
       body: SafeArea(
         child: ListView(
           children: [
@@ -213,12 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 20,
                   ),
                   //sorting
-                  Sorting(),
+                  Sorting(toggleGoalsOverlay: () {  }, showGoalsOverlay: null,),
                   const SizedBox(
                     height: 20,
                   ),
                   //category list
 
+    ])
+    )
+    ])
+    )
     );
   }
 
@@ -227,7 +231,4 @@ class _HomeScreenState extends State<HomeScreen> {
     controller.clear();
   }
 
-  void changePromptType(){
-
-  }
 }
