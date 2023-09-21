@@ -32,63 +32,70 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryTree(
+              categories: categories,
+            ),
+          ),
+        );
+      },
+      child: Padding(
         padding: const EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
-          color: product.color,
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: SingleChildScrollView(
-          // Wrap with SingleChildScrollView
-          child: Column(
-            children: [
-              Image.asset(
-                product.image,
-                height: 100,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                product.title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+        child: Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+            color: product.color,
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Image.asset(
+                  product.image,
+                  height: 100,
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                "${product.courses} courses",
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              FractionallySizedBox(
-                widthFactor: 0.8,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CategoryTree(
-                          categories: categories,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text('Explore All Categories'),
+                Text(
+                  product.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "${product.courses} courses",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: ElevatedButton(
+                    onPressed: null, // You can set this to a function if needed
+                    child: Text(
+                      'Explore All Categories',
+                      style: TextStyle(
+                          color: const Color.fromARGB(
+                              255, 248, 247, 247)), // Set text color
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
