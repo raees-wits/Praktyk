@@ -46,7 +46,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   children: [
                     Row(
                       children: [
-                        const Column(
+                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
