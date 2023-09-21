@@ -49,7 +49,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
                   _buildChoiceTile(context, "Fill in the blanks", 0),
                   _buildChoiceTile(context, "Multiple Choice", 1),
                   _buildChoiceTile(context, "Short Questions", 2),
-                  _buildChoiceTile(context, "Choice 4", 3),
+                  _buildChoiceTile(context, "Match The Column", 3),
                 ],
               ),
             ),
@@ -73,6 +73,11 @@ class PracticeVocabularyScreen extends StatelessWidget {
         ),
         onTap: () {
           if (title == "Fill in the blanks") {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
+            );
+          }
+          if (title == "Match The Column") {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
             );
