@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
+import 'package:e_learning_app/screens/category_tree.dart';
+
+import '../../model/category_modal.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
   @override
@@ -79,7 +82,11 @@ class PracticeVocabularyScreen extends StatelessWidget {
           }
           if (title == "Match The Column") {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
+                MaterialPageRoute(
+                  builder: (context) => CategoryTree(
+                    categories: categories,
+                  ),
+                )
             );
           }
         },
