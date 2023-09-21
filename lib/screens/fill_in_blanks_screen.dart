@@ -1,4 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:e_learning_app/firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class FillInTheBlanksScreen extends StatefulWidget {
   @override
@@ -8,23 +14,78 @@ class FillInTheBlanksScreen extends StatefulWidget {
 class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
   String selectedWord = '';
   int currentQuestionIndex = 0;
+  List<Map<String, dynamic>> questions = [];
 
-  final List<Map<String, dynamic>> questions = [
-    {
-      'sentence': 'I ate an ___ for breakfast.',
-      'options': ['apple', 'banana', 'cherry', 'date'],
-      'answer': 'apple',
-    },
-    {
-      'sentence': 'The ___ is blue.',
-      'options': ['sky', 'grass', 'apple', 'car'],
-      'answer': 'sky',
-    },
-    // Add more questions as needed
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchQuestionsFromFirestore();
+  }
+
+  _fetchQuestionsFromFirestore() async {
+    try {
+      final sentences = await FirebaseFirestore.instance.collection('sentences')
+          .get();
+
+      // Collect all individual words from all sentences
+      final allWords = sentences.docs
+          .expand((doc) => (doc.data()['afrikaans'] as String).split(' '))
+          .toSet() // Using a set to remove duplicates
+          .toList();
+
+      final validSentences = sentences.docs.where((QueryDocumentSnapshot doc) {
+        final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+        if (data == null) return false; // Skip this document if data is null
+
+        final words = (data['afrikaans'] as String?)?.split(' ');
+        if (words == null) return false; // Skip this document if 'afrikaans' field is null or not a string
+
+        return words.any((String word) => word.length >= 4);
+      }).toList();
+
+
+
+      validSentences.shuffle(); // Randomize the list
+
+      for (var i = 0; i < 10 && i < validSentences.length; i++) {
+        final sentence = validSentences[i].data()['afrikaans'] as String;
+        final words = sentence.split(' ');
+        final answer = words.firstWhere((word) => word.length >= 4);
+
+        final otherOptions = allWords.where((word) =>
+        word != answer && word.length >= answer.length).toList()
+          ..shuffle();
+
+        final options = [answer, ...otherOptions.sublist(0, min(3, otherOptions.length))];
+
+        questions.add({
+          'sentence': sentence.replaceAll(answer, '___'),
+          'options': options..shuffle(),
+          'answer': answer,
+        });
+      }
+
+      setState(() {});
+    }
+    catch (e) {
+      print("Error fetching sentences: $e");
+      // Optionally, show an error dialog or some feedback to the user.
+    }
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
+
+    if (questions.isEmpty) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()), // Show a loading spinner until questions are fetched
+      );
+    }
+
     final currentQuestion = questions[currentQuestionIndex];
 
     return Scaffold(
@@ -95,7 +156,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                       currentQuestionIndex++;
                     });
                   } else {
-                    // Handle end of questions, maybe navigate to a results page or show a message
+                    // Example: Show a dialog when all questions are answered
+                    _showFeedbackDialog('You have answered all questions!', Colors.indigoAccent[100]!);
                   }
                 },
                 child: Text('Next'),

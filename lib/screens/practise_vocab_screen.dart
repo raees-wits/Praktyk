@@ -60,7 +60,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
   }
 
   // Define the pastel colors list
-  final List<Color> pastelColors = [kgreen, kblue, kpurple, korange];
+  final List<Color> pastelColors = [kgreen, kpink, kpurple, korange];
 
   Widget _buildChoiceTile(BuildContext context, String title, int index) {
     return Card(
