@@ -137,7 +137,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             ],
           ),
           // Show the overlay when showGoalsOverlay is true
-          // Show the overlay when showGoalsOverlay is true
           if (showGoalsOverlay)
             Container(
               color: Colors.black.withOpacity(0.5), // Semi-transparent black background
