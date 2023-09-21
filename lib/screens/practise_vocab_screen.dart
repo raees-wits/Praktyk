@@ -10,7 +10,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Set the arrow icon color
+          icon: Icon(Icons.arrow_back, color: Colors.black), // Set the arrow icon color
           onPressed: () => Navigator.of(context).pop(), // Pop the current screen
         ),
         title: Text(
