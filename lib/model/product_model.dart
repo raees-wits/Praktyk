@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:e_learning_app/screens//practise_vocab_screen.dart';
+
 
 class Product {
   final String image, title;
   final int id, courses;
   final Color color;
+  final Function? onTap; // Add this line for the onTap property
   Product({
     required this.image,
     required this.title,
     required this.courses,
     required this.color,
     required this.id,
+    this.onTap, // Add this line for the constructor
   });
 }
+
 
 List<Product> products = [
   Product(
@@ -21,7 +25,14 @@ List<Product> products = [
     image: "assets/images/practisevocab.png",
     color: Color(0xFF71b8ff),
     courses: 16,
+    onTap: (BuildContext context) { // Add this line
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PracticeVocabularyScreen()),
+      );
+    }, // Add this line
   ),
+
   Product(
     id: 2,
     title: "Grammar Rules",
