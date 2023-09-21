@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
 class MatchTheColumnPage extends StatefulWidget {
-  const MatchTheColumnPage({Key? key}) : super(key: key);
+  final String categoryName;
+  const MatchTheColumnPage({Key? key, required this.categoryName}) : super(key: key);
 
   @override
   _MatchTheColumnPageState createState() => _MatchTheColumnPageState();
@@ -28,43 +29,49 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
   Future<void> fetchRandomQuestionsAndAnswers() async {
     try {
-      final querySnapshot = await FirebaseFirestore.instance
+      final categoryDoc = await FirebaseFirestore.instance
           .collection('Match The Column')
-          .limit(4) // Fetch 4 random pairs
+          .doc(widget.categoryName)
           .get();
 
-      final random = Random();
+      if (categoryDoc.exists) {
+        final data = categoryDoc.data() as Map<String, dynamic>;
+        final questionsMap = data['Questions'] as Map<String, dynamic>;
 
-      querySnapshot.docs.forEach((doc) {
-        questions.add(doc['Question'] as String);
-        answers.add(doc['Answer'] as String);
-      });
+        questionsMap.forEach((question, answer) {
+          questions.add(question);
+          answers.add(answer);
+        });
 
-      // Shuffle the questions and answers
-      questions.shuffle(random);
-      answers.shuffle(random);
+        // Shuffle the questions and answers
+        final random = Random();
+        questions.shuffle(random);
+        answers.shuffle(random);
 
-      // Initialize questionButtonColors and answerButtonColors with different colors
-      questionButtonColors = List.generate(questions.length, (index) {
-        switch (index) {
-          case 0:
-            return Colors.red;
-          case 1:
-            return Colors.blue;
-          case 2:
-            return Colors.yellow;
-          case 3:
-            return Colors.green;
-          default:
-            return Colors.white;
-        }
-      });
+        // Initialize questionButtonColors and answerButtonColors with different colors
+        questionButtonColors = List.generate(questions.length, (index) {
+          switch (index) {
+            case 0:
+              return Colors.red;
+            case 1:
+              return Colors.blue;
+            case 2:
+              return Colors.yellow;
+            case 3:
+              return Colors.green;
+            default:
+              return Colors.white;
+          }
+        });
 
-      answerButtonColors = List.generate(answers.length, (index) {
-        return Colors.white; // Initially, all answer buttons are white
-      });
+        answerButtonColors = List.generate(answers.length, (index) {
+          return Colors.white; // Initially, all answer buttons are white
+        });
 
-      setState(() {});
+        setState(() {});
+      } else {
+        print('Category not found');
+      }
     } catch (e) {
       print('Error fetching data: $e');
     }
@@ -106,7 +113,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Match the Column"),
+        title: Text(widget.categoryName),
       ),
       body: GestureDetector(
         onTap: () {
@@ -342,6 +349,6 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
 void main() {
   runApp(const MaterialApp(
-    home: MatchTheColumnPage(),
+    home: MatchTheColumnPage(categoryName: ''),
   ));
 }

@@ -6,7 +6,7 @@ import 'components/MatchTheColumn.dart';
 class CategoryTree extends StatelessWidget {
   final List<Category> categories; // List of all categories
 
-  CategoryTree({required this.categories});
+  CategoryTree({Key? key, required this.categories}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class CategoryTree extends StatelessWidget {
                         // Navigate to the MatchTheColumnPage
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const MatchTheColumnPage(),
+                            builder: (context) => MatchTheColumnPage(categoryName: category.name),
                           ),
                         );
                       },

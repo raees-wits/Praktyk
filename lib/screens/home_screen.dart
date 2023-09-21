@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _widgetOptions = [
     // Your Home screen widget here
     HomeScreenContent(),
-    MatchTheColumnPage(),
+    Text("Favourite Page"),
     CommunityScreen(),
     ProfileScreen(), // Your ProfileScreen widget here
   ];
