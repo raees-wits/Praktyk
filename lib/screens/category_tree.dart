@@ -1,6 +1,7 @@
 import 'package:e_learning_app/model/category_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens/anki_card_screen.dart';
+import 'components/MatchTheColumn.dart';
 
 class CategoryTree extends StatelessWidget {
   final List<Category> categories; // List of all categories
@@ -80,14 +81,12 @@ class CategoryTree extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to the Learn screen with the selected word
-                        // You can replace LearnScreen with your desired screen.
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         LearnScreen(word: category.name),
-                        //   ),
-                        // );
+                        // Navigate to the MatchTheColumnPage
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const MatchTheColumnPage(),
+                          ),
+                        );
                       },
                       child: Text("Learn"),
                     ),
