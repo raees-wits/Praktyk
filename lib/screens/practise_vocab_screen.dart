@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
+import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
   @override
@@ -8,6 +9,10 @@ class PracticeVocabularyScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Set the arrow icon color
+          onPressed: () => Navigator.of(context).pop(), // Pop the current screen
+        ),
         title: Text(
           "Pick a choice",
           style: TextStyle(
@@ -23,7 +28,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.red[300]!, Colors.pink[50]!],
+            colors: [Colors.blue[400]!, Colors.pink[50]!],
           ),
         ),
         child: Column(
@@ -41,10 +46,10 @@ class PracticeVocabularyScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  _buildChoiceTile("Fill in the blanks", 0),
-                  _buildChoiceTile("Multiple Choice", 1),
-                  _buildChoiceTile("Short Questions", 2),
-                  _buildChoiceTile("Choice 4", 3),
+                  _buildChoiceTile(context, "Fill in the blanks", 0),
+                  _buildChoiceTile(context, "Multiple Choice", 1),
+                  _buildChoiceTile(context, "Short Questions", 2),
+                  _buildChoiceTile(context, "Choice 4", 3),
                 ],
               ),
             ),
@@ -57,10 +62,9 @@ class PracticeVocabularyScreen extends StatelessWidget {
   // Define the pastel colors list
   final List<Color> pastelColors = [kgreen, kblue, kpurple, korange];
 
-  Widget _buildChoiceTile(String title, int index) {
+  Widget _buildChoiceTile(BuildContext context, String title, int index) {
     return Card(
       color: pastelColors[index % pastelColors.length],
-      // Set the background color
       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: ListTile(
         title: Text(
@@ -68,10 +72,15 @@ class PracticeVocabularyScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         onTap: () {
-          // Handle the tile tap here
+          if (title == "Fill in the blanks") {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
+            );
+          }
         },
       ),
     );
   }
+
 }
 
