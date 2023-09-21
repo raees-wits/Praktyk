@@ -38,15 +38,28 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         final data = categoryDoc.data() as Map<String, dynamic>;
         final questionsMap = data['Questions'] as Map<String, dynamic>;
 
-        questionsMap.forEach((question, answer) {
-          questions.add(question);
-          answers.add(answer);
-        });
+        // Convert the questions and answers into a list of key-value pairs
+        final questionAnswerList = questionsMap.entries.toList();
+
+        // Shuffle the list of key-value pairs
+        questionAnswerList.shuffle(Random());
+
+        // Take the first 4 random pairs
+        final selectedQuestionAnswerList = questionAnswerList.take(4).toList();
+
+        // Clear existing questions and answers
+        questions.clear();
+        answers.clear();
+
+        // Add the selected questions and answers to the lists
+        for (final entry in selectedQuestionAnswerList) {
+          questions.add(entry.key);
+          answers.add(entry.value);
+        }
 
         // Shuffle the questions and answers
-        final random = Random();
-        questions.shuffle(random);
-        answers.shuffle(random);
+        questions.shuffle(Random());
+        answers.shuffle(Random());
 
         // Initialize questionButtonColors and answerButtonColors with different colors
         questionButtonColors = List.generate(questions.length, (index) {

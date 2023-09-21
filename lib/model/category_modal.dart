@@ -37,10 +37,10 @@ List<Category> categories = [
     color: Color(0xFF71b8ff),
   ),
   Category(
-    name: "Days of the Week",
+    name: "Days Of The Week",
     learningItems: [],
     icon: "assets/images/tree.png",
-    description: "Description for Days of the Week",
+    description: "Description for Days Of The Week",
     color: Color(0xFF71b8ff),
   ),
   Category(
