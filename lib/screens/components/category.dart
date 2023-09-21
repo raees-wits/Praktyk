@@ -37,52 +37,59 @@ class CategoryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
-            color: product.color, borderRadius: BorderRadius.circular(15.0)),
-        child: Column(
-          children: [
-            Image.asset(
-              product.image,
-              height: 100,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              product.title,
-              style: const TextStyle(
+          color: product.color,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: SingleChildScrollView(
+          // Wrap with SingleChildScrollView
+          child: Column(
+            children: [
+              Image.asset(
+                product.image,
+                height: 100,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                product.title,
+                style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              "${product.courses} courses",
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-
-            // This button is for redirects to the categorytree where users can select the task they want to
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CategoryTree(
-                      categories: categories, // Pass the list of categories
-                    ),
-                  ),
-                );
-              },
-              child: Text('Explore All Categories'),
-            )
-          ],
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                "${product.courses} courses",
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              FractionallySizedBox(
+                widthFactor: 0.8,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CategoryTree(
+                          categories: categories,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Explore All Categories'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
