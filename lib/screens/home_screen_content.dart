@@ -16,6 +16,7 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
+  late TextEditingController controller;   //For the avatar
   bool showGoalsOverlay = false; // Track whether the overlay should be shown
 
   void _toggleGoalsOverlay() {
@@ -28,6 +29,37 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       showGoalsOverlay = false;
     });
   }
+
+  @override
+  void initState(){
+    super.initState();
+
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  void confirmPrompt(){
+    Navigator.of(context).pop(controller.text);
+    controller.clear();
+  }
+
+  //Initialise Avatar properties
+  String avatarPrompt = "Neo";
+  String avatarPromptType = "Humans";
+  String avatarPromptTypeNumber = '5';
+  List<DropdownMenuItem<String>> myAvatarTypes = <String>["Robots","Monsters","Heads","Kittens","Humans"]
+      .map<DropdownMenuItem<String>>((String value){
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -72,17 +104,74 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         ),
                         const Spacer(),
                         Column(
+                          mainAxisSize : MainAxisSize.min,
                           children: [
-                            Container(
-                              height: 70,
-                              width: 70,
-                              decoration: BoxDecoration(
-                                color: kpurple,
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Image.asset(
-                                "assets/images/profile.png",
-                              ),
+                            InkWell(
+                                onTap : () async{
+                                  final newAvatarPrompt = (await showDialog<String>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Avatar Prompt'),
+                                      content: Column(
+                                          children: [
+                                            DropdownButton(
+                                                items: myAvatarTypes,
+                                                value: "Avatar Type",
+                                                onChanged: (String? newValue){
+                                                  setState(() {
+                                                    avatarPromptType = newValue!;
+
+                                                    if(newValue=="Robots"){
+                                                      avatarPromptTypeNumber = '1';
+                                                    }
+
+                                                    if(newValue=="Monsters"){
+                                                      avatarPromptTypeNumber = '2';
+                                                    }
+
+                                                    if(newValue=="Heads"){
+                                                      avatarPromptTypeNumber = '3';
+                                                    }
+
+                                                    if(newValue=="Kittens"){
+                                                      avatarPromptTypeNumber = '4';
+                                                    }
+
+                                                    if(newValue=="Humans"){
+                                                      avatarPromptTypeNumber = '5';
+                                                    }
+                                                    print(avatarPromptTypeNumber);
+                                                  });
+                                                }),
+                                            TextField(
+                                              autofocus: true,
+                                              decoration: InputDecoration(hintText: 'Enter an Avatar Prompt'),
+                                              controller: controller,
+                                            )
+                                          ]
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: confirmPrompt,
+                                            child: Text('Confirm'))
+                                      ],
+                                    ),
+                                  ))!;
+                                  if(newAvatarPrompt == null || newAvatarPrompt.isEmpty)return;
+                                  setState(() => avatarPrompt=newAvatarPrompt);
+
+                                  print(avatarPrompt);
+                                },
+                                child: Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                      color: kpurple,
+                                      borderRadius: BorderRadius.circular(15.0)),
+                                  child: Image.network(
+                                    "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
+                                  ),
+                                )
                             ),
                           ],
                         ),
