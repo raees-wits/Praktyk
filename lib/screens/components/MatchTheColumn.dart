@@ -243,25 +243,19 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         final matchingAnswer = answers[matchingIndex];
         final originalQuestion = questions[i]; // Use the original question
 
-        // Fetch the document IDs for the Question and Answer
-        final questionQuery = await FirebaseFirestore.instance
+        // Fetch the matching answer for the current question from the database
+        final categoryDoc = await FirebaseFirestore.instance
             .collection('Match The Column')
-            .where('Question', isEqualTo: originalQuestion)
-            .limit(1)
+            .doc(widget.categoryName)
             .get();
 
-        final answerQuery = await FirebaseFirestore.instance
-            .collection('Match The Column')
-            .where('Answer', isEqualTo: matchingAnswer)
-            .limit(1)
-            .get();
+        if (categoryDoc.exists) {
+          final data = categoryDoc.data() as Map<String, dynamic>;
+          final questionsMap = data['Questions'] as Map<String, dynamic>;
 
-        if (questionQuery.docs.isNotEmpty && answerQuery.docs.isNotEmpty) {
-          final questionDocumentId = questionQuery.docs[0].id;
-          final answerDocumentId = answerQuery.docs[0].id;
-
-          // Check if the document IDs match
-          if (questionDocumentId == answerDocumentId) {
+          // Check if the matching answer matches the answer in the database
+          if (questionsMap.containsKey(originalQuestion) &&
+              questionsMap[originalQuestion] == matchingAnswer) {
             correctMatchesCount++;
           }
         }
@@ -274,6 +268,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
     print("Correct Matches: $correctMatchesCount");
   }
+
 
   void pairSelected() {
     if (selectedQuestionIndex != null && selectedAnswerIndex != null) {
