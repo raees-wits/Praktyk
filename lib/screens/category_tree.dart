@@ -51,7 +51,7 @@ class CategoryTree extends StatelessWidget {
               color: bgColor, // Apply the background color to the container
               child: ListTile(
                 contentPadding:
-                    EdgeInsets.all(16), // Add padding to the ListTile
+                EdgeInsets.all(16), // Add padding to the ListTile
                 leading: Container(
                   width: 48, // Adjust the width of the leading image
                   height: 48, // Adjust the height of the leading image
@@ -63,54 +63,58 @@ class CategoryTree extends StatelessWidget {
                     ),
                   ),
                 ),
-                title: Text(
-                  category.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                subtitle: Text(
-                  category.description,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigate to the MatchTheColumnPage
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => MatchTheColumnPage(categoryName: category.name),
-                          ),
-                        );
-                      },
-                      child: Text("Learn"),
-                    ),
-                    SizedBox(width: 8), // Add some spacing between buttons
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigate to the Anki card screen with the selected word
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AnkiCardScreen(word: category.name),
-                          ),
-                        );
-                      },
-                      child: Text("Practice"),
-                    ),
-                    SizedBox(
-                        width: 8), // Add spacing between the buttons and score
                     Text(
-                      "Score: $staticScore", // Display the user's score here
+                      category.name,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
+                    ),
+                    Text(
+                      category.description,
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the MatchTheColumnPage
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MatchTheColumnPage(categoryName: category.name),
+                              ),
+                            );
+                          },
+                          child: Text("Learn"),
+                        ),
+                        SizedBox(width: 8), // Add some spacing between buttons
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the Anki card screen with the selected word
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AnkiCardScreen(word: category.name),
+                              ),
+                            );
+                          },
+                          child: Text("Practice"),
+                        ),
+                        SizedBox(width: 8), // Add some spacing between buttons and score
+                        Text(
+                          "Score: $staticScore", // Display the user's score here
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
