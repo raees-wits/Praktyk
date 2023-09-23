@@ -57,4 +57,32 @@ List<Category> categories = [
     description: "Description for Basic Vocabulary 2",
     color: Color(0xFF71b8ff),
   ),
+  Category(
+    name: "Basic Vocabulary 3",
+    learningItems: [],
+    icon: "assets/images/book2.png",
+    description: "Description for Basic Vocabulary 3",
+    color: Color(0xFF71b8ff),
+  ),
+  Category(
+    name: "Basic Vocabulary 4",
+    learningItems: [],
+    icon: "assets/images/tree.png",
+    description: "Description for Basic Vocabulary 4",
+    color: Color(0xFF71b8ff),
+  ),
+  Category(
+    name: "Places And Buildings",
+    learningItems: [],
+    icon: "assets/images/egg.png",
+    description: "Description for Places And Buildings",
+    color: Color(0xFF71b8ff),
+  ),
+  Category(
+    name: "Parts Of The Body",
+    learningItems: [],
+    icon: "assets/images/book.png",
+    description: "Description for Parts of the Body",
+    color: Color(0xFF71b8ff),
+  ),
 ];

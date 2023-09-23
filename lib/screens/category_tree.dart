@@ -13,7 +13,7 @@ class CategoryTree extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          color: Colors.orange, // Add the orange background color here
+          //color: Colors.orange, // Add the orange background color here
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
