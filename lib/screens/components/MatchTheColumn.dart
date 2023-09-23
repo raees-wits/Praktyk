@@ -21,6 +21,8 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   int? selectedQuestionIndex;
   int? selectedAnswerIndex;
 
+  Map<String, dynamic>? questionsMap; // Store the questions map from the database
+
   @override
   void initState() {
     super.initState();
@@ -36,23 +38,23 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
       if (categoryDoc.exists) {
         final data = categoryDoc.data() as Map<String, dynamic>;
-        final questionsMap = data['Questions'] as Map<String, dynamic>;
+        questionsMap = data['Questions'] as Map<String, dynamic>;
 
         // Convert the questions and answers into a list of key-value pairs
-        final questionAnswerList = questionsMap.entries.toList();
+        final questionAnswerList = questionsMap?.entries.toList();
 
         // Shuffle the list of key-value pairs
-        questionAnswerList.shuffle(Random());
+        questionAnswerList?.shuffle(Random());
 
         // Take the first 4 random pairs
-        final selectedQuestionAnswerList = questionAnswerList.take(4).toList();
+        final selectedQuestionAnswerList = questionAnswerList?.take(4).toList();
 
         // Clear existing questions and answers
         questions.clear();
         answers.clear();
 
         // Add the selected questions and answers to the lists
-        for (final entry in selectedQuestionAnswerList) {
+        for (final entry in selectedQuestionAnswerList!) {
           questions.add(entry.key);
           answers.add(entry.value);
         }
@@ -235,6 +237,11 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   void checkMatchingPairs() async {
     int correctMatchesCount = 0;
 
+    if (questionsMap == null) {
+      print('Questions map not available');
+      return;
+    }
+
     for (int i = 0; i < questions.length; i++) {
       final matchingIndex = matchingPairs[i];
 
@@ -243,21 +250,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         final matchingAnswer = answers[matchingIndex];
         final originalQuestion = questions[i]; // Use the original question
 
-        // Fetch the matching answer for the current question from the database
-        final categoryDoc = await FirebaseFirestore.instance
-            .collection('Match The Column')
-            .doc(widget.categoryName)
-            .get();
-
-        if (categoryDoc.exists) {
-          final data = categoryDoc.data() as Map<String, dynamic>;
-          final questionsMap = data['Questions'] as Map<String, dynamic>;
-
-          // Check if the matching answer matches the answer in the database
-          if (questionsMap.containsKey(originalQuestion) &&
-              questionsMap[originalQuestion] == matchingAnswer) {
-            correctMatchesCount++;
-          }
+        // Check if the matching answer matches the answer in the questionsMap
+        if (questionsMap!.containsKey(originalQuestion) &&
+            questionsMap![originalQuestion] == matchingAnswer) {
+          correctMatchesCount++;
         }
       }
     }
