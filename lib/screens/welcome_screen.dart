@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:e_learning_app/constants.dart';
+import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:e_learning_app/screens/comprehension_question_screen.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/login_screen.dart';
@@ -85,7 +86,7 @@ class WelcomeScreen extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              ComprehensionQuestionScreen()));
+                                              ComprehensionChoiceScreen()));
                                 },
                                 child: Text(
                                   "Begin",
