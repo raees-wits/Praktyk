@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -232,6 +229,20 @@ class _ComprehensionQuestionScreenState
                                 for (int i = 0; i < questions.length; i++) {
                                   Navigator.pop(context);
                                 }
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ComprehensionQuestionScreen(
+                                                comprehensionID:
+                                                    widget.comprehensionID,
+                                                comprehensionTitle:
+                                                    widget.comprehensionTitle,
+                                                comprehensionText:
+                                                    widget.comprehensionText,
+                                                questionNo:
+                                                    widget.questionNo + 1)));
                               }
                             },
                             child: Text(

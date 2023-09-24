@@ -2,9 +2,6 @@
 
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
-import 'package:e_learning_app/screens/comprehension_question_screen.dart';
-import 'package:e_learning_app/screens/home_screen.dart';
-import 'package:e_learning_app/screens/login_screen.dart';
 
 import 'package:flutter/material.dart';
 
