@@ -80,11 +80,19 @@ class PracticeVocabularyScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
             );
           }
-          if (title == "Match The Column") {
+          else if (title == "Match The Column") {
             Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => CategoryTree(
                     categories: categories,
+                  ),
+                )
+            );
+          }
+          else if (title == "Short Questions") {
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ShortAnswerQuestions,
                   ),
                 )
             );
