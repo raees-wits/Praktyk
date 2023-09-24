@@ -1,8 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ComprehensionQuestionScreen extends StatelessWidget {
-  const ComprehensionQuestionScreen({Key? key}) : super(key: key);
+class Question {
+  final String id;
+  final String text;
+  final String answer;
+
+  Question(this.id, this.text, this.answer);
+}
+
+class ComprehensionQuestionScreen extends StatefulWidget {
+  @override
+  _ComprehensionQuestionScreenState createState() =>
+      _ComprehensionQuestionScreenState();
+}
+
+class _ComprehensionQuestionScreenState
+    extends State<ComprehensionQuestionScreen> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String comprehensionID = "FHjDW18WbYQQrKthfsQe";
+  int questionNo = 0;
+  String comprehensionText = "Empty";
+  String questionAnswer = "";
+  List<Question> questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadQuestion();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> loadQuestion() async {
+    final querySnapshot = await firestore
+        .collection('ComprehensionQuestions')
+        .doc(comprehensionID)
+        .collection('Questions')
+        .get();
+    setState(() {
+      questions = querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Question(doc.id, data['Text'], data['Answer']);
+      }).toList();
+
+      comprehensionText = questions[questionNo].text;
+      questionAnswer = questions[questionNo].answer;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
