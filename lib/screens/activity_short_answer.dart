@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async'; // Import dart:async for Timer
 
 class ShortAnswerQuestions extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
   int currentQuestionIndex = 0;
   String? feedback;
   bool? isCorrect;
+  double opacityLevel = 0.0; // Initial opacity level
 
   final List<String> questions = [
     "Wanneer het Tom die tee vir sy ma gemaak?",
@@ -40,6 +42,13 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
         feedback = "Incorrect! The correct answer is $correctAnswer";
         isCorrect = false;
       }
+      opacityLevel = 1.0; // Set opacity level to 1 to make the icon visible
+    });
+
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        opacityLevel = 0.0; // Set opacity level to 0 to hide the icon after 2 seconds
+      });
     });
   }
 
@@ -66,18 +75,19 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(height: 70),
                 Text(
                   "Question ${currentQuestionIndex + 1}",
                   style: TextStyle(
-                    fontFamily: 'Pacifico',
-                    fontSize: 32,
+                    fontFamily: 'Cursive',
+                    fontSize: 45,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 40),
                 Text(
                   questions[currentQuestionIndex],
                   style: TextStyle(
@@ -87,7 +97,7 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
                 TextField(
                   controller: answerController,
                   decoration: InputDecoration(
@@ -99,21 +109,23 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: submitAnswer,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.all(15),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                   child: Text(
                     "Submit",
                     style: TextStyle(
-                        color: Color(0xFF9ba0fc),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                      color: Color(0xFF9ba0fc),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 if (feedback != null)
@@ -127,47 +139,60 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                           fontSize: 18,
                         ),
                       ),
+                      SizedBox(height: 20),
+                      AnimatedOpacity(
+                        opacity: opacityLevel,
+                        duration: Duration(seconds: 1),
+                        child: Icon(
+                          isCorrect! ? Icons.check : Icons.close,
+                          color: isCorrect! ? Colors.green : Colors.red,
+                          size: 30,
+                        ),
+                      ),
                     ],
                   ),
-                SizedBox(height: 140),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (currentQuestionIndex > 0) {
-                          setState(() {
-                            currentQuestionIndex--;
-                          });
-                        }
-                      },
-                      child: Text("Prev"),
-                    ),
-                    Text(
-                      "Question ${currentQuestionIndex + 1}",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (currentQuestionIndex < questions.length - 1) {
-                          setState(() {
-                            currentQuestionIndex++;
-                          });
-                        }
-                      },
-                      child: Text("Next"),
-                    ),
-                  ],
-                ),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  if (currentQuestionIndex > 0) {
+                    setState(() {
+                      currentQuestionIndex--;
+                    });
+                  }
+                },
+                child: Text("Prev"),
+              ),
+              Text(
+                "Question ${currentQuestionIndex + 1}",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (currentQuestionIndex < questions.length - 1) {
+                    setState(() {
+                      currentQuestionIndex++;
+                    });
+                  }
+                },
+                child: Text("Next"),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
-
