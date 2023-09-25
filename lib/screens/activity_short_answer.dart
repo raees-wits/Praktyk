@@ -19,9 +19,9 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
   ];
 
   final List<String> correctAnswers = [
-    "Correct answer for question 1",
+    "Yes",
     "Paris",
-    "Correct answer for question 3",
+    "Dog",
   ];
 
   final Map<int, String> userAnswers = {};
