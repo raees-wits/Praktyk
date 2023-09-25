@@ -1,4 +1,5 @@
 import 'package:e_learning_app/constants.dart';
+import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -146,6 +147,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         print("Sign Up Pressed");
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()
+                            )
+                        );
                       }
                     },
                     child: Text(
