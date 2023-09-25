@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'components/Question.dart';
 import 'components/question_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 class CommunityScreen extends StatefulWidget {
   @override
@@ -77,6 +79,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     }
                   },
                   child: Text('Submit'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final imagePicker = ImagePicker();
+                    final imageFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+                    // Check if an image was selected
+                    if (imageFile != null) {
+                      // Now you can upload the image to Firebase Storage
+                      // Add the image upload logic here
+                    }
+                  },
+                  child: Text('Attach Image'),
                 ),
                 SizedBox(height: 16.0),
               ],
