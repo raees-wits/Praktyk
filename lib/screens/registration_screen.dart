@@ -29,14 +29,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           width: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x66ff6374),
-                  Color(0x99ff6374),
-                  Color(0xccff6374),
-                  Color(0xFFff6374),
-                ]
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0x66ff6374),
+                Color(0x99ff6374),
+                Color(0xccff6374),
+                Color(0xFFff6374),
+              ],
             ),
           ),
           child: SingleChildScrollView(
@@ -67,6 +67,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     hint: Text("Please select registration type"),
                     value: registrationType,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a registration type';
+                      }
+                      return null;
+                    },
                     items: [
                       DropdownMenuItem(
                         child: Text("Student"),
@@ -81,10 +87,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         value: "Parent",
                       ),
                     ],
-                    validator: (value) =>
-                    value == null
-                        ? 'Please select a registration type'
-                        : null,
                     onChanged: (String? value) {
                       setState(() {
                         registrationType = value;
@@ -99,42 +101,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   buildTextField("Email Address", emailController, true,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
+                        final emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
                         if (value == null || value.isEmpty) {
-                          return 'Please enter an Email Address';
-                        }
-                        // Add regex for email validation
-                        final regexEmail = RegExp(
-                            r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-                        if (!regexEmail.hasMatch(value)) {
-                          return 'Enter a valid Email Address';
+                          return 'Please enter an email address';
+                        } else if (!emailRegex.hasMatch(value)) {
+                          return 'Please enter a valid email address';
                         }
                         return null;
-                      }),
+                      }
+                  ),
                   SizedBox(height: 20),
                   buildTextField("Phone Number", phoneController, true,
-                      keyboardType: TextInputType.phone, validator: (value) {
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a phone number';
-                        }
-                        if (value.length != 10) {
-                          return 'Phone number must be 10 digits long';
+                        } else if (value.length != 10) {
+                          return 'Please enter a valid 10-digit phone number';
                         }
                         return null;
-                      }),
+                      }
+                  ),
                   SizedBox(height: 20),
-                  buildTextField(
-                      "Password", passwordController, true, isPassword: true),
+                  buildTextField("Password", passwordController, true, isPassword: true),
                   SizedBox(height: 20),
-                  buildTextField(
-                      "Confirm Password", confirmPasswordController, true,
-                      isPassword: true, validator: (value) {
-                    if (value != passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  }),
+                  buildTextField("Confirm Password", confirmPasswordController, true, isPassword: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        } else if (value != passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      }
+                  ),
+                  SizedBox(height: 20),
                   if (registrationType == "Student") ...[
-                    SizedBox(height: 20),
                     buildTextField("School", schoolController, true),
                     SizedBox(height: 20),
                     buildTextField("Grade", gradeController, true),
@@ -142,17 +144,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                   ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        print("Form is valid");
-                        // Process data
-                      } else {
-                        print("Form is invalid");
+                      if (_formKey.currentState!.validate()) {
+                        print("Sign Up Pressed");
                       }
                     },
-                    child: Text("Sign Up",
-                        style: TextStyle(
-                          color: Colors.black,
-                        )),
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       padding: EdgeInsets.all(15),
@@ -170,105 +171,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget buildTextField(String hint, TextEditingController controller) {
+  Widget buildTextField(String hint, TextEditingController controller, bool isRequired,
+      {TextInputType keyboardType = TextInputType.text, bool isPassword = false,
+        FormFieldValidator<String>? validator}) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           hint,
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(height: 10),
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 2)
-                )
-              ]
-          ),
-          height: 60,
-          child: TextField(
-            controller: controller,
-            keyboardType: hint == "Phone Number" ? TextInputType.phone : TextInputType.text,
-            style: TextStyle(
-                color: Colors.black87
-            ),
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14),
-                prefixIcon: Icon(
-                    hint == "Phone Number" ? Icons.phone
-                        : (hint == "Email Address" ? Icons.email
-                        : Icons.person),
-                    color: kpink
-                ),
-                hintText: hint,
-                hintStyle: TextStyle(
-                    color: Colors.black38
-                )
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-}
-
-Widget buildPasswordField(String hint, TextEditingController controller) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        hint,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-        ),
-      ),
-      SizedBox(height: 10),
-      Container(
-        alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(0, 2)
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
               )
-            ]
-        ),
-        height: 60,
-        child: TextField(
-          controller: controller,
-          obscureText: true, // Obscures the text input for passwords
-          style: TextStyle(color: Colors.black87),
-          decoration: InputDecoration(
+            ],
+          ),
+          height: 60,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: isPassword,
+            style: TextStyle(color: Colors.black87),
+            validator: validator ?? (isRequired ? (value) {
+              if (value == null || value.isEmpty) {
+                return '$hint is required';
+              }
+              return null;
+            } : null),
+            decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14),
-              prefixIcon: Icon(Icons.lock, color: kpink), // Updated to a lock icon for passwords
+              prefixIcon: Icon(
+                hint == "Phone Number"
+                    ? Icons.phone
+                    : (hint == "Email Address"
+                    ? Icons.email
+                    : Icons.person),
+                color: kpink,
+              ),
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.black38)
+              hintStyle: TextStyle(color: Colors.black38),
+            ),
           ),
         ),
-      )
-    ],
-  );
+      ],
+    );
+  }
 }
-
 
 void main() {
   runApp(MaterialApp(
