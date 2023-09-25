@@ -17,6 +17,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   List<Question> questions = [];
   File? imageFile;
   bool isUploading = false; // Add a state variable for upload status
+  bool questionPosted = false; // Add a state variable for successful question posting
 
   @override
   void initState() {
@@ -79,6 +80,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     if (enteredQuestion.isNotEmpty) {
                       setState(() {
                         isUploading = true; // Set uploading status to true
+                        questionPosted = false; // Reset questionPosted status
                       });
 
                       if (imageFile != null) {
@@ -109,6 +111,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           // Reload questions to reflect the newly added one
                           loadQuestions();
                           clearUploadStatus();
+                          setState(() {
+                            questionPosted = true; // Set questionPosted status to true
+                          });
                         } catch (error) {
                           print('Upload error: $error');
                           clearUploadStatus();
@@ -125,6 +130,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         // Reload questions to reflect the newly added one
                         loadQuestions();
                         clearUploadStatus();
+                        setState(() {
+                          questionPosted = true; // Set questionPosted status to true
+                        });
                       }
                     }
                   },
@@ -150,7 +158,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 if (isUploading) CircularProgressIndicator(),
 
                 // Show "question successfully posted" message when uploading is done
-                if (isUploading == false) Text('Question successfully posted'),
+                if (questionPosted) Text('Question successfully posted'),
 
                 SizedBox(height: 16.0),
               ],
