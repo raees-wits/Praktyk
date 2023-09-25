@@ -15,6 +15,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController schoolController = TextEditingController();
   TextEditingController gradeController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +105,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 buildTextField("Grade", gradeController),
                 SizedBox(height: 20),
               ],
+                buildPasswordField("Password", passwordController),
+                SizedBox(height: 20),
+                buildPasswordField("Confirm Password", confirmPasswordController),
+                SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   print("Sign Up Pressed");
@@ -179,6 +186,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
 }
+
+Widget buildPasswordField(String hint, TextEditingController controller) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Text(
+        hint,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold
+        ),
+      ),
+      SizedBox(height: 10),
+      Container(
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(0, 2)
+              )
+            ]
+        ),
+        height: 60,
+        child: TextField(
+          controller: controller,
+          obscureText: true, // Obscures the text input for passwords
+          style: TextStyle(color: Colors.black87),
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Icons.lock, color: kpink), // Updated to a lock icon for passwords
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.black38)
+          ),
+        ),
+      )
+    ],
+  );
+}
+
 
 void main() {
   runApp(MaterialApp(

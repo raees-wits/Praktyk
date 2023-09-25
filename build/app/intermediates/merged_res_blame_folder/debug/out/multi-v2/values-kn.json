@@ -4,7 +4,7 @@
             "outputFile": "com.example.e_learning_app-mergeDebugResources-13:/values-kn/values-kn.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\joshu\\.gradle\\caches\\transforms-3\\edcb68729614718a4fe620b8418b467b\\transformed\\jetified-play-services-base-18.0.1\\res\\values-kn\\values.xml",
+                    "source": "C:\\Users\\Neo\\.gradle\\caches\\transforms-3\\edcb68729614718a4fe620b8418b467b\\transformed\\jetified-play-services-base-18.0.1\\res\\values-kn\\values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\joshu\\.gradle\\caches\\transforms-3\\25e40e9ae6c849e71bc55eea7bccfa73\\transformed\\core-1.6.0\\res\\values-kn\\values-kn.xml",
+                    "source": "C:\\Users\\Neo\\.gradle\\caches\\transforms-3\\25e40e9ae6c849e71bc55eea7bccfa73\\transformed\\core-1.6.0\\res\\values-kn\\values-kn.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\joshu\\.gradle\\caches\\transforms-3\\9b317b22b35e8b3cbd542c0a3d802eb3\\transformed\\jetified-play-services-basement-18.1.0\\res\\values-kn\\values.xml",
+                    "source": "C:\\Users\\Neo\\.gradle\\caches\\transforms-3\\9b317b22b35e8b3cbd542c0a3d802eb3\\transformed\\jetified-play-services-basement-18.1.0\\res\\values-kn\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
