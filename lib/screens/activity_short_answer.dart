@@ -8,15 +8,40 @@ class ShortAnswerQuestions extends StatefulWidget {
 
 class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
   final TextEditingController answerController = TextEditingController();
-  int currentQuestionIndex = 0; // To keep track of the current question
+  int currentQuestionIndex = 0;
+  String? feedback;
+  bool? isCorrect;
 
-  // Sample questions, you can replace these with your questions.
   final List<String> questions = [
     "Wanneer het Tom die tee vir sy ma gemaak?",
     "Wat is die hoofstad van Frankryk?",
     "In the following sentence:\n\nDie hond by die kat\n\n \"Hond\" is a:",
-    // Add more questions here
   ];
+
+  final List<String> correctAnswers = [
+    "Correct answer for question 1",
+    "Paris",
+    "Correct answer for question 3",
+  ];
+
+  final Map<int, String> userAnswers = {};
+
+  void submitAnswer() {
+    setState(() {
+      String userAnswer = answerController.text.trim();
+      String correctAnswer = correctAnswers[currentQuestionIndex];
+
+      userAnswers[currentQuestionIndex] = userAnswer;
+
+      if (userAnswer == correctAnswer) {
+        feedback = "Correct!";
+        isCorrect = true;
+      } else {
+        feedback = "Incorrect! The correct answer is $correctAnswer";
+        isCorrect = false;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +56,10 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0x66ff6374),
-                Color(0x99ff6374),
-                Color(0xccff6374),
-                Color(0xFFff6374),
+                Color(0x669ba0fc),
+                Color(0x999ba0fc),
+                Color(0xcc9ba0fc),
+                Color(0xFF9ba0fc),
               ],
             ),
           ),
@@ -76,10 +101,7 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement your answer validation logic here
-                    print("Answer submitted: ${answerController.text}");
-                  },
+                  onPressed: submitAnswer,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.all(15),
@@ -89,12 +111,25 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                   child: Text(
                     "Submit",
                     style: TextStyle(
-                        color: Color(0xFFff6374),
+                        color: Color(0xFF9ba0fc),
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(height: 180),
+                if (feedback != null)
+                  Column(
+                    children: [
+                      SizedBox(height: 20),
+                      Text(
+                        feedback!,
+                        style: TextStyle(
+                          color: isCorrect! ? Colors.green : Colors.red,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                SizedBox(height: 140),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -135,3 +170,4 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
     );
   }
 }
+

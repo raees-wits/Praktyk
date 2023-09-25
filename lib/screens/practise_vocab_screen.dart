@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/activity_short_answer.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
@@ -90,12 +91,12 @@ class PracticeVocabularyScreen extends StatelessWidget {
             );
           }
           else if (title == "Short Questions") {
-            Navigator.of(context).push(
+            Navigator.push(
+              context,
                 MaterialPageRoute(
-                  builder: (context) => ShortAnswerQuestions,
+                  builder: (context) => ShortAnswerQuestions(),
                   ),
-                )
-            );
+                );
           }
         },
       ),
