@@ -40,6 +40,115 @@ class QuestionWidget extends StatelessWidget {
 
   QuestionWidget({required this.questionId, required this.questionText});
 
+  Widget buildCard(BuildContext context, bool hasImage) {
+    return Card(
+      margin: EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              questionText,
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+            child: Text(
+              "Asked by John Doe",
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          if (hasImage)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RichText(
+                text: TextSpan(
+                  text: 'View Attached Image',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _showAttachedImage(context, questionId);
+                    },
+                ),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _showAnswerDialog(context);
+                  },
+                  child: Text("Answer this question"),
+                ),
+              ],
+            ),
+          ),
+          ExpansionTile(
+            title: Text(
+              "Answers",
+              style: TextStyle(fontSize: 16.0),
+            ),
+            children: <Widget>[
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('questions')
+                    .doc(questionId)
+                    .collection('answers')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+                  final answers = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: answers.length,
+                    itemBuilder: (context, index) {
+                      final answerDoc = answers[index];
+                      final answerText = answerDoc['text'];
+                      final upvotes = answerDoc['upvotes'];
+                      final downvotes = answerDoc['downvotes'];
+
+                      return AnswerWidget(
+                        answer: answerText,
+                        upvotes: upvotes,
+                        downvotes: downvotes,
+                        onUpvote: () async {
+                          await _upvoteAnswer(questionId, answerDoc.id);
+                        },
+                        onDownvote: () async {
+                          await _downvoteAnswer(questionId, answerDoc.id);
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
@@ -49,203 +158,10 @@ class QuestionWidget extends StatelessWidget {
           return CircularProgressIndicator();
         } else if (snapshot.hasError || !snapshot.data!) {
           // Handle the case where there's an error or no image is found
-          return Card(
-            margin: EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // Rest of your widget contents
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    questionText,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
-                  child: Text(
-                    "Asked by John Doe",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _showAnswerDialog(context);
-                        },
-                        child: Text("Answer this question"),
-                      ),
-                    ],
-                  ),
-                ),
-                ExpansionTile(
-                  title: Text(
-                    "Answers",
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  children: <Widget>[
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('questions')
-                          .doc(questionId)
-                          .collection('answers')
-                          .orderBy('timestamp', descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
-                        }
-                        final answers = snapshot.data!.docs;
-
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: answers.length,
-                          itemBuilder: (context, index) {
-                            final answerDoc = answers[index];
-                            final answerText = answerDoc['text'];
-                            final upvotes = answerDoc['upvotes'];
-                            final downvotes = answerDoc['downvotes'];
-
-                            return AnswerWidget(
-                              answer: answerText,
-                              upvotes: upvotes,
-                              downvotes: downvotes,
-                              onUpvote: () async {
-                                await _upvoteAnswer(questionId, answerDoc.id);
-                              },
-                              onDownvote: () async {
-                                await _downvoteAnswer(questionId, answerDoc.id);
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
+          return buildCard(context, false);
         } else {
           // If the question has an image, display the "View Attached Image" link
-          return Card(
-            margin: EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // Rest of your widget contents
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    questionText,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
-                  child: Text(
-                    "Asked by John Doe",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                // View Attached Image Link
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'View Attached Image',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          _showAttachedImage(context, questionId);
-                        },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _showAnswerDialog(context);
-                        },
-                        child: Text("Answer this question"),
-                      ),
-                    ],
-                  ),
-                ),
-                ExpansionTile(
-                  title: Text(
-                    "Answers",
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  children: <Widget>[
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('questions')
-                          .doc(questionId)
-                          .collection('answers')
-                          .orderBy('timestamp', descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
-                        }
-                        final answers = snapshot.data!.docs;
-
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: answers.length,
-                          itemBuilder: (context, index) {
-                            final answerDoc = answers[index];
-                            final answerText = answerDoc['text'];
-                            final upvotes = answerDoc['upvotes'];
-                            final downvotes = answerDoc['downvotes'];
-
-                            return AnswerWidget(
-                              answer: answerText,
-                              upvotes: upvotes,
-                              downvotes: downvotes,
-                              onUpvote: () async {
-                                await _upvoteAnswer(questionId, answerDoc.id);
-                              },
-                              onDownvote: () async {
-                                await _downvoteAnswer(questionId, answerDoc.id);
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
+          return buildCard(context, true);
         }
       },
     );
