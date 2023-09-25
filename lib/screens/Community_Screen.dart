@@ -154,11 +154,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   child: Text('Attach Image'),
                 ),
 
-                // Show a loading indicator while uploading
-                if (isUploading) CircularProgressIndicator(),
+                // Use a Stack to overlay loading indicator and message
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Show a loading indicator while uploading
+                    if (isUploading) CircularProgressIndicator(),
 
-                // Show "question successfully posted" message when uploading is done
-                if (questionPosted) Text('Question successfully posted'),
+                    // Show "question successfully posted" message when uploading is done
+                    if (questionPosted) Text('Question successfully posted'),
+                  ],
+                ),
 
                 SizedBox(height: 16.0),
               ],
