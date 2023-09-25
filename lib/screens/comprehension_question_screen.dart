@@ -32,6 +32,10 @@ class _ComprehensionQuestionScreenState
   String questionText = "Empty";
   String questionAnswer = "";
   List<Question> questions = [];
+  String nextText = "Next";
+  String userAnswer = "";
+  String answerText = "";
+  Color answerColor = Colors.green;
 
   @override
   void initState() {
@@ -58,6 +62,10 @@ class _ComprehensionQuestionScreenState
 
       questionText = questions[widget.questionNo].text;
       questionAnswer = questions[widget.questionNo].answer;
+
+      if (widget.questionNo == (questions.length - 1)) {
+        nextText = "Done";
+      }
     });
   }
 
@@ -142,6 +150,11 @@ class _ComprehensionQuestionScreenState
                             offset: Offset(0, 2))
                       ]),
                   child: TextField(
+                    onChanged: (String newValue) {
+                      setState(() {
+                        userAnswer = newValue;
+                      });
+                    },
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -169,12 +182,37 @@ class _ComprehensionQuestionScreenState
                             offset: Offset(0, 2))
                       ]),
                   child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        setState(() {
+                          if (userAnswer ==
+                              questions[widget.questionNo].answer) {
+                            answerText = "Correct!";
+                            answerColor = Colors.green;
+                          } else if (userAnswer == "") {
+                            answerText = "Please provide an answer";
+                            answerColor = Colors.white;
+                          } else {
+                            answerText = "Incorrect! The correct answer is:\n" +
+                                questions[widget.questionNo].answer;
+                            answerColor = Colors.white;
+                          }
+                        });
+                      },
                       child: Text(
                         "Submit",
                         style:
                             TextStyle(color: Color(0xFFff6374), fontSize: 15),
                       )),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  answerText,
+                  style: TextStyle(
+                      color: answerColor,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
                 ),
                 Flexible(
                     child: Align(
@@ -246,7 +284,7 @@ class _ComprehensionQuestionScreenState
                               }
                             },
                             child: Text(
-                              "Next",
+                              nextText,
                               style: TextStyle(
                                   color: Color(0xFFff6374), fontSize: 15),
                             ),

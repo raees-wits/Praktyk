@@ -114,7 +114,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           children: [
                             InkWell(
                                 onTap: () async {
-                                  print(myAvatarTypes.toString());
                                   final newAvatarPrompt =
                                       (await showDialog<String>(
                                     context: context,
