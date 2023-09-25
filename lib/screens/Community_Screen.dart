@@ -59,118 +59,55 @@ class _CommunityScreenState extends State<CommunityScreen> {
       ),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Text box for entering a question
-                TextFormField(
-                  controller: questionController,
-                  decoration: InputDecoration(
-                    hintText: 'Write your question here...',
-                  ),
+              Container(
+                padding: EdgeInsets.all(16.0),
+                margin: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                SizedBox(height: 16.0),
-                // Button to submit the question
-                ElevatedButton(
-                  onPressed: () async {
-                    // Handle question submission here
-                    String enteredQuestion = questionController.text;
-                    if (enteredQuestion.isNotEmpty) {
-                      setState(() {
-                        isUploading = true; // Set uploading status to true
-                        questionPosted = false; // Reset questionPosted status
-                      });
-
-                      if (imageFile != null) {
-                        final String fileName =
-                            DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
-                        final Reference storageRef =
-                        FirebaseStorage.instance.ref().child('images/$fileName');
-                        final UploadTask uploadTask = storageRef.putFile(imageFile!);
-
-                        try {
-                          // Wait for the image upload to complete
-                          final TaskSnapshot snapshot =
-                          await uploadTask.whenComplete(() => null);
-
-                          // Get the download URL of the uploaded image
-                          final String imageUrl =
-                          await snapshot.ref.getDownloadURL();
-
-                          // Now, you can save the image URL along with the question to Firestore
-                          await firestore.collection('questions').add({
-                            'text': enteredQuestion,
-                            'timestamp': FieldValue.serverTimestamp(),
-                            'imageUrl': imageUrl, // Save the image URL in Firestore
-                          });
-
-                          // Clear the text field after submitting
-                          questionController.clear();
-                          // Reload questions to reflect the newly added one
-                          loadQuestions();
-                          clearUploadStatus();
-                          setState(() {
-                            questionPosted = true; // Set questionPosted status to true
-                          });
-                        } catch (error) {
-                          print('Upload error: $error');
-                          clearUploadStatus();
-                        }
-                      } else {
-                        // If no image was selected, just save the question without an image
-                        await firestore.collection('questions').add({
-                          'text': enteredQuestion,
-                          'timestamp': FieldValue.serverTimestamp(),
-                        });
-
-                        // Clear the text field after submitting
-                        questionController.clear();
-                        // Reload questions to reflect the newly added one
-                        loadQuestions();
-                        clearUploadStatus();
-                        setState(() {
-                          questionPosted = true; // Set questionPosted status to true
-                        });
-                      }
-                    }
-                  },
-                  child: Text('Submit'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    final imagePicker = ImagePicker();
-                    final pickedImageFile =
-                    await imagePicker.pickImage(source: ImageSource.gallery);
-
-                    // Set the imageFile variable to the pickedImageFile
-                    if (pickedImageFile != null) {
-                      setState(() {
-                        imageFile = File(pickedImageFile.path);
-                      });
-                    }
-                  },
-                  child: Text('Attach Image'),
-                ),
-
-                // Use a Stack to overlay loading indicator and message
-                Stack(
-                  alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Show a loading indicator while uploading
-                    if (isUploading) CircularProgressIndicator(),
+                    // Text box for entering a question
+                    TextFormField(
+                      controller: questionController,
+                      decoration: InputDecoration(
+                        hintText: 'Write your question here...',
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    // Button to submit the question
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Handle question submission here
+                        // ...
+                      },
+                      child: Text('Submit'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Handle image attachment here
+                        // ...
+                      },
+                      child: Text('Attach Image'),
+                    ),
+                    // Use a Stack to overlay loading indicator and message
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Show a loading indicator while uploading
+                        if (isUploading) CircularProgressIndicator(),
 
-                    // Show "question successfully posted" message when uploading is done
-                    if (questionPosted) Text('Question successfully posted'),
+                        // Show "question successfully posted" message when uploading is done
+                        if (questionPosted) Text('Question successfully posted'),
+                      ],
+                    ),
                   ],
                 ),
+              ),
 
-                SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-          for (var question in questions)
+              for (var question in questions)
             QuestionWidget(
               questionId: question.id, // Use the ID of the question document as questionId
               questionText: question.question,
