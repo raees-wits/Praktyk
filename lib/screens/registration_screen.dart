@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +12,9 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+
   String? registrationType;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -41,14 +46,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 120),
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 120),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Sign Up',
                     style: TextStyle(
                       color: Colors.white,
@@ -56,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: 'Registration Type',
@@ -66,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    hint: Text("Please select registration type"),
+                    hint: const Text("Please select registration type"),
                     value: registrationType,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -74,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                       return null;
                     },
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         child: Text("Student"),
                         value: "Student",
@@ -94,11 +99,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       });
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("First Name", firstNameController, true),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("Last Name", lastNameController, true),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("Email Address", emailController, true,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
@@ -111,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       }
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("Phone Number", phoneController, true,
                       keyboardType: TextInputType.phone,
                       validator: (value) {
@@ -123,9 +128,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       }
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("Password", passwordController, true, isPassword: true),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildTextField("Confirm Password", confirmPasswordController, true, isPassword: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -136,25 +141,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       }
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   if (registrationType == "Student") ...[
                     buildTextField("School", schoolController, true),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     buildTextField("Grade", gradeController, true),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        print("Sign Up Pressed");
-                        Navigator.push(context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()
-                            )
-                        );
+                        try {
+                          UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          );
+
+                          // Determine which collection to store the data in based on registrationType
+                          String collectionName;
+                          if (registrationType == "Student") {
+                            collectionName = 'students';
+                          } else if (registrationType == "Teacher") {
+                            collectionName = 'teachers';
+                          } else if (registrationType == "Parent") {
+                            collectionName = 'parents';
+                          } else {
+                            throw Exception("Invalid registration type");
+                          }
+
+                          Map<String, dynamic> dataToSave = {
+                            'registrationType': registrationType,
+                            'firstName': firstNameController.text,
+                            'lastName': lastNameController.text,
+                            'email': emailController.text,
+                            'phone': phoneController.text,
+                          };
+
+                          if (registrationType == "Student") {
+                            dataToSave['school'] = schoolController.text;
+                            dataToSave['grade'] = gradeController.text;
+                          }
+
+                          _firestore.collection(collectionName).doc(userCredential.user!.uid).set(dataToSave);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                          );
+                        } on FirebaseAuthException catch (e) {
+                          // Handle registration error such as email already in use
+                          print(e.message);
+                        }
                       }
                     },
-                    child: Text(
+                    child: const Text(
                       "Sign Up",
                       style: TextStyle(
                         color: Colors.black,
@@ -176,7 +216,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
   Widget buildTextField(String hint, TextEditingController controller, bool isRequired,
       {TextInputType keyboardType = TextInputType.text, bool isPassword = false,
         FormFieldValidator<String>? validator}) {
@@ -186,19 +225,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
       children: <Widget>[
         Text(
           hint,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 6,
@@ -211,7 +250,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: controller,
             keyboardType: keyboardType,
             obscureText: isPassword,
-            style: TextStyle(color: Colors.black87),
+            style: const TextStyle(color: Colors.black87),
             validator: validator ?? (isRequired ? (value) {
               if (value == null || value.isEmpty) {
                 return '$hint is required';
@@ -230,7 +269,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 color: kpink,
               ),
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.black38),
+              hintStyle: const TextStyle(color: Colors.black38),
             ),
           ),
         ),
