@@ -157,20 +157,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             password: passwordController.text,
                           );
 
-                          // Determine which collection to store the data in based on registrationType
-                          String collectionName;
-                          if (registrationType == "Student") {
-                            collectionName = 'students';
-                          } else if (registrationType == "Teacher") {
-                            collectionName = 'teachers';
-                          } else if (registrationType == "Parent") {
-                            collectionName = 'parents';
-                          } else {
-                            throw Exception("Invalid registration type");
-                          }
-
-                          Map<String, dynamic> dataToSave = {
-                            'registrationType': registrationType,
+                          Map<String, dynamic> userData = {
+                            'userType': registrationType,
                             'firstName': firstNameController.text,
                             'lastName': lastNameController.text,
                             'email': emailController.text,
@@ -178,19 +166,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           };
 
                           if (registrationType == "Student") {
-                            dataToSave['school'] = schoolController.text;
-                            dataToSave['grade'] = gradeController.text;
+                            userData['school'] = schoolController.text;
+                            userData['grade'] = gradeController.text;
                           }
 
-                          _firestore.collection(collectionName).doc(userCredential.user!.uid).set(dataToSave);
+                          _firestore.collection('Users').doc(userCredential.user!.uid).set(userData);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                          Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()
+                              )
                           );
                         } on FirebaseAuthException catch (e) {
-                          // Handle registration error such as email already in use
-                          print(e.message);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'An error occurred')));
                         }
                       }
                     },
@@ -216,6 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
   Widget buildTextField(String hint, TextEditingController controller, bool isRequired,
       {TextInputType keyboardType = TextInputType.text, bool isPassword = false,
         FormFieldValidator<String>? validator}) {
@@ -242,44 +231,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 color: Colors.black26,
                 blurRadius: 6,
                 offset: Offset(0, 2),
-              )
+              ),
             ],
           ),
           height: 60,
           child: TextFormField(
-            controller: controller,
+            validator: validator,
             keyboardType: keyboardType,
             obscureText: isPassword,
-            style: const TextStyle(color: Colors.black87),
-            validator: validator ?? (isRequired ? (value) {
-              if (value == null || value.isEmpty) {
-                return '$hint is required';
-              }
-              return null;
-            } : null),
+            controller: controller,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14),
-              prefixIcon: Icon(
-                hint == "Phone Number"
-                    ? Icons.phone
-                    : (hint == "Email Address"
-                    ? Icons.email
-                    : Icons.person),
-                color: kpink,
-              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               hintText: hint,
-              hintStyle: const TextStyle(color: Colors.black38),
+              hintStyle: TextStyle(
+                color: Colors.black26,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
       ],
     );
   }
+
+  void main() {
+    runApp(MaterialApp(
+      home: SignUpScreen(),
+    ));
+  }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: SignUpScreen(),
-  ));
-}
