@@ -117,6 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 60,
             child: TextField(
               //obscure text to hide password
+              controller: passwordController,  // <-- Add this line
               obscureText: true,
               style: TextStyle(
                   color: Colors.black87
@@ -219,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             } catch (e) {
               // Handle authentication error
-              showMessage("Error logging in. Please check your credentials.");
+              showMessage("Error logging in. Please check your credentials. Details: $e");
             }
           } else {
             // Display message for invalid email address
