@@ -1,5 +1,6 @@
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +12,8 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   TextEditingController emailController = TextEditingController();
 
   bool isValidEmail(String email) {
@@ -58,21 +61,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   padding: EdgeInsets.symmetric(vertical: 25),
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (isValidEmail(emailController.text)) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginScreen())
-                        );
-                        Fluttertoast.showToast(
-                          msg: "Email sent",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 4,
-                          backgroundColor: Colors.blueAccent,
-                          textColor: Colors.white,
-                          fontSize: 16,
-                        );
+                        try {
+                          await _auth.sendPasswordResetEmail(email: emailController.text);
+                          Fluttertoast.showToast(
+                            msg: "Password reset email sent.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.blueAccent,
+                            textColor: Colors.white,
+                            fontSize: 16,
+                          );
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginScreen())
+                          );
+                        } catch (e) {
+                          Fluttertoast.showToast(
+                            msg: "Error sending password reset email.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 4,
+                            backgroundColor: Colors.redAccent,
+                            textColor: Colors.white,
+                            fontSize: 16,
+                          );
+                        }
                       } else {
                         Fluttertoast.showToast(
                           msg: "Invalid email address",

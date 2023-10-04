@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/forgot_password_screen.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/registration_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,12 +16,25 @@ class LoginScreen extends StatefulWidget{
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   bool isRememberMe = false;
+
 
   bool isValidEmail(String email) {
     final RegExp regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     return regex.hasMatch(email);
+  }
+
+  void showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+      duration: Duration(seconds: 4),
+      backgroundColor: Colors.redAccent,
+    ));
   }
 
   Widget buildEmail(){
@@ -182,23 +197,33 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           if (isValidEmail(emailController.text)) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
+            try {
+              // authenticate against firebase
+              UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+                email: emailController.text,
+                password: passwordController.text,
+              );
+
+              // Optionally, check if the user exists in the 'Users' collection
+              DocumentSnapshot userDoc = await _firestore.collection('Users').doc(userCredential.user!.uid).get();
+
+              if (userDoc.exists) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              } else {
+                showMessage("User does not exist in the database");
+              }
+            } catch (e) {
+              // Handle authentication error
+              showMessage("Error logging in. Please check your credentials.");
+            }
           } else {
-            // You can display a message or alert here.
-            Fluttertoast.showToast(
-              msg: "Invalid email address",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 4,
-              backgroundColor: Colors.redAccent,
-              textColor: Colors.white,
-              fontSize: 16,
-            );
+            // Display message for invalid email address
+            showMessage("Invalid email address");
           }
         },
         style: ElevatedButton.styleFrom(
