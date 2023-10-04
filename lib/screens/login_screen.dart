@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:e_learning_app/model/current_user.dart';
+
 
 class LoginScreen extends StatefulWidget{
 
@@ -211,6 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
               DocumentSnapshot userDoc = await _firestore.collection('Users').doc(userCredential.user!.uid).get();
 
               if (userDoc.exists) {
+                CurrentUser().userId = userCredential.user!.uid; // Set the userId here
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),

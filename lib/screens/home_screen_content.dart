@@ -1,4 +1,5 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
 import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
@@ -7,6 +8,7 @@ import 'components/category.dart';
 import 'components/goals_overlay.dart';
 import 'components/sorting.dart';
 import 'package:flutter/material.dart';
+import 'package:e_learning_app/model/current_user.dart';
 
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({Key? key}) : super(key: key);
@@ -16,6 +18,25 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
+
+  String? userName;
+
+  Future<void> fetchUserName() async {
+    try {
+      String userId = CurrentUser().userId!;
+      print('User ID: $userId');
+      var document = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      setState(() {
+        userName = document.data()?['firstName'];
+        print('Fetched username: $userName');  // Added this print statement
+      });
+    } catch (error) {
+      print("Error fetching user name: $error");
+    }
+  }
+
+
+
   late TextEditingController controller; //For the avatar
   bool showGoalsOverlay = false; // Track whether the overlay should be shown
 
@@ -34,6 +55,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   @override
   void initState() {
     super.initState();
+
+    fetchUserName();
 
     controller = TextEditingController();
   }
@@ -88,7 +111,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Hi PraiseGod",
+                              "Hi ${userName ?? 'Loading...'}",
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,

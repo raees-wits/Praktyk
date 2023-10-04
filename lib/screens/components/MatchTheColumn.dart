@@ -14,6 +14,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   List<String> questions = [];
   List<String> answers = [];
   Map<int, int> matchingPairs = {};
+  Map<String, String> originalPairs = {};
   int correctMatches = 0;
 
   List<Color> questionButtonColors = []; // List to store colors of question buttons
@@ -38,30 +39,22 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
       if (categoryDoc.exists) {
         final data = categoryDoc.data() as Map<String, dynamic>;
-        questionsMap = data['Questions'] as Map<String, dynamic>;
+        final questionAnswerArray = data['Questions'] as List;
 
-        // Convert the questions and answers into a list of key-value pairs
-        final questionAnswerList = questionsMap?.entries.toList();
-
-        // Shuffle the list of key-value pairs
-        questionAnswerList?.shuffle(Random());
-
-        // Take the first 4 random pairs
-        final selectedQuestionAnswerList = questionAnswerList?.take(4).toList();
+        // Take the first 4 pairs
+        final selectedQuestionAnswerList = questionAnswerArray.take(4).toList();
 
         // Clear existing questions and answers
         questions.clear();
         answers.clear();
 
-        // Add the selected questions and answers to the lists
-        for (final entry in selectedQuestionAnswerList!) {
-          questions.add(entry.key);
-          answers.add(entry.value);
+        for (final entry in selectedQuestionAnswerList) {
+          questions.add(entry['Question']);
+          answers.add(entry['Answer']);
+          originalPairs[entry['Question']] = entry['Answer'];
         }
-
-        // Shuffle the questions and answers
-        questions.shuffle(Random());
         answers.shuffle(Random());
+
 
         // Initialize questionButtonColors and answerButtonColors with different colors
         questionButtonColors = List.generate(questions.length, (index) {
@@ -91,6 +84,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       print('Error fetching data: $e');
     }
   }
+
 
   Column buildQuestionColumn() {
     return Column(
@@ -234,25 +228,19 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   }
 
 
-  void checkMatchingPairs() async {
+  void checkMatchingPairs() {
     int correctMatchesCount = 0;
-
-    if (questionsMap == null) {
-      print('Questions map not available');
-      return;
-    }
 
     for (int i = 0; i < questions.length; i++) {
       final matchingIndex = matchingPairs[i];
 
       // Ensure matchingIndex is not null and within bounds
       if (matchingIndex != null && matchingIndex >= 0 && matchingIndex < answers.length) {
+        final originalQuestion = questions[i];
+        final originalAnswer = originalPairs[originalQuestion]; // The correct answer from the originalPairs map
         final matchingAnswer = answers[matchingIndex];
-        final originalQuestion = questions[i]; // Use the original question
 
-        // Check if the matching answer matches the answer in the questionsMap
-        if (questionsMap!.containsKey(originalQuestion) &&
-            questionsMap![originalQuestion] == matchingAnswer) {
+        if (originalAnswer == matchingAnswer) {
           correctMatchesCount++;
         }
       }
@@ -264,6 +252,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
     print("Correct Matches: $correctMatchesCount");
   }
+
 
 
   void pairSelected() {
