@@ -280,6 +280,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget buildSkipBtn() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      },
+      child: Text('Skip', style: TextStyle(color: Colors.white)),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -344,7 +357,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       buildForgotPassBtn(),
                       buildRememberCb(),
                       buildLoginBtn(),
-                      buildSignUpBtn()
+                      buildSignUpBtn(),
+                      SizedBox(height: 10),  // Provide some spacing
+                      buildSkipBtn(),       // Add the skip button here
                     ],
                   ),
                 ),
