@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:e_learning_app/model/current_user.dart';
 
 class MatchTheColumnPage extends StatefulWidget {
   final String categoryName;
@@ -27,10 +28,41 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   @override
   void initState() {
     super.initState();
-    fetchRandomQuestionsAndAnswers();
+    String userId = CurrentUser().userId!;
+    fetchCompletedQuestionsCount(userId, widget.categoryName).then((completedCount) {
+      fetchRandomQuestionsAndAnswers(completedCount);
+    });
   }
 
-  Future<void> fetchRandomQuestionsAndAnswers() async {
+  Future<int> fetchCompletedQuestionsCount(String userId, String categoryName) async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .get();
+
+    if (userDoc.exists && userDoc.data()!.containsKey('MatchTheColumn') &&
+        userDoc.data()!['MatchTheColumn'].containsKey(categoryName)) {
+      return userDoc.data()!['MatchTheColumn'][categoryName];
+    } else {
+      return 0; // default to 0 if data is not found
+    }
+  }
+
+  Future<void> updateMatchTheColumnCount(String userId, String categoryName, int incrementValue) async {
+    try {
+      final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+      await userRef.set({
+        'MatchTheColumn': {
+          categoryName: FieldValue.increment(incrementValue),
+        },
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Error updating MatchTheColumn count: $e");
+    }
+  }
+
+
+  Future<void> fetchRandomQuestionsAndAnswers(int startIndex) async {
     try {
       final categoryDoc = await FirebaseFirestore.instance
           .collection('Match The Column')
@@ -41,8 +73,8 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         final data = categoryDoc.data() as Map<String, dynamic>;
         final questionAnswerArray = data['Questions'] as List;
 
-        // Take the first 4 pairs
-        final selectedQuestionAnswerList = questionAnswerArray.take(4).toList();
+        // Take 4 questions starting from the startIndex
+        final selectedQuestionAnswerList = questionAnswerArray.skip(startIndex).take(4).toList();
 
         // Clear existing questions and answers
         questions.clear();
@@ -233,11 +265,9 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
     for (int i = 0; i < questions.length; i++) {
       final matchingIndex = matchingPairs[i];
-
-      // Ensure matchingIndex is not null and within bounds
       if (matchingIndex != null && matchingIndex >= 0 && matchingIndex < answers.length) {
         final originalQuestion = questions[i];
-        final originalAnswer = originalPairs[originalQuestion]; // The correct answer from the originalPairs map
+        final originalAnswer = originalPairs[originalQuestion];
         final matchingAnswer = answers[matchingIndex];
 
         if (originalAnswer == matchingAnswer) {
@@ -250,8 +280,14 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       correctMatches = correctMatchesCount;
     });
 
+    // If all matches are correct, update the Firestore data.
+    if (correctMatchesCount == questions.length) {
+      updateMatchTheColumnCount(CurrentUser().userId!, widget.categoryName, correctMatchesCount);
+    }
+
     print("Correct Matches: $correctMatchesCount");
   }
+
 
 
 
