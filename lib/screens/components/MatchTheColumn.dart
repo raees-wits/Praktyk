@@ -51,10 +51,17 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     }
   }
 
-  Future<void> fetchNextSetOfQuestionsAndAnswers() async {
+  Future<void> fetchNextSetOfQuestionsAndAnswers(int delta) async {
+    // Check for negative index
+    if (currentStartIndex + delta < 0) {
+      print("No more previous questions");
+      return;
+    }
+    currentStartIndex += delta;
     String userId = CurrentUser().userId!;
+    fetchRandomQuestionsAndAnswers(currentStartIndex);
+
     int completedCount = await fetchCompletedQuestionsCount(userId, widget.categoryName);
-    fetchRandomQuestionsAndAnswers(completedCount);
 
     setState(() {
       correctMatches = 0;
@@ -312,10 +319,23 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 if (showNextButton)
                   TextButton(
                     onPressed: () {
-                      fetchNextSetOfQuestionsAndAnswers();
+                      fetchNextSetOfQuestionsAndAnswers(4);
                     },
                     child: const Text(
                       "Next",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                if (currentStartIndex > 0) // only show 'Previous' if we're not at the start
+                  TextButton(
+                    onPressed: () {
+                      fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
+                    },
+                    child: const Text(
+                      "Previous",
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.blue,
