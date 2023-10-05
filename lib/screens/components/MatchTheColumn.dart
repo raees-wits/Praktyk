@@ -23,6 +23,8 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   int? selectedQuestionIndex;
   int? selectedAnswerIndex;
 
+  bool showNextButton =false;
+
   Map<String, dynamic>? questionsMap; // Store the questions map from the database
 
   @override
@@ -47,6 +49,46 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       return 0; // default to 0 if data is not found
     }
   }
+
+  Future<void> fetchNextSetOfQuestionsAndAnswers() async {
+    String userId = CurrentUser().userId!;
+    int completedCount = await fetchCompletedQuestionsCount(userId, widget.categoryName);
+    fetchRandomQuestionsAndAnswers(completedCount);
+
+    setState(() {
+      correctMatches = 0;
+      resultMessage = "";
+      showNextButton = false;
+
+      // Reset colors for question buttons
+      questionButtonColors = List.generate(questions.length, (index) {
+        switch (index) {
+          case 0:
+            return Colors.red;
+          case 1:
+            return Colors.blue;
+          case 2:
+            return Colors.yellow;
+          case 3:
+            return Colors.green;
+          default:
+            return Colors.white;
+        }
+      });
+
+      // Reset colors for answer buttons
+      answerButtonColors = List.generate(answers.length, (index) {
+        return Colors.white; // Initially, all answer buttons are white
+      });
+
+      // Reset matching pairs and selections
+      matchingPairs.clear();
+      selectedQuestionIndex = null;
+      selectedAnswerIndex = null;
+    });
+  }
+
+
 
   Future<void> updateMatchTheColumnCount(String userId, String categoryName, int incrementValue) async {
     try {
@@ -251,6 +293,19 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     color: Colors.green, // You can choose your desired color
                   ),
                 ),
+                if (showNextButton)
+                  TextButton(
+                    onPressed: () {
+                      fetchNextSetOfQuestionsAndAnswers();
+                    },
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
@@ -280,9 +335,12 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       correctMatches = correctMatchesCount;
     });
 
-    // If all matches are correct, update the Firestore data.
+    // If all matches are correct, update the Firestore data and show the next button.
     if (correctMatchesCount == questions.length) {
       updateMatchTheColumnCount(CurrentUser().userId!, widget.categoryName, correctMatchesCount);
+      setState(() {
+        showNextButton = true;
+      });
     }
 
     print("Correct Matches: $correctMatchesCount");
