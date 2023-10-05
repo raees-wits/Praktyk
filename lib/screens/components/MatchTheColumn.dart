@@ -22,6 +22,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   List<Color> answerButtonColors = []; // List to store colors of answer buttons
   int? selectedQuestionIndex;
   int? selectedAnswerIndex;
+  int currentStartIndex = 0;
 
   bool showNextButton =false;
 
@@ -105,6 +106,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
 
   Future<void> fetchRandomQuestionsAndAnswers(int startIndex) async {
+    currentStartIndex = startIndex;
     try {
       final categoryDoc = await FirebaseFirestore.instance
           .collection('Match The Column')
@@ -158,6 +160,20 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       print('Error fetching data: $e');
     }
   }
+
+  Future<void> updateStartIndexInFirestore(String userId, String categoryName, int newIndex) async {
+    try {
+      final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+      await userRef.set({
+        'MatchTheColumnStartIndices': {
+          categoryName: newIndex,
+        },
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Error updating start index: $e");
+    }
+  }
+
 
 
   Column buildQuestionColumn() {
@@ -337,6 +353,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
 
     // If all matches are correct, update the Firestore data and show the next button.
     if (correctMatchesCount == questions.length) {
+      updateStartIndexInFirestore(CurrentUser().userId!, widget.categoryName, currentStartIndex + 4);
       updateMatchTheColumnCount(CurrentUser().userId!, widget.categoryName, correctMatchesCount);
       setState(() {
         showNextButton = true;
