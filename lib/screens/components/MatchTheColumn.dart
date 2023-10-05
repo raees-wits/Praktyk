@@ -371,14 +371,19 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       correctMatches = correctMatchesCount;
     });
 
-    // If all matches are correct, update the Firestore data and show the next button.
     if (correctMatchesCount == questions.length) {
-      updateStartIndexInFirestore(CurrentUser().userId!, widget.categoryName, currentStartIndex + 4);
-      updateMatchTheColumnCount(CurrentUser().userId!, widget.categoryName, correctMatchesCount);
-      setState(() {
-        showNextButton = true;
+      String userId = CurrentUser().userId!;
+      fetchCompletedQuestionsCount(userId, widget.categoryName).then((matchTheColumnCountFromDb) {
+        if (matchTheColumnCountFromDb == currentStartIndex) {
+          updateStartIndexInFirestore(userId, widget.categoryName, currentStartIndex + 4);
+          updateMatchTheColumnCount(userId, widget.categoryName, correctMatchesCount);
+          setState(() {
+            showNextButton = true;
+          });
+        }
       });
     }
+
 
     print("Correct Matches: $correctMatchesCount");
   }
