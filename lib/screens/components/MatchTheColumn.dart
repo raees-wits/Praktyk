@@ -377,10 +377,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         if (matchTheColumnCountFromDb == currentStartIndex) {
           updateStartIndexInFirestore(userId, widget.categoryName, currentStartIndex + 4);
           updateMatchTheColumnCount(userId, widget.categoryName, correctMatchesCount);
-          setState(() {
-            showNextButton = true;
-          });
         }
+        setState(() {
+          showNextButton = true;
+        });
       });
     }
 
