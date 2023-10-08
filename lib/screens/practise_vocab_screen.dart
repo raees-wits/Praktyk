@@ -1,4 +1,5 @@
 import 'package:e_learning_app/screens/activity_short_answer.dart';
+import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
@@ -67,7 +68,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
   }
 
   // Define the pastel colors list
-  final List<Color> pastelColors = [kgreen, kpink, kpurple, korange];
+  final List<Color> pastelColors = [kgreen, kpink, kpurple, korange, kyellow];
 
   Widget _buildChoiceTile(BuildContext context, String title, int index) {
     return Card(
@@ -96,15 +97,13 @@ class PracticeVocabularyScreen extends StatelessWidget {
                 builder: (context) => ShortAnswerQuestions(),
               ),
             );
+          } else if (title == "Comprehension Texts") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ComprehensionChoiceScreen()),
+            );
           }
-          //else if (title == "Comprehension Texts") {
-          //  Navigator.push(
-          //    context,
-          //    MaterialPageRoute(
-          //      builder: (context) =>
-          //      ),
-          //  );
-          //}
         },
       ),
     );

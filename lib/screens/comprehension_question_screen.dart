@@ -85,10 +85,10 @@ class _ComprehensionQuestionScreenState
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                    Color(0x66ff6374),
-                    Color(0x99ff6374),
-                    Color(0xccff6374),
-                    Color(0xFFff6374),
+                    Color(0xFFfdfd96),
+                    Color(0xFFfcfcc0),
+                    Color(0xFFfafad2),
+                    Color(0xFFfcfcfa),
                   ])),
               child: Column(children: [
                 SizedBox(
@@ -96,7 +96,7 @@ class _ComprehensionQuestionScreenState
                 ),
                 Text(widget.comprehensionTitle,
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 17,
                         fontWeight: FontWeight.bold)),
                 SizedBox(
@@ -105,7 +105,7 @@ class _ComprehensionQuestionScreenState
                 Text(
                   "Question " + (widget.questionNo + 1).toString(),
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 17,
                       fontWeight: FontWeight.bold),
                 ),
@@ -131,7 +131,7 @@ class _ComprehensionQuestionScreenState
                 Text(
                   questionText,
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 17,
                       fontWeight: FontWeight.bold),
                 ),
