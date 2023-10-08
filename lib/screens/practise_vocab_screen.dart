@@ -14,8 +14,10 @@ class PracticeVocabularyScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black), // Set the arrow icon color
-          onPressed: () => Navigator.of(context).pop(), // Pop the current screen
+          icon: Icon(Icons.arrow_back,
+              color: Colors.black), // Set the arrow icon color
+          onPressed: () =>
+              Navigator.of(context).pop(), // Pop the current screen
         ),
         title: Text(
           "Pick a choice",
@@ -54,6 +56,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
                   _buildChoiceTile(context, "Multiple Choice", 1),
                   _buildChoiceTile(context, "Short Questions", 2),
                   _buildChoiceTile(context, "Match The Column", 3),
+                  _buildChoiceTile(context, "Comprehension Texts", 4),
                 ],
               ),
             ),
@@ -80,28 +83,30 @@ class PracticeVocabularyScreen extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
             );
-          }
-          else if (title == "Match The Column") {
-            Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CategoryTree(
-                    categories: categories,
-                  ),
-                )
-            );
-          }
-          else if (title == "Short Questions") {
+          } else if (title == "Match The Column") {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => CategoryTree(
+                categories: categories,
+              ),
+            ));
+          } else if (title == "Short Questions") {
             Navigator.push(
               context,
-                MaterialPageRoute(
-                  builder: (context) => ShortAnswerQuestions(),
-                  ),
-                );
+              MaterialPageRoute(
+                builder: (context) => ShortAnswerQuestions(),
+              ),
+            );
           }
+          //else if (title == "Comprehension Texts") {
+          //  Navigator.push(
+          //    context,
+          //    MaterialPageRoute(
+          //      builder: (context) =>
+          //      ),
+          //  );
+          //}
         },
       ),
     );
   }
-
 }
-
