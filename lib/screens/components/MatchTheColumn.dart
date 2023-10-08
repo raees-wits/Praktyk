@@ -316,32 +316,46 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     color: Colors.green, // You can choose your desired color
                   ),
                 ),
-                if (showNextButton)
-                  TextButton(
-                    onPressed: () {
-                      fetchNextSetOfQuestionsAndAnswers(4);
-                    },
-                    child: const Text(
-                      "Next",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue,
-                      ),
-                    ),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // adjust as needed
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(8.0), // if you want rounded corners
                   ),
-                if (currentStartIndex > 0) // only show 'Previous' if we're not at the start
-                  TextButton(
-                    onPressed: () {
-                      fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
-                    },
-                    child: const Text(
-                      "Previous",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround, // To space the buttons evenly in the row
+                    children: [
+                      if (currentStartIndex > 0) // only show 'Previous' if we're not at the start
+                        TextButton(
+                          onPressed: () {
+                            fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
+                          },
+                          child: const Text(
+                            "Previous",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      if (showNextButton)
+                        TextButton(
+                          onPressed: () {
+                            fetchNextSetOfQuestionsAndAnswers(4);
+                          },
+                          child: const Text(
+                            "Next",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
+                  ,
+                )
+
               ],
             ),
           ],
