@@ -226,6 +226,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
           // Handle taps on the entire screen if needed
         },
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const SizedBox(height: 40), // Add spacing between the top of the page and the columns
             Padding(
@@ -325,32 +326,48 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround, // To space the buttons evenly in the row
                     children: [
-                      if (currentStartIndex > 0) // only show 'Previous' if we're not at the start
-                        TextButton(
-                          onPressed: () {
-                            fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
-                          },
-                          child: const Text(
-                            "Previous",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                            ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.disabled)) return Colors.grey;
+                              return Colors.blue; // Otherwise, return the primary color
+                            },
                           ),
                         ),
-                      if (showNextButton)
-                        TextButton(
-                          onPressed: () {
-                            fetchNextSetOfQuestionsAndAnswers(4);
-                          },
-                          child: const Text(
-                            "Next",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                            ),
+                        onPressed: currentStartIndex > 0 // Condition for the 'Previous' button
+                            ? () {
+                          fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
+                        }
+                            : null, // Disable the button
+                        child: const Text(
+                          "Previous",
+                          style: TextStyle(
+                            fontSize: 18,
                           ),
                         ),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.disabled)) return Colors.grey;
+                              return Colors.blue; // Otherwise, return the primary color
+                            },
+                          ),
+                        ),
+                        onPressed: showNextButton
+                            ? () {
+                          fetchNextSetOfQuestionsAndAnswers(4);
+                        }
+                            : null, // Disable the button
+                        child: const Text(
+                          "Next",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
                     ],
                   )
                   ,
