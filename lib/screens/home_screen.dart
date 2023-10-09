@@ -6,6 +6,7 @@ import 'package:e_learning_app/model/product_model.dart';
 import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
 import 'package:e_learning_app/screens/home_screen_content.dart';
 import 'package:e_learning_app/screens/Community_Screen.dart';
+import 'package:e_learning_app/screens/leaderboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'components/MatchTheColumn.dart';
 
@@ -43,7 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _widgetOptions = [
     // Your Home screen widget here
     HomeScreenContent(),
-    Text("Favourite Page"),
+    //Text("Favourite Page"),
+    LeaderBoardScreen(),
     CommunityScreen(),
     ProfileScreen(), // Your ProfileScreen widget here
   ];
