@@ -184,17 +184,19 @@ class _ComprehensionQuestionScreenState
                   child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          if (userAnswer ==
-                              questions[widget.questionNo].answer) {
+                          if (userAnswer.toUpperCase() ==
+                              questions[widget.questionNo]
+                                  .answer
+                                  .toUpperCase()) {
                             answerText = "Correct!";
                             answerColor = Colors.green;
                           } else if (userAnswer == "") {
                             answerText = "Please provide an answer";
-                            answerColor = Colors.white;
+                            answerColor = Colors.red;
                           } else {
                             answerText = "Incorrect! The correct answer is:\n" +
                                 questions[widget.questionNo].answer;
-                            answerColor = Colors.white;
+                            answerColor = Colors.red;
                           }
                         });
                       },
@@ -245,7 +247,7 @@ class _ComprehensionQuestionScreenState
                         Text(
                           "Question " + (widget.questionNo + 1).toString(),
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
