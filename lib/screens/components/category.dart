@@ -50,7 +50,7 @@ class CategoryCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PracticeVocabularyScreen()),
+                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
               );
             }
           }

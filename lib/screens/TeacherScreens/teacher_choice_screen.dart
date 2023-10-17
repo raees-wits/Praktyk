@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:e_learning_app/screens/practise_vocab_screen.dart'; // ensure you import the PracticeVocabularyScreen
 
 class TeacherChoiceScreen extends StatelessWidget {
   const TeacherChoiceScreen({Key? key}) : super(key: key);
@@ -15,15 +16,33 @@ class TeacherChoiceScreen extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to the "View Questions" screen when this is pressed
+                // Navigate to the PracticeVocabularyScreen when this is pressed
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
+                );
               },
-              child: Text('View Questions'),
+              child: Text('View Student Perspective'), // change the button text
             ),
             ElevatedButton(
               onPressed: () {
                 // TODO: Navigate to the "Add Questions" screen when this is pressed
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Add',)),
+                );
               },
               child: Text('Add Questions'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Navigate to the "Add Questions" screen when this is pressed
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Modify',)),
+                );
+              },
+              child: Text('Modify Questions'),
             ),
           ],
         ),

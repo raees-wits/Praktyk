@@ -8,6 +8,10 @@ import 'package:e_learning_app/screens/category_tree.dart';
 import '../../model/category_modal.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
+  final String updateMode;
+
+  PracticeVocabularyScreen({Key? key, required this.updateMode}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +25,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
               Navigator.of(context).pop(), // Pop the current screen
         ),
         title: Text(
-          "Pick a choice",
+          updateMode == "Add" ? "Add Questions" : (updateMode == "Modify" ? "Modify Questions" : "Pick a choice"),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
