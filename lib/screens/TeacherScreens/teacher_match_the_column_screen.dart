@@ -38,14 +38,42 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
   }
 
   Future<void> submitQuestion() async {
-    // Add a new document inside the category with the question and answer
-    if (dropdownValue != null) {
-      await FirebaseFirestore.instance.collection('Match The Column').doc(dropdownValue).collection('items').add({
-        'question': questionController.text,
-        'answer': answerController.text,
-      });
+    if (dropdownValue != null && questionController.text.isNotEmpty && answerController.text.isNotEmpty) {
+      // Create a map of the question and answer
+      Map<String, dynamic> questionMap = {
+        'Question': questionController.text,
+        'Answer': answerController.text,
+      };
+
+      // Get a reference to the document
+      DocumentReference docRef = FirebaseFirestore.instance.collection('Match The Column').doc(dropdownValue);
+
+      // Update the 'Questions' array in the document
+      return FirebaseFirestore.instance.runTransaction((transaction) async {
+        // Get the document
+        DocumentSnapshot snapshot = await transaction.get(docRef);
+
+        if (!snapshot.exists) {
+          throw Exception("Document does not exist!");
+        }
+
+        // Update the 'Questions' field with the new question map
+        List<dynamic> questions = snapshot.get('Questions') as List<dynamic>;
+        questions.add(questionMap);
+
+        // Perform the update
+        transaction.update(docRef, {'Questions': questions});
+      }).then((value) {
+        print("Question Added");
+        // Clear the text fields
+        questionController.clear();
+        answerController.clear();
+      }).catchError((error) => print("Failed to add question: $error"));
+    } else {
+      print("Please fill in all fields before submitting.");
     }
   }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -85,7 +113,7 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                 }).toList(),
               ),
               SizedBox(height: 20), // to add spacing
-              Text('Question:'),
+              Text('Question (Afrikaans):'),
               TextField(
                 controller: questionController,
                 decoration: InputDecoration(
@@ -93,7 +121,7 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                 ),
               ),
               SizedBox(height: 20), // to add spacing
-              Text('Answer:'),
+              Text('Answer (English):'),
               TextField(
                 controller: answerController,
                 decoration: InputDecoration(
