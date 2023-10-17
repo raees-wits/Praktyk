@@ -68,6 +68,13 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
         // Clear the text fields
         questionController.clear();
         answerController.clear();
+        // Show a Snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Question successfully submitted'),
+            duration: Duration(seconds: 2), // Duration can be adjusted
+          ),
+        );
       }).catchError((error) => print("Failed to add question: $error"));
     } else {
       print("Please fill in all fields before submitting.");
