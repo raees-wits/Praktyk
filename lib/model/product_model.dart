@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
 
+import '../screens/TeacherScreens/teacher_choice_screen.dart';
+import '../screens/category_tree.dart';
+import 'category_modal.dart';
+import 'current_user.dart';
+
 
 class Product {
   final String image, title;
@@ -17,20 +22,13 @@ class Product {
   });
 }
 
-
 List<Product> products = [
   Product(
     id: 1,
-    title: "Practise Vocab",
+    title: "Practise Vocabulary",
     image: "assets/images/practisevocab.png",
     color: Color(0xFF71b8ff),
     courses: 16,
-    onTap: (BuildContext context) { // Add this line
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PracticeVocabularyScreen()),
-      );
-    }, // Add this line
   ),
 
   Product(
@@ -46,6 +44,14 @@ List<Product> products = [
     image: "assets/images/pronounciation.png",
     color: Color(0xFFffaa5b),
     courses: 15,
+      onTap: (BuildContext context) { // Add the onTap functionality
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CategoryTree(
+            categories: categories,
+          )),
+        );
+      }
   ),
   Product(
     id: 4,
