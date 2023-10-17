@@ -6,6 +6,7 @@ import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
 import 'package:e_learning_app/screens/category_tree.dart';
 
 import '../../model/category_modal.dart';
+import 'TeacherScreens/teacher_match_the_column_screen.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
   final String updateMode;
@@ -89,12 +90,20 @@ class PracticeVocabularyScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
             );
           } else if (title == "Match The Column") {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => CategoryTree(
-                categories: categories,
-              ),
-            ));
-          } else if (title == "Short Questions") {
+            if (updateMode == "Add" || updateMode == "Modify") {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    TeacherMatchTheColumn(updateMode: updateMode), // Passing updateMode to the new screen
+              ));
+            }else{
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    CategoryTree(
+                      categories: categories,
+                    ),
+              ));
+            }
+          }else if (title == "Short Questions") {
             Navigator.push(
               context,
               MaterialPageRoute(
