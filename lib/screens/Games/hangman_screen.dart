@@ -15,8 +15,8 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
   // Current word to guess
   late String currentWord;
 
-  // Stores the letters of the current word as a set.
-  late Set<String> currentWordLetters;
+  // Stores the letters of the current word as a list.
+  late List<String> currentWordLetters;
 
   // Stores the letters guessed by the user
   Set<String> guessedLetters = {};
@@ -40,7 +40,7 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
 
   void _startNewGame() {
     currentWord = (words..shuffle(Random())).first; // Selects a random word
-    currentWordLetters = Set<String>.from(currentWord.split(''));
+    currentWordLetters = List<String>.from(currentWord.split(''));
     guessedLetters.clear();
     attemptsRemaining = 5;
 
@@ -58,57 +58,60 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
 
 
   void _guessLetter(String letter) {
-    if (currentWordLetters.contains(letter)) {
+    setState(() { // Enclose the changes in a setState call
+      // Add the letter to guessedLetters regardless of whether it's correct
       guessedLetters.add(letter);
-      if (guessedLetters.length == currentWordLetters.length) {
-        // Win condition
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Congratulations!'),
-                content: Text('You guessed the word correctly!'),
-                actions: [
-                  TextButton(
-                    child: Text('New Game'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _startNewGame();
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-    } else {
-      // Decrement remaining attempts and show the next body part
-      --attemptsRemaining;
-      _showNextBodyPart();
-      if (attemptsRemaining == 0) {
-        // Lose condition
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Game Over'),
-                content: Text('The correct word was "$currentWord".'),
-                actions: [
-                  TextButton(
-                    child: Text('New Game'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _startNewGame();
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-    }
 
-    // Ensures the UI is updated
-    setState(() {});
+      if (currentWordLetters.contains(letter)) {
+        if (currentWordLetters.every((element) => guessedLetters.contains(element))) {
+          // Win condition
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Congratulations!'),
+                  content: Text('You guessed the word correctly!'),
+                  actions: [
+                    TextButton(
+                      child: Text('New Game'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _startNewGame();
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      } else {
+        // Decrement remaining attempts and show the next body part
+        --attemptsRemaining;
+        _showNextBodyPart();
+        if (attemptsRemaining == 0) {
+          // Lose condition
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Game Over'),
+                  content: Text('The correct word was "$currentWord".'),
+                  actions: [
+                    TextButton(
+                      child: Text('New Game'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _startNewGame();
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      }
+    }); // End of setState call
   }
+
+
 
   // Function to determine which body part to show next
   void _showNextBodyPart() {
