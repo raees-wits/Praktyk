@@ -231,39 +231,64 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
               ),
               if (isEditing) ...[
                 SizedBox(height: 20),
-                // Wrap the Column in an Expanded and SingleChildScrollView
-                Expanded( // This will take up all remaining space
-                  child: SingleChildScrollView( // This will add scrolling capability
-                    child: Column(
-                      children: questionAnswerPairs.map((pair) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: TextEditingController(text: pair['Question']),
-                                decoration: InputDecoration(
-                                  hintText: 'Question (Afrikaans)',
+                // Using Table widget to create a table-like structure
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Table(
+                      // Adding border to the table
+                      border: TableBorder.all(color: Colors.black),
+                      // Defining column widths
+                      columnWidths: const <int, TableColumnWidth>{
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(1),
+                      },
+                      // Table's children
+                      children: [
+                        // Table Row for Headings
+                        TableRow(children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('Question', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('Answer', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ]),
+                        // Table Rows for Question-Answer Pairs
+                        ...questionAnswerPairs.map((pair) {
+                          return TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: TextEditingController(text: pair['Question']),
+                                  decoration: InputDecoration(
+                                    hintText: 'Question (Afrikaans)',
+                                    border: OutlineInputBorder(), // added border
+                                  ),
+                                  onChanged: (value) {
+                                    pair['Question'] = value; // Update the question text in the pair
+                                  },
                                 ),
-                                onChanged: (value) {
-                                  pair['Question'] = value; // Update the question text in the pair
-                                },
                               ),
-                            ),
-                            SizedBox(width: 20),
-                            Expanded(
-                              child: TextField(
-                                controller: TextEditingController(text: pair['Answer']),
-                                decoration: InputDecoration(
-                                  hintText: 'Answer (English)',
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: TextEditingController(text: pair['Answer']),
+                                  decoration: InputDecoration(
+                                    hintText: 'Answer (English)',
+                                    border: OutlineInputBorder(), // added border
+                                  ),
+                                  onChanged: (value) {
+                                    pair['Answer'] = value; // Update the answer text in the pair
+                                  },
                                 ),
-                                onChanged: (value) {
-                                  pair['Answer'] = value; // Update the answer text in the pair
-                                },
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                            ],
+                          );
+                        }).toList(),
+                      ],
                     ),
                   ),
                 ),
