@@ -20,6 +20,10 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
   bool isCreateCategorySelected = false; // New state variable for visibility control
   bool isLoading = true; // Flag to check if data is still loading
 
+  //For the Modify section
+  List<Map<String, dynamic>> questionAnswerPairs = []; // New variable to store question-answer pairs
+  bool isEditing = false; // State to determine if a user is editing a question-answer pair
+
   @override
   void initState() {
     super.initState();
@@ -102,6 +106,39 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
     }).catchError((error) => print("Failed to add question: $error"));
   }
 
+  void fetchQuestionAnswers(String category) async {
+    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+        .collection('Match The Column')
+        .doc(category)
+        .get();
+
+    List<dynamic> questions = docSnapshot.get('Questions');
+    setState(() {
+      questionAnswerPairs = List<Map<String, dynamic>>.from(questions);
+      isEditing = true; // Enable editing mode when question-answer pairs are fetched
+    });
+  }
+
+  void updateQuestionAnswers(String category) async {
+    // Perform the update in Firestore
+    await FirebaseFirestore.instance
+        .collection('Match The Column')
+        .doc(category)
+        .update({'Questions': questionAnswerPairs});
+
+    setState(() {
+      isEditing = false; // Disable editing mode after update
+    });
+
+    // Show a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Updates successfully submitted'),
+        duration: Duration(seconds: 2), // Adjust the duration as needed
+      ),
+    );
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -171,6 +208,71 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                 onPressed: submitQuestion,
                 child: Text('Submit Question'),
               ),
+            ],
+            if (widget.updateMode == "Modify") ...[
+              Text('Select Category:'),
+              DropdownButton<String>(
+                value: dropdownValue,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                    isCreateCategorySelected = newValue == 'Create category';
+                  });
+                  if (!isCreateCategorySelected) {
+                    fetchQuestionAnswers(dropdownValue!); // Fetch question-answer pairs when a category is selected
+                  }
+                },
+                items: categories.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              if (isEditing) ...[
+                SizedBox(height: 20),
+                // Wrap the Column in an Expanded and SingleChildScrollView
+                Expanded( // This will take up all remaining space
+                  child: SingleChildScrollView( // This will add scrolling capability
+                    child: Column(
+                      children: questionAnswerPairs.map((pair) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: TextEditingController(text: pair['Question']),
+                                decoration: InputDecoration(
+                                  hintText: 'Question (Afrikaans)',
+                                ),
+                                onChanged: (value) {
+                                  pair['Question'] = value; // Update the question text in the pair
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              child: TextField(
+                                controller: TextEditingController(text: pair['Answer']),
+                                decoration: InputDecoration(
+                                  hintText: 'Answer (English)',
+                                ),
+                                onChanged: (value) {
+                                  pair['Answer'] = value; // Update the answer text in the pair
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => updateQuestionAnswers(dropdownValue!),
+                  child: Text('Submit Updates'),
+                ),
+              ],
             ],
             // More conditions can be added here for other update modes
           ],
