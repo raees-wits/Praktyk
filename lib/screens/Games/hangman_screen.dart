@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'hangman_painter.dart';
+
 class HangmanGameScreen extends StatefulWidget {
   @override
   _HangmanGameScreenState createState() => _HangmanGameScreenState();
@@ -21,6 +23,14 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
 
   // Number of attempts remaining - starts at 5 for simplicity
   int attemptsRemaining = 5;
+
+  // Hangman body parts
+  bool _showHead = false;
+  bool _showBody = false;
+  bool _showLeftArm = false;
+  bool _showRightArm = false;
+  bool _showLeftLeg = false;
+  bool _showRightLeg = false;
 
   @override
   void initState() {
@@ -62,7 +72,10 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
             });
       }
     } else {
-      if (--attemptsRemaining == 0) {
+      // Decrement remaining attempts and show the next body part
+      --attemptsRemaining;
+      _showNextBodyPart();
+      if (attemptsRemaining == 0) {
         // Lose condition
         showDialog(
             context: context,
@@ -88,6 +101,24 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     setState(() {});
   }
 
+  // Function to determine which body part to show next
+  void _showNextBodyPart() {
+    if (!_showHead) {
+      _showHead = true;
+    } else if (!_showBody) {
+      _showBody = true;
+    } else if (!_showLeftArm) {
+      _showLeftArm = true;
+    } else if (!_showRightArm) {
+      _showRightArm = true;
+    } else if (!_showLeftLeg) {
+      _showLeftLeg = true;
+    } else if (!_showRightLeg) {
+      _showRightLeg = true;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +142,19 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
                 .toList(),
           ),
           SizedBox(height: 20),
+          Expanded(
+            child: CustomPaint(
+              painter: HangmanPainter(
+                head: _showHead,
+                body: _showBody,
+                leftArm: _showLeftArm,
+                rightArm: _showRightArm,
+                leftLeg: _showLeftLeg,
+                rightLeg: _showRightLeg,
+              ),
+              child: Container(), // Container takes any available space that's left
+            ),
+          ),
           Wrap(
             spacing: 4.0,
             runSpacing: 4.0,
