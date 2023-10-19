@@ -151,16 +151,19 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
           ),
           SizedBox(height: 20),
           Expanded(
-            child: CustomPaint(
-              painter: HangmanPainter(
-                head: _showHead,
-                body: _showBody,
-                leftArm: _showLeftArm,
-                rightArm: _showRightArm,
-                leftLeg: _showLeftLeg,
-                rightLeg: _showRightLeg,
+            child: Transform.scale(
+              scale: 0.7, // you can change the scale factor here
+              child: CustomPaint(
+                painter: HangmanPainter(
+                  head: _showHead,
+                  body: _showBody,
+                  leftArm: _showLeftArm,
+                  rightArm: _showRightArm,
+                  leftLeg: _showLeftLeg,
+                  rightLeg: _showRightLeg,
+                ),
+                child: Container(), // Container takes any available space that's left
               ),
-              child: Container(), // Container takes any available space that's left
             ),
           ),
           Wrap(
@@ -180,4 +183,5 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
       ),
     );
   }
+
 }
