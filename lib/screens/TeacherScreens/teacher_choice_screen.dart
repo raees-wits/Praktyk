@@ -53,24 +53,13 @@ class TeacherChoiceScreen extends StatelessWidget {
               ),
               buildGradientButton(
                 onPressed: () {
-                  // TODO: Navigate to the "Add Questions" screen when this is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Add',)),
-                  );
-                },
-                text: 'Add Questions',
-                colors: [Colors.red, Colors.orange], // different colors for the gradient
-              ),
-              buildGradientButton(
-                onPressed: () {
                   // TODO: Navigate to the "Modify Questions" screen when this is pressed
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Modify',)),
                   );
                 },
-                text: 'Modify Questions',
+                text: 'Add/Modify Questions',
                 colors: [Colors.green, Colors.teal], // another set of colors for the gradient
               ),
             ],

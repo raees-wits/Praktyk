@@ -26,7 +26,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
               Navigator.of(context).pop(), // Pop the current screen
         ),
         title: Text(
-          updateMode == "Add" ? "Add Questions" : (updateMode == "Modify" ? "Modify Questions" : "Pick a choice"),
+          updateMode == "Add" ? "Add Questions" : (updateMode == "Modify" ? "Add/Modify Questions" : "Pick a choice"),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
             );
           } else if (title == "Match The Column") {
-            if (updateMode == "Add" || updateMode == "Modify") {
+            if (updateMode == "Modify") {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     TeacherMatchTheColumn(updateMode: updateMode), // Passing updateMode to the new screen
