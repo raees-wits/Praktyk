@@ -44,9 +44,18 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     guessedLetters.clear();
     attemptsRemaining = 5;
 
+    // Reset the visibility of hangman parts
+    _showHead = false;
+    _showBody = false;
+    _showLeftArm = false;
+    _showRightArm = false;
+    _showLeftLeg = false;
+    _showRightLeg = false;
+
     // Ensures the UI is updated
     setState(() {});
   }
+
 
   void _guessLetter(String letter) {
     if (currentWordLetters.contains(letter)) {
@@ -103,9 +112,8 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
 
   // Function to determine which body part to show next
   void _showNextBodyPart() {
-    if (!_showHead) {
+    if (!_showHead && !_showBody) {
       _showHead = true;
-    } else if (!_showBody) {
       _showBody = true;
     } else if (!_showLeftArm) {
       _showLeftArm = true;
