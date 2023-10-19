@@ -139,6 +139,28 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
     );
   }
 
+  // Function to delete a question-answer pair
+  void deleteQuestionAnswer(String category, int index) async {
+    // Remove the pair from the local list
+    setState(() {
+      questionAnswerPairs.removeAt(index);
+    });
+
+    // Update the document in Firestore
+    await FirebaseFirestore.instance
+        .collection('Match The Column')
+        .doc(category)
+        .update({'Questions': questionAnswerPairs});
+
+    // Show a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Question-answer pair deleted successfully'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -241,22 +263,29 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                       columnWidths: const <int, TableColumnWidth>{
                         0: FlexColumnWidth(1),
                         1: FlexColumnWidth(1),
+                        2: FlexColumnWidth(0.5), // added column for delete button
                       },
                       // Table's children
                       children: [
-                        // Table Row for Headings
-                        TableRow(children: [
+                        /// Table Row for Headings
+                        const TableRow(children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Text('Question', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Text('Answer', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
+                          Padding( // Placeholder for the delete column in the header
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(''), // This could be an empty Text widget, or you could provide a header like "Actions"
+                          ),
                         ]),
+
                         // Table Rows for Question-Answer Pairs
                         ...questionAnswerPairs.map((pair) {
+                          int index = questionAnswerPairs.indexOf(pair);
                           return TableRow(
                             children: [
                               Padding(
@@ -285,8 +314,15 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                                   },
                                 ),
                               ),
-                            ],
-                          );
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => deleteQuestionAnswer(dropdownValue!, index),
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ]);
                         }).toList(),
                       ],
                     ),
