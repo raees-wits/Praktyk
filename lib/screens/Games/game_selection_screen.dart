@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'hangman_screen.dart';
+
 class GameSelectionScreen extends StatelessWidget {
   const GameSelectionScreen({Key? key}) : super(key: key);
 
@@ -48,7 +50,11 @@ class GameSelectionScreen extends StatelessWidget {
               ),
               buildGradientButton(
                 onPressed: () {
-                  // TODO: Navigate to the "Hangman" game screen when this is pressed
+                  // Navigate to the "Hangman" game screen when this is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HangmanGameScreen()), // replace with your actual HangmanGameScreen widget
+                  );
                 },
                 text: 'Hangman',
                 colors: [Colors.orange, Colors.red], // another set of colors for the gradient
