@@ -324,6 +324,53 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                               ),
                             ]);
                         }).toList(),
+                        TableRow(children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              controller: questionController, // Controller for new question input
+                              decoration: InputDecoration(
+                                hintText: 'New Question (Afrikaans)',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              controller: answerController, // Controller for new answer input
+                              decoration: InputDecoration(
+                                hintText: 'New Answer (English)',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton(
+                              icon: Icon(Icons.add), // Change icon to "add"
+                              onPressed: () {
+                                // Functionality to add a new question-answer pair
+                                if (questionController.text.isNotEmpty && answerController.text.isNotEmpty) {
+                                  setState(() {
+                                    questionAnswerPairs.add({
+                                      'Question': questionController.text,
+                                      'Answer': answerController.text,
+                                    });
+                                    // Optionally clear the input fields after adding
+                                    questionController.clear();
+                                    answerController.clear();
+                                  });
+                                  // Add to the database (if needed right away) or you can do it when 'Submit Updates' is pressed
+                                  updateQuestionAnswers(dropdownValue!);
+                                } else {
+                                  print("Both fields must be filled!");
+                                }
+                              },
+                              color: Colors.green, // Change button color to indicate a different action (add)
+                            ),
+                          ),
+                        ]),
                       ],
                     ),
                   ),
