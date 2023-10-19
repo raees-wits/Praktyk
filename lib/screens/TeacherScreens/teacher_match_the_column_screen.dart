@@ -50,6 +50,12 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
       return;
     }
 
+    // New validation: If creating a new category, ensure the category name is provided.
+    if (isCreateCategorySelected && categoryController.text.trim().isEmpty) {
+      print("Please provide a name for the new category.");
+      return;
+    }
+
     // Prepare data for submission
     Map<String, dynamic> questionMap = {
       'Question': questionController.text,
@@ -60,15 +66,16 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
 
     // If "Create category" is selected, use the new category input field's value
     if (isCreateCategorySelected) {
-      finalCategory = categoryController.text; // New category name from the input field
+      finalCategory = categoryController.text.trim(); // Use trimmed value to avoid leading/trailing whitespaces
 
-      // Validate the new category name
-      if (finalCategory.trim().isEmpty || categories.contains(finalCategory)) {
-        print("Please enter a valid new category.");
+      // Ensure the new category name doesn't already exist
+      if (categories.contains(finalCategory)) {
+        print("This category already exists. Please enter a different name.");
         return;
       }
 
-      categories.add(finalCategory); // Add the new category to the local categories list
+      categories.add(finalCategory); // Add the new category to the local list
+      dropdownValue = finalCategory; // Update the dropdown to the new category
     }
 
     // Reference to the Firestore document
@@ -163,11 +170,13 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
+    // Clean up the controllers when the widget is disposed.
     questionController.dispose();
     answerController.dispose();
+    categoryController.dispose(); // Ensure to dispose of this controller too
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +191,6 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (widget.updateMode == "Add") ...[
               Text('Select Category:'),
               DropdownButton<String>(
                 value: dropdownValue,
@@ -190,60 +198,20 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                   setState(() {
                     dropdownValue = newValue!;
                     isCreateCategorySelected = newValue == 'Create category';
+
+                    // Clear previous questions when changing category or creating a new one
+                    if (newValue == 'Create category' || (dropdownValue != newValue && newValue != null)) {
+                      questionAnswerPairs.clear();
+                      isEditing = false;
+                    }
                   });
-                },
-                items: categories.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              // Conditional rendering of the new category text field
-              if (isCreateCategorySelected) ...[
-                SizedBox(height: 20),
-                TextField(
-                  controller: categoryController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter new category',
-                  ),
-                ),
-              ],
-              SizedBox(height: 20),
-              Text('Question (Afrikaans):'),
-              TextField(
-                controller: questionController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your question',
-                ),
-              ),
-              SizedBox(height: 20),
-              Text('Answer (English):'),
-              TextField(
-                controller: answerController,
-                decoration: InputDecoration(
-                  hintText: 'Enter the answer',
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: submitQuestion,
-                child: Text('Submit Question'),
-              ),
-            ],
-            if (widget.updateMode == "Modify") ...[
-              Text('Select Category:'),
-              DropdownButton<String>(
-                value: dropdownValue,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                    isCreateCategorySelected = newValue == 'Create category';
-                  });
-                  if (!isCreateCategorySelected) {
-                    fetchQuestionAnswers(dropdownValue!); // Fetch question-answer pairs when a category is selected
+
+                  // Fetch question-answer pairs only for existing categories
+                  if (!isCreateCategorySelected && newValue != null) {
+                    fetchQuestionAnswers(newValue);
                   }
                 },
+
                 items: categories.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -381,9 +349,43 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                   child: Text('Submit Updates'),
                 ),
               ],
-            ],
             // More conditions can be added here for other update modes
+            // Condition to check if 'Create category' is selected, if so, show the input fields for new category, question, and answer.
+            if (isCreateCategorySelected) ...[
+              TextField(
+                controller: categoryController,
+                decoration: InputDecoration(
+                  labelText: 'New Category Name', // to indicate the purpose of the text field
+                  hintText: 'Enter new category name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 8), // for some spacing between the fields
+              TextField(
+                controller: questionController,
+                decoration: InputDecoration(
+                  labelText: 'New Question (Afrikaans)',
+                  hintText: 'Enter new question',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 8), // spacing between the fields
+              TextField(
+                controller: answerController,
+                decoration: InputDecoration(
+                  labelText: 'New Answer (English',
+                  hintText: 'Enter new answer',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16), // spacing before the button
+              ElevatedButton(
+                onPressed: () => submitQuestion(), // this function should handle new category creation and question submission
+                child: Text('Submit New Category and Question'),
+              ),
+            ]
           ],
+
         ),
       ),
     );
