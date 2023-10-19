@@ -151,6 +151,8 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
           ),
           SizedBox(height: 20),
           Expanded(
+            child:Transform.translate(
+              offset: const Offset(0, -100), // moves 10 pixels up,
             child: Transform.scale(
               scale: 0.7, // you can change the scale factor here
               child: CustomPaint(
@@ -165,6 +167,7 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
                 child: Container(), // Container takes any available space that's left
               ),
             ),
+          ),
           ),
           Wrap(
             spacing: 4.0,
