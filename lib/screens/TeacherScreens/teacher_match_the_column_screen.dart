@@ -15,7 +15,9 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
   String? dropdownValue;
   final questionController = TextEditingController();
   final answerController = TextEditingController();
-  final List<String> categories = [];
+  final categoryController = TextEditingController(); // Controller for the new category input
+  final List<String> categories = [' ', 'Create category']; // Added blank option and "Create category"
+  bool isCreateCategorySelected = false; // New state variable for visibility control
   bool isLoading = true; // Flag to check if data is still loading
 
   @override
@@ -38,47 +40,66 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
   }
 
   Future<void> submitQuestion() async {
-    if (dropdownValue != null && questionController.text.isNotEmpty && answerController.text.isNotEmpty) {
-      // Create a map of the question and answer
-      Map<String, dynamic> questionMap = {
-        'Question': questionController.text,
-        'Answer': answerController.text,
-      };
+    // Validation: both question and answer fields must not be empty.
+    if (dropdownValue == null || dropdownValue!.trim().isEmpty || questionController.text.trim().isEmpty || answerController.text.trim().isEmpty) {
+      print("Please fill in all fields before submitting.");
+      return;
+    }
 
-      // Get a reference to the document
-      DocumentReference docRef = FirebaseFirestore.instance.collection('Match The Column').doc(dropdownValue);
+    // Prepare data for submission
+    Map<String, dynamic> questionMap = {
+      'Question': questionController.text,
+      'Answer': answerController.text,
+    };
 
-      // Update the 'Questions' array in the document
-      return FirebaseFirestore.instance.runTransaction((transaction) async {
-        // Get the document
-        DocumentSnapshot snapshot = await transaction.get(docRef);
+    String finalCategory = dropdownValue!; // Assume an existing category is selected initially
 
-        if (!snapshot.exists) {
-          throw Exception("Document does not exist!");
-        }
+    // If "Create category" is selected, use the new category input field's value
+    if (isCreateCategorySelected) {
+      finalCategory = categoryController.text; // New category name from the input field
 
-        // Update the 'Questions' field with the new question map
+      // Validate the new category name
+      if (finalCategory.trim().isEmpty || categories.contains(finalCategory)) {
+        print("Please enter a valid new category.");
+        return;
+      }
+
+      categories.add(finalCategory); // Add the new category to the local categories list
+    }
+
+    // Reference to the Firestore document
+    DocumentReference docRef = FirebaseFirestore.instance.collection('Match The Column').doc(finalCategory);
+
+    return FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(docRef);
+
+      if (!snapshot.exists) {
+        // If the document doesn't exist (new category), create a new one with the initial question
+        transaction.set(docRef, {'Questions': [questionMap]});
+      } else {
+        // If the document exists, append the new question to the 'Questions' array
         List<dynamic> questions = snapshot.get('Questions') as List<dynamic>;
         questions.add(questionMap);
 
         // Perform the update
         transaction.update(docRef, {'Questions': questions});
-      }).then((value) {
-        print("Question Added");
-        // Clear the text fields
-        questionController.clear();
-        answerController.clear();
-        // Show a Snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Question successfully submitted'),
-            duration: Duration(seconds: 2), // Duration can be adjusted
-          ),
-        );
-      }).catchError((error) => print("Failed to add question: $error"));
-    } else {
-      print("Please fill in all fields before submitting.");
-    }
+      }
+    }).then((value) {
+      print("Question Added");
+      // Clear the text fields
+      questionController.clear();
+      answerController.clear();
+      categoryController.clear(); // Don't forget to clear the new category field
+      isCreateCategorySelected = false; // Reset the flag for creating a new category
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Question successfully submitted'),
+          duration: Duration(seconds: 2), // Adjust the duration as needed
+        ),
+      );
+    }).catchError((error) => print("Failed to add question: $error"));
   }
 
   @override
@@ -95,9 +116,9 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
       appBar: AppBar(
         title: const Text('Teacher Match The Column'),
       ),
-      body: isLoading // Check if data is still loading
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator if yes
-          : Padding( // Otherwise, show the regular UI
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,17 +130,27 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                 onChanged: (String? newValue) {
                   setState(() {
                     dropdownValue = newValue!;
+                    isCreateCategorySelected = newValue == 'Create category';
                   });
                 },
-                items: categories // Use categories list here, instead of hardcoded values
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: categories.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
                   );
                 }).toList(),
               ),
-              SizedBox(height: 20), // to add spacing
+              // Conditional rendering of the new category text field
+              if (isCreateCategorySelected) ...[
+                SizedBox(height: 20),
+                TextField(
+                  controller: categoryController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter new category',
+                  ),
+                ),
+              ],
+              SizedBox(height: 20),
               Text('Question (Afrikaans):'),
               TextField(
                 controller: questionController,
@@ -127,7 +158,7 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                   hintText: 'Enter your question',
                 ),
               ),
-              SizedBox(height: 20), // to add spacing
+              SizedBox(height: 20),
               Text('Answer (English):'),
               TextField(
                 controller: answerController,
@@ -135,13 +166,13 @@ class _TeacherMatchTheColumnState extends State<TeacherMatchTheColumn> {
                   hintText: 'Enter the answer',
                 ),
               ),
-              SizedBox(height: 20), // to add spacing
+              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: submitQuestion, // Call the submitQuestion method when the button is pressed
+                onPressed: submitQuestion,
                 child: Text('Submit Question'),
               ),
             ],
-            // You can add "else" or "else if" statements for other "updateMode" conditions
+            // More conditions can be added here for other update modes
           ],
         ),
       ),
