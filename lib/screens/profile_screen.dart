@@ -146,8 +146,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 initialData: {
                   'firstName': firstName,
                   'lastName': lastName,
-                  'email': email, // assuming you retrieve email and other info from Firestore
-                  'phone': phone, // same assumption as above
+                  'email': email,
+                  'phone': phone,
                   'userType' : userType,
                   'grade' : grade,
                   'school' : school

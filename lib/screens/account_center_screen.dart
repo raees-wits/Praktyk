@@ -10,8 +10,10 @@ class AccountCenterScreen extends StatefulWidget {
 }
 
 class _AccountCenterScreenState extends State<AccountCenterScreen> {
-  late TextEditingController nameController;
+  late TextEditingController firstNameController;
+  late TextEditingController lastNameController;
   late TextEditingController emailController;
+  late TextEditingController phoneController;
   late TextEditingController emailController2;
   late TextEditingController passwordController;
   String userType = "Student"; // Default user type
@@ -20,10 +22,19 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.initialData['name']);
-    emailController = TextEditingController(text: widget.initialData['email']);
-    emailController2 = TextEditingController(text: widget.initialData['guardian-email']);
-    passwordController = TextEditingController(text: widget.initialData['password']);
+    // Initialize the text editing controllers with the data passed from the previous screen.
+    // If the data is not available for some reason, initialize with an empty string to prevent errors.
+    firstNameController = TextEditingController(text: widget.initialData['firstName'] ?? '');
+    lastNameController = TextEditingController(text: widget.initialData['lastName'] ?? '');
+    emailController = TextEditingController(text: widget.initialData['email'] ?? '');
+    phoneController = TextEditingController(text: widget.initialData['phone'] ?? '');
+    emailController2 = TextEditingController(text: widget.initialData['guardianEmail'] ?? '');
+    passwordController = TextEditingController();
+
+    // If you also pass 'userType' from the previous screen, you can initialize it as follows.
+    // If 'userType' isn't passed, it defaults to "Student" as already defined in your variables.
+    userType = widget.initialData['userType'] ?? userType; // keeps the default if not provided
+
   }
 
   String obscurePassword(String password) {
@@ -93,9 +104,16 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: nameController,
+                      controller: firstNameController,
                       decoration: InputDecoration(
-                        label: const Text("Full Name"),
+                        label: const Text("First Name"),
+                        prefixIcon: const Icon(Icons.drive_file_rename_outline_sharp),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: lastNameController,
+                      decoration: InputDecoration(
+                        label: const Text("Last Name"),
                         prefixIcon: const Icon(Icons.drive_file_rename_outline_sharp),
                       ),
                     ),
@@ -115,6 +133,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     ),
                     // const SizedBox(height: 20),
                     TextFormField(
+                      controller: phoneController,
                       decoration: InputDecoration(
                         label: const Text("Phone No"),
                         prefixIcon: const Icon(Icons.phone_outlined),
@@ -124,7 +143,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     TextFormField(
                       controller: emailController2,
                       decoration: InputDecoration(
-                        label: const Text("Gaurdian E-Mail"),
+                        label: const Text("Gaurdian E-Mail (optional)"),
                         prefixIcon: const Icon(Icons.attach_email_outlined),
                       ),
                       validator: (value) {
@@ -134,21 +153,6 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         return null;
                       },
                     ),
-                    ListTile(
-                      title: Text("Password"),
-                      subtitle: Text(
-                        obscureText ? obscurePassword(passwordController.text) : passwordController.text,
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            obscureText = !obscureText;
-                          });
-                        },
-                      ),
-                    ),
-                    // const SizedBox(height: 20),
                     Divider(color: Colors.black),  // <-- Add this line
                     DropdownButtonFormField<String>(
                       value: userType,
@@ -173,7 +177,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                       child: ElevatedButton(
                         onPressed: () => // Validate and save data
                         Navigator.pop(context, {
-                          'name': nameController.text,
+                          'name': firstNameController.text,
                           'email': emailController.text,
                           'guardian-email': emailController2.text,
                           'password': passwordController.text,
