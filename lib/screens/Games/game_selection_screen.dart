@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'hangman_screen.dart';
+import 'fallingwordsgame_screen.dart';
 
 class GameSelectionScreen extends StatelessWidget {
   const GameSelectionScreen({Key? key}) : super(key: key);
@@ -43,7 +44,10 @@ class GameSelectionScreen extends StatelessWidget {
             children: <Widget>[
               buildGradientButton(
                 onPressed: () {
-                  // TODO: Navigate to the "Falling Words" game screen when this is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FallingWordsGameScreen()),
+                  );
                 },
                 text: 'Falling Words', // change the button text
                 colors: [Colors.blue, Colors.purple], // colors for the gradient
