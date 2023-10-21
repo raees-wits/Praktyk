@@ -18,24 +18,28 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
-
   String? userName;
+  String? avatarPrompt;
+  String? avatarPromptTypeNumber;
 
   Future<void> fetchUserName() async {
     try {
       String userId = CurrentUser().userId!;
       print('User ID: $userId');
-      var document = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      var document = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
       setState(() {
         userName = document.data()?['firstName'];
-        print('Fetched username: $userName');  // Added this print statement
+        avatarPrompt = document.data()?['avatarPrompt'];
+        avatarPromptTypeNumber = document.data()?['avatarPromptTypeNumber'];
+        print('Fetched username: $userName'); // Added this print statement
       });
     } catch (error) {
       print("Error fetching user name: $error");
     }
   }
-
-
 
   late TextEditingController controller; //For the avatar
   bool showGoalsOverlay = false; // Track whether the overlay should be shown
@@ -74,9 +78,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 
   //Initialise Avatar properties
-  String avatarPrompt = "Neo";
   String avatarPromptType = "Humans";
-  String avatarPromptTypeNumber = '5';
+
   List<DropdownMenuItem<String>> myAvatarTypes = <String>[
     "Robots",
     "Monsters",
@@ -107,7 +110,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   children: [
                     Row(
                       children: [
-                         Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -202,6 +205,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                       newAvatarPrompt.isEmpty) return;
                                   setState(
                                       () => avatarPrompt = newAvatarPrompt);
+
+                                  try {
+                                    final userRef = FirebaseFirestore.instance
+                                        .collection("Users")
+                                        .doc(CurrentUser().userId!);
+                                    await userRef.set({
+                                      'avatarPrompt': avatarPrompt,
+                                      "avatarPromptTypeNumber":
+                                          avatarPromptTypeNumber
+                                    }, SetOptions(merge: true));
+                                  } catch (e) {
+                                    print("Error updating avatar: $e");
+                                  }
 
                                   print(avatarPrompt);
                                 },

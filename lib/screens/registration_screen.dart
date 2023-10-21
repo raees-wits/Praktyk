@@ -107,40 +107,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   buildTextField("Email Address", emailController, true,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        final emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter an email address';
-                        } else if (!emailRegex.hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      }
-                  ),
+                    final emailRegex = RegExp(
+                        r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an email address';
+                    } else if (!emailRegex.hasMatch(value)) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  }),
                   const SizedBox(height: 20),
                   buildTextField("Phone Number", phoneController, true,
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a phone number';
-                        } else if (value.length != 10) {
-                          return 'Please enter a valid 10-digit phone number';
-                        }
-                        return null;
-                      }
-                  ),
+                      keyboardType: TextInputType.phone, validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a phone number';
+                    } else if (value.length != 10) {
+                      return 'Please enter a valid 10-digit phone number';
+                    }
+                    return null;
+                  }),
                   const SizedBox(height: 20),
-                  buildTextField("Password", passwordController, true, isPassword: true),
+                  buildTextField("Password", passwordController, true,
+                      isPassword: true),
                   const SizedBox(height: 20),
-                  buildTextField("Confirm Password", confirmPasswordController, true, isPassword: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        } else if (value != passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      }
-                  ),
+                  buildTextField(
+                      "Confirm Password", confirmPasswordController, true,
+                      isPassword: true, validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    } else if (value != passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  }),
                   const SizedBox(height: 20),
                   if (registrationType == "Student") ...[
                     buildTextField("School", schoolController, true),
@@ -152,12 +151,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+                          UserCredential userCredential =
+                              await _auth.createUserWithEmailAndPassword(
                             email: emailController.text,
                             password: passwordController.text,
                           );
 
                           Map<String, dynamic> userData = {
+                            'avatarPrompt': "default",
+                            'avatarPromptTypeNumber': "5",
                             'userType': registrationType,
                             'firstName': firstNameController.text,
                             'lastName': lastNameController.text,
@@ -170,15 +172,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             userData['grade'] = gradeController.text;
                           }
 
-                          _firestore.collection('Users').doc(userCredential.user!.uid).set(userData);
+                          _firestore
+                              .collection('Users')
+                              .doc(userCredential.user!.uid)
+                              .set(userData);
 
-                          Navigator.push(context,
+                          Navigator.push(
+                              context,
                               MaterialPageRoute(
-                                  builder: (context) => HomeScreen()
-                              )
-                          );
+                                  builder: (context) => HomeScreen()));
                         } on FirebaseAuthException catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'An error occurred')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(e.message ?? 'An error occurred')));
                         }
                       }
                     },
@@ -205,10 +210,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget buildTextField(String hint, TextEditingController controller, bool isRequired,
-      {TextInputType keyboardType = TextInputType.text, bool isPassword = false,
-        FormFieldValidator<String>? validator}) {
-
+  Widget buildTextField(
+      String hint, TextEditingController controller, bool isRequired,
+      {TextInputType keyboardType = TextInputType.text,
+      bool isPassword = false,
+      FormFieldValidator<String>? validator}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -242,7 +248,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: controller,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               hintText: hint,
               hintStyle: TextStyle(
                 color: Colors.black26,
@@ -262,4 +269,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ));
   }
 }
-
