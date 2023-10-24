@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/constants.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacher_choice_screen.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacher_home_page.dart';
 import 'package:e_learning_app/screens/forgot_password_screen.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
 import 'package:e_learning_app/screens/registration_screen.dart';
@@ -214,11 +216,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
               if (userDoc.exists) {
                 CurrentUser().userId = userCredential.user!.uid; // Set the userId here
-                CurrentUser().userType = userDoc['userType'];
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+                String userType = userDoc['userType'];
+
+                if (userType == "Student") {
+                  // Navigate to student screen
+                  print("UserType1:"+ userType);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                } else {
+                  // Navigate to teacher screen
+                  print("UserType2:"+ userType);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TeacherHomeScreen()),
+                  );
+                }
               } else {
                 showMessage("User does not exist in the database");
               }
