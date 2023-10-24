@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/practise_vocab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
@@ -170,7 +171,12 @@ class TeacherChoiceScreen extends StatelessWidget {
                     Icons.edit,
                         () {
                       print("Add/Modify Questions tapped");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: "Modify")),
+                      );
                     }
+
                 ),
               ],
             ),
