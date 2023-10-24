@@ -1,4 +1,5 @@
 import 'package:e_learning_app/screens/TeacherScreens/teacher_comprehension_screen.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacher_fill_in_blanks_screen.dart';
 import 'package:e_learning_app/screens/activity_short_answer.dart';
 import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
@@ -92,9 +93,17 @@ class PracticeVocabularyScreen extends StatelessWidget {
         ),
         onTap: () {
           if (title == "Fill in the blanks") {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => FillInTheBlanksScreen()),
-            );
+            if (updateMode == "Modify") {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TeacherFillInTheBlankScreen()));
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => FillInTheBlanksScreen()),
+              );
+            }
           } else if (title == "Match The Column") {
             if (updateMode == "Modify") {
               Navigator.of(context).push(MaterialPageRoute(
