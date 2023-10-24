@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/TeacherScreens/teacher_comprehension_screen.dart';
 import 'package:e_learning_app/screens/activity_short_answer.dart';
 import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,8 @@ import 'TeacherScreens/teacher_match_the_column_screen.dart';
 class PracticeVocabularyScreen extends StatelessWidget {
   final String updateMode;
 
-  PracticeVocabularyScreen({Key? key, required this.updateMode}) : super(key: key);
+  PracticeVocabularyScreen({Key? key, required this.updateMode})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,11 @@ class PracticeVocabularyScreen extends StatelessWidget {
               Navigator.of(context).pop(), // Pop the current screen
         ),
         title: Text(
-          updateMode == "Add" ? "Add Questions" : (updateMode == "Modify" ? "Add/Modify Questions" : "Pick a choice"),
+          updateMode == "Add"
+              ? "Add Questions"
+              : (updateMode == "Modify"
+                  ? "Add/Modify Questions"
+                  : "Pick a choice"),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -92,18 +98,18 @@ class PracticeVocabularyScreen extends StatelessWidget {
           } else if (title == "Match The Column") {
             if (updateMode == "Modify") {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    TeacherMatchTheColumn(updateMode: updateMode), // Passing updateMode to the new screen
+                builder: (context) => TeacherMatchTheColumn(
+                    updateMode:
+                        updateMode), // Passing updateMode to the new screen
               ));
-            }else{
+            } else {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    CategoryTree(
-                      categories: categories,
-                    ),
+                builder: (context) => CategoryTree(
+                  categories: categories,
+                ),
               ));
             }
-          }else if (title == "Short Questions") {
+          } else if (title == "Short Questions") {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -111,11 +117,19 @@ class PracticeVocabularyScreen extends StatelessWidget {
               ),
             );
           } else if (title == "Comprehension Texts") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ComprehensionChoiceScreen()),
-            );
+            if (updateMode == "Modify") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TeacherComprehensionChoiceScreen()),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ComprehensionChoiceScreen()),
+              );
+            }
           }
         },
       ),
