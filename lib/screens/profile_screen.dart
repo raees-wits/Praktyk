@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'account_center_screen.dart'; // Replace with the actual path if different
-import 'settings_screen.dart'; // Replace with the actual path if different
+import 'account_center_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -65,7 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       userType = "Guest";
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

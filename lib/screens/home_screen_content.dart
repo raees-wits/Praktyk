@@ -114,7 +114,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Hi ${userName ?? 'Loading...'}",
+                              "Welcome ${userName ?? ''} !",
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,

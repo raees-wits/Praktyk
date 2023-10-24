@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountCenterScreen extends StatefulWidget {
   const AccountCenterScreen({Key? key, required this.initialData}) : super(key: key);
@@ -17,32 +19,53 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
   late TextEditingController emailController2;
   late TextEditingController passwordController;
   String userType = "Student"; // Default user type
-  bool obscureText = true;
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the text editing controllers with the data passed from the previous screen.
-    // If the data is not available for some reason, initialize with an empty string to prevent errors.
     firstNameController = TextEditingController(text: widget.initialData['firstName'] ?? '');
     lastNameController = TextEditingController(text: widget.initialData['lastName'] ?? '');
     emailController = TextEditingController(text: widget.initialData['email'] ?? '');
     phoneController = TextEditingController(text: widget.initialData['phone'] ?? '');
     emailController2 = TextEditingController(text: widget.initialData['guardianEmail'] ?? '');
-    passwordController = TextEditingController();
-
-    // If you also pass 'userType' from the previous screen, you can initialize it as follows.
-    // If 'userType' isn't passed, it defaults to "Student" as already defined in your variables.
-    userType = widget.initialData['userType'] ?? userType; // keeps the default if not provided
-
+    passwordController = TextEditingController(); // Assuming password is passed for the sake of completion
+    userType = widget.initialData['userType'] ?? userType;
   }
 
-  String obscurePassword(String password) {
-    return password.length > 3
-        ? password.substring(0, 2) +
-        '*' * (password.length - 3) +
-        password.substring(password.length - 1)
-        : password;
+  Future<void> updateUserDetails() async {
+    try {
+      final User? currentUser = auth.currentUser;
+      if (currentUser == null) {
+        // Handle the case where there is no user logged in.
+        return;
+      }
+
+      final String userId = currentUser.uid;
+
+      Map<String, dynamic> updateData = {
+        'firstName': firstNameController.text,
+        'lastName': lastNameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        // Include additional fields as necessary
+      };
+
+      if (emailController2.text.isNotEmpty) {
+        updateData['guardianEmail'] = emailController2.text;
+      }
+
+      await firestore.collection('Users').doc(userId).update(updateData);
+
+      // After updating, you may want to navigate or give some feedback
+      Navigator.pop(context);
+    } catch (e) {
+      // Handle error
+      print("An error occurred1: $e");
+      // Here, you might want to show a Snackbar or a dialog with the error message
+    }
   }
 
   @override
@@ -92,7 +115,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                       ),
                       child: const Icon(
                         Icons.camera_alt_outlined,
-                        color: Colors.black,
+                        color: Colors.white,
                         size: 15,
                       ),
                     ),
@@ -107,17 +130,16 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                       controller: firstNameController,
                       decoration: InputDecoration(
                         label: const Text("First Name"),
-                        prefixIcon: const Icon(Icons.drive_file_rename_outline_sharp),
+                        prefixIcon: const Icon(Icons.drive_file_rename_outline),
                       ),
                     ),
                     TextFormField(
                       controller: lastNameController,
                       decoration: InputDecoration(
                         label: const Text("Last Name"),
-                        prefixIcon: const Icon(Icons.drive_file_rename_outline_sharp),
+                        prefixIcon: const Icon(Icons.drive_file_rename_outline),
                       ),
                     ),
-                    // const SizedBox(height: 20),
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -131,7 +153,6 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         return null;
                       },
                     ),
-                    // const SizedBox(height: 20),
                     TextFormField(
                       controller: phoneController,
                       decoration: InputDecoration(
@@ -139,32 +160,32 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         prefixIcon: const Icon(Icons.phone_outlined),
                       ),
                     ),
-                    // const SizedBox(height: 20),
                     TextFormField(
                       controller: emailController2,
                       decoration: InputDecoration(
-                        label: const Text("Gaurdian E-Mail (optional)"),
+                        label: const Text("Guardian E-Mail (optional)"),
                         prefixIcon: const Icon(Icons.attach_email_outlined),
                       ),
                       validator: (value) {
-                        if (value == null || !value.contains('@')) {
-                          return 'Please enter a valid email';
+                        if (value == null || value.isEmpty || value.contains('@')) {
+                          return null; // valid or empty is allowed
                         }
-                        return null;
+                        return 'Please enter a valid email'; // invalid email
                       },
                     ),
-                    Divider(color: Colors.black),  // <-- Add this line
+                    Divider(color: Colors.black),
                     DropdownButtonFormField<String>(
                       value: userType,
-                      items: ["Teacher", "Student", "Parent"]
-                          .map((String value) {
+                      items: ["Teacher", "Student", "Parent"].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        userType = newValue!;
+                        setState(() {
+                          userType = newValue!;
+                        });
                       },
                       decoration: InputDecoration(
                         label: const Text("User Type"),
@@ -175,18 +196,18 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     SizedBox(
                       width: 150,
                       child: ElevatedButton(
-                        onPressed: () => // Validate and save data
-                        Navigator.pop(context, {
-                          'name': firstNameController.text,
-                          'email': emailController.text,
-                          'guardian-email': emailController2.text,
-                          'password': passwordController.text,
-                        }),
+                        onPressed: updateUserDetails, // This saves the data to Firestore
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurpleAccent, side: BorderSide.none, shape: const StadiumBorder()),
-                        child: const Text("Done", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                          primary: Colors.deepPurpleAccent,
+                          onPrimary: Colors.white,
+                          shape: const StadiumBorder(),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),

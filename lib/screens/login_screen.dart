@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 60,
             child: TextField(
               //obscure text to hide password
-              controller: passwordController,  // <-- Add this line
+              controller: passwordController,
               obscureText: true,
               style: TextStyle(
                   color: Colors.black87
@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold
-            )
+            ),
         ),
       ),
     );
