@@ -14,6 +14,8 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
   late String questionText;
   late List<String> options;
   late String correctAnswer;
+  int currentQuestionIndex = 0;
+  late List<String> questionKeys;
 
   @override
   void initState() {
@@ -24,12 +26,31 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
   Future<void> _fetchQuestionData() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
     Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+    questionKeys = questionsMap.keys.toList();
+    _loadCurrentQuestion(questionsMap);
+  }
 
-    questionText = questionsMap.keys.first;  // Assuming you want the first question
-    options = List<String>.from(questionsMap[questionText] ?? []);
-    correctAnswer = options[0];  // Store the correct answer before shuffling
-    options.shuffle();
-    setState(() {});  // Rebuild the widget with the new data
+  void _loadCurrentQuestion(Map<String, dynamic> questionsMap) {
+    setState(() {
+      questionText = questionKeys[currentQuestionIndex];
+      options = List<String>.from(questionsMap[questionText] ?? []);
+      correctAnswer = options[0];
+      options.shuffle();
+    });
+  }
+
+  void goToNextQuestion(Map<String, dynamic> questionsMap) {
+    if (currentQuestionIndex < questionKeys.length - 1) {
+      currentQuestionIndex++;
+      _loadCurrentQuestion(questionsMap);
+    }
+  }
+
+  void goToPreviousQuestion(Map<String, dynamic> questionsMap) {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      _loadCurrentQuestion(questionsMap);
+    }
   }
 
   void checkAnswer(String selectedOption) {
@@ -67,6 +88,28 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
             ),
             SizedBox(height: 20),
             ...options.map((option) => OptionButton(option: option, onSelected: checkAnswer)).toList(),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
+                    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                    goToPreviousQuestion(questionsMap);
+                  },
+                  child: Text("Back"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
+                    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                    goToNextQuestion(questionsMap);
+                  },
+                  child: Text("Next"),
+                ),
+              ],
+            ),
           ],
         ),
       ),
