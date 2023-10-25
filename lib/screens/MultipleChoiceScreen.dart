@@ -13,6 +13,7 @@ class MultipleChoiceScreen extends StatefulWidget {
 class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
   late String questionText;
   late List<String> options;
+  late String correctAnswer;
 
   @override
   void initState() {
@@ -26,12 +27,13 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
 
     questionText = questionsMap.keys.first;  // Assuming you want the first question
     options = List<String>.from(questionsMap[questionText] ?? []);
-    options.shuffle();  // Randomize the options
+    correctAnswer = options[0];  // Store the correct answer before shuffling
+    options.shuffle();
     setState(() {});  // Rebuild the widget with the new data
   }
 
   void checkAnswer(String selectedOption) {
-    if (selectedOption == options[0]) {
+    if (selectedOption == correctAnswer) {
       // Correct answer
       print("Correct!");
       // TODO: Handle correct answer logic here
