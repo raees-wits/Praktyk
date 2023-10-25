@@ -75,42 +75,67 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text("${widget.category} - Multiple Choice"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Question: $questionText",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ...options.map((option) => OptionButton(option: option, onSelected: checkAnswer)).toList(),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
-                    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
-                    goToPreviousQuestion(questionsMap);
-                  },
-                  child: Text("Back"),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.green[200]!, Colors.white],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SizedBox(height: 40.0),
+              Container(
+                padding: EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[800]!, width: 2.0),
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
-                    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
-                    goToNextQuestion(questionsMap);
-                  },
-                  child: Text("Next"),
+                child: Text(
+                  "Question: $questionText",
+                  style: TextStyle(fontSize: 20.0),
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: 25.0),
+              ...options.map((option) => OptionButton(option: option, onSelected: checkAnswer)).toList(),
+              Spacer(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
+                        Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                        goToPreviousQuestion(questionsMap);
+                      },
+                      child: Text("Back"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
+                        Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                        goToNextQuestion(questionsMap);
+                      },
+                      child: Text("Next"),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.0),
+            ],
+          ),
         ),
       ),
     );
@@ -125,13 +150,18 @@ class OptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: ElevatedButton(
-        onPressed: () {
-          onSelected(option);
-        },
-        child: Text(option),
+    return GestureDetector(
+      onTap: () {
+        onSelected(option);
+      },
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text(
+            option,
+            style: TextStyle(fontSize: 18.0),
+          ),
+        ),
       ),
     );
   }
