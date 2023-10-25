@@ -8,6 +8,7 @@ import 'package:e_learning_app/screens/fill_in_blanks_screen.dart';
 import 'package:e_learning_app/screens/category_tree.dart';
 
 import '../../model/category_modal.dart';
+import 'MultipleChoiceScreen.dart';
 import 'TeacherScreens/teacher_match_the_column_screen.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
@@ -139,6 +140,11 @@ class PracticeVocabularyScreen extends StatelessWidget {
                     builder: (context) => ComprehensionChoiceScreen()),
               );
             }
+          } else  if (title == "Multiple Choice") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MultipleChoiceScreen()),
+            );
           }
         },
       ),
