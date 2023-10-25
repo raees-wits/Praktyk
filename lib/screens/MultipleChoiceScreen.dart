@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MultipleChoiceScreen extends StatefulWidget {
   final String category;
@@ -11,13 +11,23 @@ class MultipleChoiceScreen extends StatefulWidget {
 }
 
 class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
-  final String questionText = "What is the capital of France?"; // You might want to fetch this based on the category later
-  List<String> options = ["Paris", "London", "Berlin", "Madrid"];
+  late String questionText;
+  late List<String> options;
 
   @override
   void initState() {
     super.initState();
-    options.shuffle(Random());
+    _fetchQuestionData();
+  }
+
+  Future<void> _fetchQuestionData() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
+    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+
+    questionText = questionsMap.keys.first;  // Assuming you want the first question
+    options = List<String>.from(questionsMap[questionText] ?? []);
+    options.shuffle();  // Randomize the options
+    setState(() {});  // Rebuild the widget with the new data
   }
 
   void checkAnswer(String selectedOption) {
@@ -34,9 +44,15 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (options == null || questionText == null) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.category} - Multiple Choice"), // Now using the category in the title
+        title: Text("${widget.category} - Multiple Choice"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -47,7 +63,7 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
               "Question: $questionText",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20), // Spacer
+            SizedBox(height: 20),
             ...options.map((option) => OptionButton(option: option, onSelected: checkAnswer)).toList(),
           ],
         ),
