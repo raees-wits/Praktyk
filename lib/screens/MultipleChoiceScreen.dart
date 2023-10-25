@@ -155,11 +155,17 @@ class OptionButton extends StatelessWidget {
         onSelected(option);
       },
       child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Text(
-            option,
-            style: TextStyle(fontSize: 18.0),
+        child: ConstrainedBox(
+          constraints: BoxConstraints.tightFor(width: 150, height: 60), // Define your desired width and height
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                option,
+                style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.center,  // Ensures text is centered in the button
+              ),
+            ),
           ),
         ),
       ),
