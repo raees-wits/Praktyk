@@ -1,14 +1,17 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class MultipleChoiceScreen extends StatefulWidget {
+  final String category;
+
+  MultipleChoiceScreen({required this.category});
+
   @override
   _MultipleChoiceScreenState createState() => _MultipleChoiceScreenState();
 }
 
 class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
-  final String questionText = "What is the capital of France?";
+  final String questionText = "What is the capital of France?"; // You might want to fetch this based on the category later
   List<String> options = ["Paris", "London", "Berlin", "Madrid"];
 
   @override
@@ -33,7 +36,7 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Multiple Choice Screen"),
+        title: Text("${widget.category} - Multiple Choice"), // Now using the category in the title
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

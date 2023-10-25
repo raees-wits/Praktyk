@@ -10,6 +10,7 @@ import 'package:e_learning_app/screens/category_tree.dart';
 import '../../model/category_modal.dart';
 import 'MultipleChoiceScreen.dart';
 import 'TeacherScreens/teacher_match_the_column_screen.dart';
+import 'components/multiPurposeCategoryScreen.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
   final String updateMode;
@@ -143,7 +144,9 @@ class PracticeVocabularyScreen extends StatelessWidget {
           } else  if (title == "Multiple Choice") {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MultipleChoiceScreen()),
+              MaterialPageRoute(
+                builder: (context) => MultiPurposeCategoryScreen(questionType: "MultipleChoice"),
+              ),
             );
           }
         },
