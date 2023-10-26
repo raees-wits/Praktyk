@@ -4,6 +4,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/screens/Community_Screen.dart';
 import 'package:e_learning_app/screens/profile_screen.dart';
+import '../../model/current_user.dart';
 import '../components/appbar.dart';
 import '../components/category.dart';
 import '../components/sorting.dart';
@@ -120,7 +121,7 @@ class TeacherChoiceScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Hi Neo",
+                  "Hi ${CurrentUser().firstName ?? 'User'}",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Text(

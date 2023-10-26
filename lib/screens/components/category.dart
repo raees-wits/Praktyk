@@ -52,7 +52,7 @@ class CategoryCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const TeacherChoiceScreen()),
+                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
               );
             } else {
               // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
