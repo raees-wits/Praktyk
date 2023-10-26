@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'hangman_painter.dart';
 
 class HangmanGameScreen extends StatefulWidget {
@@ -38,23 +38,48 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     _startNewGame();
   }
 
-  void _startNewGame() {
-    currentWord = (words..shuffle(Random())).first; // Selects a random word
-    currentWordLetters = List<String>.from(currentWord.split(''));
-    guessedLetters.clear();
-    attemptsRemaining = 5;
+  Future<String> getRandomWordFromFirestore() async {
+    final firestore = FirebaseFirestore.instance;
+    final categories = await firestore.collection('Match The Column').get();
 
-    // Reset the visibility of hangman parts
-    _showHead = false;
-    _showBody = false;
-    _showLeftArm = false;
-    _showRightArm = false;
-    _showLeftLeg = false;
-    _showRightLeg = false;
+    if (categories.docs.isEmpty) {
+      return 'Error'; // or some other error word or handling
+    }
 
-    // Ensures the UI is updated
-    setState(() {});
+    // Fetch a random category
+    final randomCategory = categories.docs[Random().nextInt(categories.docs.length)];
+
+    // Fetch questions from the random category
+    final questions = List.from(randomCategory['Questions'] as List);
+
+    if (questions.isEmpty) {
+      return 'Error'; // or some other error word or handling
+    }
+
+    // Fetch a random question from the list
+    final randomQuestion = questions[Random().nextInt(questions.length)];
+    print(randomQuestion['Question'].toUpperCase());
+    return randomQuestion['Question'].toUpperCase();
   }
+
+  void _startNewGame() async {
+    String word = await getRandomWordFromFirestore();
+    setState(() {
+      currentWord = word;
+      currentWordLetters = List<String>.from(currentWord.split(''));
+      guessedLetters.clear();
+      attemptsRemaining = 5;
+
+      // Reset the visibility of hangman parts
+      _showHead = false;
+      _showBody = false;
+      _showLeftArm = false;
+      _showRightArm = false;
+      _showLeftLeg = false;
+      _showRightLeg = false;
+    });
+  }
+
 
 
   void _guessLetter(String letter) {
