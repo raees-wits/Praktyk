@@ -66,6 +66,8 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
+    - assets/images/talkingtoucan2.png
+    - assets/images/talkingtoucan.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
