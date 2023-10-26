@@ -215,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (userDoc.exists) {
                 CurrentUser().userId = userCredential.user!.uid; // Set the userId here
                 CurrentUser().userType = userDoc['userType'];
+                CurrentUser().firstName = userDoc['firstName'];
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),

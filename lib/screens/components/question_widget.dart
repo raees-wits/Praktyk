@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:e_learning_app/model/current_user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -127,11 +129,13 @@ class QuestionWidget extends StatelessWidget {
                       final answerText = answerDoc['text'];
                       final upvotes = answerDoc['upvotes'];
                       final downvotes = answerDoc['downvotes'];
+                      final userName =answerDoc['userr_name'];
 
                       return AnswerWidget(
                         answer: answerText,
                         upvotes: upvotes,
                         downvotes: downvotes,
+                        posterName:userName,
                         onUpvote: () async {
                           await _upvoteAnswer(questionId, answerDoc.id);
                         },
@@ -198,6 +202,7 @@ class QuestionWidget extends StatelessWidget {
               child: Text("Submit"),
               onPressed: () async {
                 if (answerText.isNotEmpty) {
+                  String? currentUserFirstName = CurrentUser().firstName;
                   await FirebaseFirestore.instance
                       .collection('questions')
                       .doc(questionId)
@@ -207,6 +212,7 @@ class QuestionWidget extends StatelessWidget {
                     'upvotes': 0, // Initial upvotes count
                     'downvotes': 0, // Initial downvotes count
                     'timestamp': FieldValue.serverTimestamp(),
+                    'user_name': currentUserFirstName,
                   });
                   Navigator.of(context).pop();
                 }
