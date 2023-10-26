@@ -9,6 +9,8 @@ class HangmanGameScreen extends StatefulWidget {
 }
 
 class _HangmanGameScreenState extends State<HangmanGameScreen> {
+  bool _isLoading = true;
+
   // List of words to choose from. You can expand this list or fetch it from an external source.
   final List<String> words = ['FLUTTER', 'DART', 'WIDGET', 'STATE'];
 
@@ -41,33 +43,31 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     _startNewGame();
   }
 
-  Future<Map<String, String>>  getRandomWordFromFirestore() async {
+  Future<Map<String, String>> getRandomWordFromFirestore() async {
     final firestore = FirebaseFirestore.instance;
-    final categories = await firestore.collection('Match The Column').get();
 
-    //if (categories.docs.isEmpty) {
-    //  return 'Error'; // or some other error word or handling
-    //}
+    // We will run a loop to keep fetching until the category isn't "Basic Vocabulary"
+    while (true) {
+      final categories = await firestore.collection('Match The Column').get();
+      final randomCategory = categories.docs[Random().nextInt(categories.docs.length)];
 
-    // Fetch a random category
-    final randomCategory = categories.docs[Random().nextInt(categories.docs.length)];
+      // If the category contains "Basic Vocabulary", we continue the loop to fetch another category
+      if (randomCategory.id.contains('Basic Vocabulary')) continue;
 
-    // Fetch questions from the random category
-    final questions = List.from(randomCategory['Questions'] as List);
+      final questions = List.from(randomCategory['Questions'] as List);
+      final randomQuestion = questions[Random().nextInt(questions.length)];
 
-    //if (questions.isEmpty) {
-    //  return 'Error'; // or some other error word or handling
-    //}
+      print(randomQuestion['Question'].toUpperCase());
 
-    // Fetch a random question from the list
-    final randomQuestion = questions[Random().nextInt(questions.length)];
-    print(randomQuestion['Question'].toUpperCase());
-
-    // Return both the word and its category
-    return {'word': randomQuestion['Question'].toUpperCase(), 'category': randomCategory.id};
+      return {'word': randomQuestion['Question'].toUpperCase(), 'category': randomCategory.id};
+    }
   }
 
+
   void _startNewGame() async {
+    setState(() {
+      _isLoading = true;
+    });
     Map<String, String> data = await getRandomWordFromFirestore();
     setState(() {
       currentWord = data['word']!;
@@ -83,8 +83,10 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
       _showRightArm = false;
       _showLeftLeg = false;
       _showRightLeg = false;
+      _isLoading = false;
     });
   }
+
 
   void _showHint() {
     showDialog(
@@ -186,6 +188,16 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Hangman Game'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Hangman Game'),
