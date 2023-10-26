@@ -15,6 +15,7 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
   // Current word to guess
   late String currentWord;
 
+
   // Stores the letters of the current word as a list.
   late List<String> currentWordLetters;
 
@@ -32,19 +33,21 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
   bool _showLeftLeg = false;
   bool _showRightLeg = false;
 
+  late String _categoryHint;
+
   @override
   void initState() {
     super.initState();
     _startNewGame();
   }
 
-  Future<String> getRandomWordFromFirestore() async {
+  Future<Map<String, String>>  getRandomWordFromFirestore() async {
     final firestore = FirebaseFirestore.instance;
     final categories = await firestore.collection('Match The Column').get();
 
-    if (categories.docs.isEmpty) {
-      return 'Error'; // or some other error word or handling
-    }
+    //if (categories.docs.isEmpty) {
+    //  return 'Error'; // or some other error word or handling
+    //}
 
     // Fetch a random category
     final randomCategory = categories.docs[Random().nextInt(categories.docs.length)];
@@ -52,20 +55,23 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     // Fetch questions from the random category
     final questions = List.from(randomCategory['Questions'] as List);
 
-    if (questions.isEmpty) {
-      return 'Error'; // or some other error word or handling
-    }
+    //if (questions.isEmpty) {
+    //  return 'Error'; // or some other error word or handling
+    //}
 
     // Fetch a random question from the list
     final randomQuestion = questions[Random().nextInt(questions.length)];
     print(randomQuestion['Question'].toUpperCase());
-    return randomQuestion['Question'].toUpperCase();
+
+    // Return both the word and its category
+    return {'word': randomQuestion['Question'].toUpperCase(), 'category': randomCategory.id};
   }
 
   void _startNewGame() async {
-    String word = await getRandomWordFromFirestore();
+    Map<String, String> data = await getRandomWordFromFirestore();
     setState(() {
-      currentWord = word;
+      currentWord = data['word']!;
+      _categoryHint = data['category']!;
       currentWordLetters = List<String>.from(currentWord.split(''));
       guessedLetters.clear();
       attemptsRemaining = 5;
@@ -78,6 +84,25 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
       _showLeftLeg = false;
       _showRightLeg = false;
     });
+  }
+
+  void _showHint() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Hint'),
+            content: Text('The word belongs to the category: $_categoryHint'),
+            actions: [
+              TextButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
 
@@ -132,6 +157,10 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
                 );
               });
         }
+        // Check if hint button should be shown
+        if (attemptsRemaining == 3 && !_showHead && !_showBody) {
+          _showHint();
+        }
       }
     }); // End of setState call
   }
@@ -167,6 +196,12 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
             'Attempts remaining: $attemptsRemaining',
             style: TextStyle(fontSize: 20, color: Colors.red),
           ),
+          // Add a hint button that becomes visible after 2 incorrect attempts
+          if (attemptsRemaining <= 3)
+            ElevatedButton(
+              onPressed: _showHint,
+              child: Text('Hint'),
+            ),
           SizedBox(height: 20),
           // This creates a display of underscores for letters not guessed yet, and letters for those guessed.
           Row(
