@@ -35,6 +35,16 @@ class _TeacherComprehensionChoiceScreen
     super.dispose();
   }
 
+  void onDeleted(Comprehension c) {
+    firestore.collection('ComprehensionQuestions').doc(c.id).delete();
+
+    setState(() {
+      comprehensions.remove(c);
+    });
+
+    Navigator.pop(context);
+  }
+
   Future<void> loadComprehensions() async {
     final querySnapshot =
         await firestore.collection("ComprehensionQuestions").get();
@@ -80,6 +90,9 @@ class _TeacherComprehensionChoiceScreen
               comprehensionID: comprehension.id,
               comprehensionTitle: comprehension.title,
               comprehensionText: comprehension.text,
+              onDeleted: (() {
+                onDeleted(comprehension);
+              }),
             )
         ],
       ),

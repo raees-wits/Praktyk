@@ -34,6 +34,16 @@ class _TeacherFillInTheBlankScreen extends State<TeacherFillInTheBlankScreen> {
     super.dispose();
   }
 
+  void onDeleted(Sentence s) {
+    firestore.collection('sentences').doc(s.id).delete();
+
+    setState(() {
+      sentences.remove(s);
+    });
+
+    Navigator.pop(context);
+  }
+
   Future<void> loadComprehensions() async {
     final querySnapshot = await firestore.collection("sentences").get();
     setState(() {
@@ -123,6 +133,9 @@ class _TeacherFillInTheBlankScreen extends State<TeacherFillInTheBlankScreen> {
               sentenceID: sentence.id,
               sentenceEnglish: sentence.english,
               sentenceAfrikaans: sentence.afrikaans,
+              onDeleted: () {
+                onDeleted(sentence);
+              },
             )
         ],
       ),
