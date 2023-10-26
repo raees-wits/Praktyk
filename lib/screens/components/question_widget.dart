@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:e_learning_app/model/current_user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -126,11 +124,13 @@ class QuestionWidget extends StatelessWidget {
                     itemCount: answers.length,
                     itemBuilder: (context, index) {
                       final answerDoc = answers[index];
-                      final answerText = answerDoc['text'];
-                      final upvotes = answerDoc['upvotes'];
-                      final downvotes = answerDoc['downvotes'];
-                      final userName =answerDoc['userr_name'];
-
+                      final answerData = answers[index].data() as Map<String, dynamic>;
+                      final answerText = answerData['text'];
+                      final upvotes = answerData['upvotes'];
+                      final downvotes = answerData['downvotes'];
+                      final userName = answerData.containsKey('user_name') && answerData['user_name'] != null && answerData['user_name'].isNotEmpty
+                          ? answerData['user_name']
+                          : 'anonymous';
                       return AnswerWidget(
                         answer: answerText,
                         upvotes: upvotes,
