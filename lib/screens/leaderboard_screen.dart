@@ -40,25 +40,34 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
       CollectionReference leaderboardCollection =
           FirebaseFirestore.instance.collection('Users');
 
-      QuerySnapshot querySnapshot =
-          await leaderboardCollection.orderBy('grade').get();
+      QuerySnapshot querySnapshot = await leaderboardCollection
+          .orderBy('Total Questions Answered', descending: true)
+          .get();
 
       int count = 0; // Counter for the first three results
 
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
-        Map<String, dynamic>? data =
-            document.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
         if (data != null) {
           String firstName = data['firstName'] ?? 'N/A';
           String grade = data['grade'] ?? 'N/A';
 
           if (count == 0) {
-            first.add(Leader(winnerName: firstName, rank: '1', url: 'assets/images/games.png'));
+            first.add(Leader(
+                winnerName: firstName,
+                rank: '1',
+                url: 'assets/images/games.png'));
           } else if (count == 1) {
-            second.add(Leader(winnerName: firstName, rank: '2', url: 'assets/images/games.png'));
+            second.add(Leader(
+                winnerName: firstName,
+                rank: '2',
+                url: 'assets/images/games.png'));
           } else if (count == 2) {
-            third.add(Leader(winnerName: firstName, rank: '3', url: 'assets/images/games.png'));
+            third.add(Leader(
+                winnerName: firstName,
+                rank: '3',
+                url: 'assets/images/games.png'));
           } else {
             contestants.add({'firstName': firstName, 'grade': grade});
           }
