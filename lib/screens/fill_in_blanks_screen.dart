@@ -169,8 +169,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
             },
 
               child: Image.asset('assets/images/talkingtoucan.png',
-                width: 200,  // Adjust the width as needed
-                height: 200, // Adjust the height as needed
+                width: 120,  // Adjust the width as needed
+                height: 120, // Adjust the height as needed
               ), // Replace with your asset path
             ),
             SizedBox(width: 10), // Some spacing between the image and the text
