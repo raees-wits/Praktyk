@@ -15,6 +15,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
   String selectedWord = '';
   int currentQuestionIndex = 0;
   List<Map<String, dynamic>> questions = [];
+  int score = 0; // Added score variable
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
 
       for (var i = 0; i < 10 && i < validSentences.length; i++) {
         final sentence = validSentences[i].data()['afrikaans'] as String;
+        final englishTranslation = validSentences[i].data()['english'] as String; // Fetching the English translation
         final words = sentence.split(' ');
         final answer = words.firstWhere((word) => word.length >= 4);
 
@@ -62,6 +64,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
           'sentence': sentence.replaceAll(answer, '___'),
           'options': options..shuffle(),
           'answer': answer,
+          'english': englishTranslation, // Storing the English translation
         });
       }
 
@@ -96,6 +99,15 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Fill in the blanks'),
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Score: $score",
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -125,10 +137,12 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedWord = word;
-                        if (selectedWord == currentQuestion['answer']) {
-                          _showFeedbackDialog('Correct!', Colors.green[300]!);
+                        if (word == currentQuestion['answer']) {
+                          score += 10;
+                          _showFeedbackDialog('Correct!', Colors.green[200]!);
                         } else {
+                          score -= 2;
+                          if (score < 0) score = 0; // Ensure score doesn't go negative
                           _showFeedbackDialog('Incorrect!', Colors.red[300]!);
                         }
                       });
@@ -146,23 +160,63 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                 }).toList(),
               ),
             ),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (currentQuestionIndex < questions.length - 1) {
-                    setState(() {
-                      currentQuestionIndex++;
-                    });
-                  } else {
-                    // Example: Show a dialog when all questions are answered
-                    _showFeedbackDialog('You have answered all questions!', Colors.indigoAccent[100]!);
-                  }
-                },
-                child: Text('Next'),
+
+            // Add the assistant figure here
+            GestureDetector(
+              onTap: (){ if (currentQuestion.containsKey('english')) {
+                _showHelpDialog(currentQuestion['english']);
+              }
+            },
+
+              child: Image.asset('assets/images/talkingtoucan.png',
+                width: 120,  // Adjust the width as needed
+                height: 120, // Adjust the height as needed
+              ), // Replace with your asset path
+            ),
+            SizedBox(width: 10), // Some spacing between the image and the text
+            Text(
+              "Need help, click me",
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 16, // Adjust the font size if needed
               ),
             ),
+
+            Spacer(),
+
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (currentQuestionIndex > 0) {
+                        setState(() {
+                          currentQuestionIndex--;
+                        });
+                      }
+                    },
+                    child: Text('Previous'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (currentQuestionIndex < questions.length - 1) {
+                        setState(() {
+                          currentQuestionIndex++;
+                        });
+                      } else {
+                        _showFeedbackDialog('You have answered all questions!', Colors.indigoAccent[100]!);
+                      }
+                    },
+                    child: Text('Next'),
+                  ),
+                ],
+              ),
+            ),
+
             SizedBox(height: 20.0),
           ],
         ),
@@ -189,4 +243,38 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
       },
     );
   }
+
+  void _showHelpDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
+          backgroundColor: Colors.blue,
+          actions: [
+            TextButton(
+              child: Text('OK', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //
+  // void _handleAssistantClick() {
+  //   final currentQuestion = questions[currentQuestionIndex];
+  //   final translation = currentQuestion['english']; // Assuming you have an 'english' key in your question map
+  //   _showTranslationDialog(translation);
+  // }
 }
