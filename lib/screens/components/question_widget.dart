@@ -1,3 +1,4 @@
+import 'package:e_learning_app/model/current_user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,20 +84,21 @@ class QuestionWidget extends StatelessWidget {
                 ),
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _showAnswerDialog(context);
-                  },
-                  child: Text("Answer this question"),
-                ),
-              ],
+          if (CurrentUser().userType == 'Teacher')
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _showAnswerDialog(context);
+                    },
+                    child: Text("Answer this question"),
+                  ),
+                ],
+              ),
             ),
-          ),
           ExpansionTile(
             title: Text(
               "Answers",
