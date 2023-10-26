@@ -30,9 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               final newPassword = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChangePasswordScreen(
-                    currentPassword: accountCenterPassword,
-                  ),
+                  builder: (context) => ChangePasswordScreen(),
                 ),
               );
               if (newPassword != null) {

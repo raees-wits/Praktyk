@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class ChangePasswordScreen extends StatefulWidget {
-  final String currentPassword;
-
-  ChangePasswordScreen({required this.currentPassword});
+  const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
@@ -14,11 +14,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
 
-  String accountCenterPassword = "password123"; // This should be fetched from AccountCenterScreen
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool obscureTextCurrent = true;
   bool obscureTextNew = true;
   bool obscureTextConfirm = true;
+
+  @override
+  void dispose() {
+    currentPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> changePassword(String newPassword) async {
+    User? user = _auth.currentUser;
+
+    if (user != null) {
+      user.updatePassword(newPassword).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Success! Your password has been changed.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred while changing the password: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,47 +81,45 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 decoration: InputDecoration(
                   labelText: 'New Password',
                   suffixIcon: IconButton(
-                    icon: Icon(obscureTextCurrent ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(obscureTextNew ? Icons.visibility : Icons.visibility_off),
                     onPressed: () {
                       setState(() {
-                        obscureTextCurrent = !obscureTextCurrent;
+                        obscureTextNew = !obscureTextNew;
                       });
                     },
                   ),
                 ),
-                obscureText: obscureTextCurrent,
+                obscureText: obscureTextNew,
               ),
               TextFormField(
                 controller: confirmNewPasswordController,
                 decoration: InputDecoration(
                   labelText: 'Confirm New Password',
                   suffixIcon: IconButton(
-                    icon: Icon(obscureTextCurrent ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(obscureTextConfirm ? Icons.visibility : Icons.visibility_off),
                     onPressed: () {
                       setState(() {
-                        obscureTextCurrent = !obscureTextCurrent;
+                        obscureTextConfirm = !obscureTextConfirm;
                       });
                     },
                   ),
                 ),
-                obscureText: obscureTextCurrent,
+                obscureText: obscureTextConfirm,
               ),
               ElevatedButton(
-                onPressed: () {
-                  if (currentPasswordController.text == accountCenterPassword &&
-                      newPasswordController.text == confirmNewPasswordController.text &&
+                onPressed: () async {
+                  if (newPasswordController.text == confirmNewPasswordController.text &&
                       newPasswordController.text.isNotEmpty) {
-                    // Update the password in AccountCenterScreen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Success'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+
+                    // Ideally, here you validate the current password of the user.
+                    // For the sake of simplicity, it's not included in this code.
+                    // To fully secure the process, re-authenticate the user or validate the current password server-side.
+
+                    await changePassword(newPasswordController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed'),
+                        content: Text('Failed: Passwords do not match or fields are empty.'),
                         backgroundColor: Colors.red,
                       ),
                     );

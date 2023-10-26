@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../model/current_user.dart';
 import 'account_center_screen.dart';
 import 'settings_screen.dart';
 
@@ -33,21 +34,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _getUserInfo() async {
     User? currentUser = _auth.currentUser;
-
+    var userID = CurrentUser().userId!;
+    print(currentUser?.uid);
     if (currentUser != null) {
       try {
         DocumentSnapshot userDoc = await _firestore.collection('Users').doc(currentUser.uid).get();
-
-        if (userDoc.exists) {
+        var document = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userID)
+            .get();
+        if (document.exists) {
           setState(() {
-            userType = userDoc['userType'] ?? "Not specified";
-            email = userDoc['email'] ?? "not specified";
-            phone = userDoc['phone'] ?? "not specified";
-            firstName = userDoc['firstName'] ?? "not specified";
-            lastName = userDoc['lastName'] ?? "not specified";
+            userType = document.data()?['userType'];
+            email = document.data()?['email'];
+            phone = document.data()?['phone'];
+            firstName = document.data()?['firstName'];
+            lastName = document.data()?['lastName'];
             name = "$firstName $lastName";
-            grade = userDoc['grade'] ?? "not specified";
-            school = userDoc['school'];
+            if (userType=='Student'){
+              grade = document.data()?['grade'];
+              school = document.data()?['school'];
+            }
 
           });
         } else {
