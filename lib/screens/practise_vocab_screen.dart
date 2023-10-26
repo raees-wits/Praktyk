@@ -10,6 +10,8 @@ import 'package:e_learning_app/screens/category_tree.dart';
 import '../../model/category_modal.dart';
 import 'MultipleChoiceScreen.dart';
 import 'TeacherScreens/teacher_match_the_column_screen.dart';
+import 'TeacherScreens/teacher_multiple_choice.dart';
+import 'TeacherScreens/teacher_short_answer_questions.dart';
 import 'components/multiPurposeCategoryScreen.dart';
 
 class PracticeVocabularyScreen extends StatelessWidget {
@@ -121,12 +123,21 @@ class PracticeVocabularyScreen extends StatelessWidget {
               ));
             }
           } else if (title == "Short Questions") {
-            Navigator.push(
+            if (updateMode == "Modify"){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ManageShortAnswerScreen(),
+                ),
+              );
+            } else {
+              Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ShortAnswerQuestions(),
               ),
             );
+            }
           } else if (title == "Comprehension Texts") {
             if (updateMode == "Modify") {
               Navigator.push(
@@ -142,12 +153,20 @@ class PracticeVocabularyScreen extends StatelessWidget {
               );
             }
           } else  if (title == "Multiple Choice") {
-            Navigator.push(
+            if (updateMode == "Modify"){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                  builder: (context) => const TeacherMultipleChoice()),
+          );
+            }else {
+              Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MultiPurposeCategoryScreen(questionType: "MultipleChoice"),
               ),
             );
+            }
           }
         },
       ),

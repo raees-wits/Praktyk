@@ -9,6 +9,8 @@ class Question {
 }
 
 class TeacherMultipleChoice extends StatefulWidget {
+  const TeacherMultipleChoice({Key? key}) : super(key: key);
+
   @override
   _TeacherMultipleChoiceState createState() => _TeacherMultipleChoiceState();
 }
