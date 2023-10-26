@@ -217,6 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (userDoc.exists) {
                 CurrentUser().userId = userCredential.user!.uid; // Set the userId here
                 String userType = userDoc['userType'];
+                CurrentUser().userType = userDoc['userType'];
                 CurrentUser().firstName = userDoc['firstName'];
 
                 if (userType == "Student") {
