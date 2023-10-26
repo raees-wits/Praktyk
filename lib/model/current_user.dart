@@ -6,4 +6,5 @@ class CurrentUser {
 
   String? userId; // To store the user's document ID
   String? userType; // To store the user's type
+  String? firstName;
 }

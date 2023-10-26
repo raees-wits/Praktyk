@@ -1,3 +1,4 @@
+import 'package:e_learning_app/model/current_user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,20 +84,21 @@ class QuestionWidget extends StatelessWidget {
                 ),
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _showAnswerDialog(context);
-                  },
-                  child: Text("Answer this question"),
-                ),
-              ],
+          if (CurrentUser().userType == 'Teacher')
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _showAnswerDialog(context);
+                    },
+                    child: Text("Answer this question"),
+                  ),
+                ],
+              ),
             ),
-          ),
           ExpansionTile(
             title: Text(
               "Answers",
@@ -122,14 +124,18 @@ class QuestionWidget extends StatelessWidget {
                     itemCount: answers.length,
                     itemBuilder: (context, index) {
                       final answerDoc = answers[index];
-                      final answerText = answerDoc['text'];
-                      final upvotes = answerDoc['upvotes'];
-                      final downvotes = answerDoc['downvotes'];
-
+                      final answerData = answers[index].data() as Map<String, dynamic>;
+                      final answerText = answerData['text'];
+                      final upvotes = answerData['upvotes'];
+                      final downvotes = answerData['downvotes'];
+                      final userName = answerData.containsKey('user_name') && answerData['user_name'] != null && answerData['user_name'].isNotEmpty
+                          ? answerData['user_name']
+                          : 'anonymous';
                       return AnswerWidget(
                         answer: answerText,
                         upvotes: upvotes,
                         downvotes: downvotes,
+                        posterName:userName,
                         onUpvote: () async {
                           await _upvoteAnswer(questionId, answerDoc.id);
                         },
@@ -196,6 +202,7 @@ class QuestionWidget extends StatelessWidget {
               child: Text("Submit"),
               onPressed: () async {
                 if (answerText.isNotEmpty) {
+                  String? currentUserFirstName = CurrentUser().firstName;
                   await FirebaseFirestore.instance
                       .collection('questions')
                       .doc(questionId)
@@ -205,6 +212,7 @@ class QuestionWidget extends StatelessWidget {
                     'upvotes': 0, // Initial upvotes count
                     'downvotes': 0, // Initial downvotes count
                     'timestamp': FieldValue.serverTimestamp(),
+                    'user_name': currentUserFirstName,
                   });
                   Navigator.of(context).pop();
                 }

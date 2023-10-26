@@ -6,6 +6,7 @@ class AnswerWidget extends StatefulWidget {
   final int downvotes;
   final VoidCallback onUpvote;
   final VoidCallback onDownvote;
+  final String? posterName;
 
   AnswerWidget({
     required this.answer,
@@ -13,6 +14,7 @@ class AnswerWidget extends StatefulWidget {
     required this.downvotes,
     required this.onUpvote,
     required this.onDownvote,
+    this.posterName,
   });
 
   @override
@@ -35,7 +37,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
             Padding(
               padding: EdgeInsets.only(left: 10.0),
               child: Text(
-                'Posted by Jane Doe',
+                'Posted by ${widget.posterName ?? 'Anonymous'}',
                 style: TextStyle(
                   fontSize: 12.0,
                   color: Colors.grey,
