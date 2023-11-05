@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:e_learning_app/firebase_options.dart';
@@ -7,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class FillInTheBlanksScreen extends StatefulWidget {
+
   @override
   _FillInTheBlanksScreenState createState() => _FillInTheBlanksScreenState();
 }
@@ -75,6 +77,56 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
       // Optionally, show an error dialog or some feedback to the user.
     }
   }
+
+  // Future<void> _updateUserScore() async {
+  //   User? currentUser = FirebaseAuth.instance.currentUser;
+  //   if (currentUser == null) return;
+  //
+  //   // Fetch the user's document from Firestore
+  //   final userDocs = await FirebaseFirestore.instance.collection('Users')
+  //       .where('firstName', isEqualTo: firstName)
+  //       .where('lastName', isEqualTo: lastName)
+  //       .get();
+  //
+  //   // Ensure we have a matching document
+  //   if (userDocs.docs.isNotEmpty) {
+  //     final userDoc = userDocs.docs.first;
+  //
+  //     // Update the 'Fill in the blanks' score
+  //     await userDoc.reference.update({
+  //       'Questions Completed.Fill in the blanks': FieldValue.increment(1)
+  //     });
+  //   }
+  // }
+
+  void _showHelpDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
+          backgroundColor: Colors.blue,
+          actions: [
+            TextButton(
+              child: Text('OK', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
 
 
@@ -224,6 +276,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
     );
   }
 
+
+
   void _showFeedbackDialog(String message, Color color) {
     showDialog(
       context: context,
@@ -242,34 +296,12 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
         );
       },
     );
+    // if (message == 'Correct!') {
+    //   _updateUserScore(); // Update the user's score in Firestore
+    // }
   }
 
-  void _showHelpDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Text(
-            message,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
-            ),
-          ),
-          backgroundColor: Colors.blue,
-          actions: [
-            TextButton(
-              child: Text('OK', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   //
   // void _handleAssistantClick() {
