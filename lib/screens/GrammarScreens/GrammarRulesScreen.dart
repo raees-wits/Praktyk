@@ -1,4 +1,5 @@
 import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
+import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
@@ -91,6 +92,11 @@ class GrammarRulesScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => FutureTenseScreen()),
+            );
+          }else if (title == "Negatives"){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NegativeFormScreen()),
             );
           }
         },
