@@ -46,9 +46,9 @@ class _NegativeFormScreenState extends State<NegativeFormScreen> {
   void submitAnswer() {
     setState(() {
       String userAnswer = answerController.text.trim();
-      String correctAnswer = questions[currentQuestionIndex]['Answer'];
+      List<String> correctAnswers = List<String>.from(questions[currentQuestionIndex]['Answers']);
 
-      if (userAnswer == correctAnswer) {
+      if (correctAnswers.contains(userAnswer)) {
         feedback = "Correct!";
         isCorrect = true;
 
@@ -70,7 +70,7 @@ class _NegativeFormScreenState extends State<NegativeFormScreen> {
           }
         });
       } else {
-        feedback = "Incorrect! The correct answer is:\n\n $correctAnswer";
+        feedback = "Incorrect! The correct answer is:\n\n${correctAnswers[0]}";
         isCorrect = false;
       }
       opacityLevel = 1.0;
@@ -82,6 +82,7 @@ class _NegativeFormScreenState extends State<NegativeFormScreen> {
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
