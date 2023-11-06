@@ -1,4 +1,5 @@
 import 'package:e_learning_app/model/product_model.dart';
+import 'package:e_learning_app/screens/GrammarRulesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
 
@@ -63,6 +64,13 @@ class CategoryCard extends StatelessWidget {
               );
             }
           }
+      else if (product.title == "Grammar Rules"){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => GrammarRulesScreen(updateMode: '',)),
+        );
+      }
         },
         child: Container(
           padding: const EdgeInsets.all(10.0),
