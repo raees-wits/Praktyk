@@ -1,4 +1,5 @@
 import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
+import 'package:e_learning_app/screens/GrammarScreens/IndirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
@@ -59,6 +60,7 @@ class GrammarRulesScreen extends StatelessWidget {
                   _buildGrammarRuleTile(context, "Past Tense", 0),
                   _buildGrammarRuleTile(context, "Future Tense", 1),
                   _buildGrammarRuleTile(context, "Negatives", 2),
+                  _buildGrammarRuleTile(context, "Indirect Speech", 3),
                 ],
               ),
             ),
@@ -97,6 +99,12 @@ class GrammarRulesScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NegativeFormScreen()),
+            );
+          }
+          else if (title == "Indirect Speech"){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => IndirectSpeechScreen()),
             );
           }
         },
