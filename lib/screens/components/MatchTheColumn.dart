@@ -101,15 +101,34 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Future<void> updateMatchTheColumnCount(String userId, String categoryName, int incrementValue) async {
     try {
       final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
-      await userRef.set({
-        'MatchTheColumn': {
-          categoryName: FieldValue.increment(incrementValue),
+      final batch = FirebaseFirestore.instance.batch();
+
+      // Update 'MatchTheColumn' count
+      batch.set(
+        userRef,
+        {
+          'MatchTheColumn': {
+            categoryName: FieldValue.increment(incrementValue),
+          },
         },
-      }, SetOptions(merge: true));
+        SetOptions(merge: true),
+      );
+
+      // Update 'Questions Completed. Match The Column' count
+      batch.update(
+        userRef,
+        {
+          'Questions Completed.Match The Column': FieldValue.increment(incrementValue),
+        },
+      );
+
+      // Commit both updates in a single batch
+      await batch.commit();
     } catch (e) {
       print("Error updating MatchTheColumn count: $e");
     }
   }
+
 
 
   Future<void> fetchRandomQuestionsAndAnswers(int startIndex) async {
