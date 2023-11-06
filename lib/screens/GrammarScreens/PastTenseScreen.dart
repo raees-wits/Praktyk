@@ -117,7 +117,16 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 10), // Add space between question number and additional text
+                  Text(
+                    "Give the past tense of the following sentence:",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 30),
                   isLoading // Display loading circle if isLoading is true
                       ? CircularProgressIndicator()
                       : Container(
