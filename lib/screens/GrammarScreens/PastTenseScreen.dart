@@ -14,6 +14,7 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
   String? feedback;
   bool? isCorrect;
   double opacityLevel = 0.0;
+  bool isLoading = true; // Added to track loading state
 
   List<Map<String, dynamic>> questions = []; // Store questions and answers
 
@@ -33,6 +34,7 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
       if (questionsList is List) {
         setState(() {
           questions = List<Map<String, dynamic>>.from(questionsList);
+          isLoading = false; // Data is loaded, set isLoading to false
         });
       }
     } catch (e) {
@@ -116,7 +118,9 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 40),
-                  Container(
+                  isLoading // Display loading circle if isLoading is true
+                      ? CircularProgressIndicator()
+                      : Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),

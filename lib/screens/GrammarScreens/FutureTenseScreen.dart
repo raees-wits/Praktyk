@@ -14,6 +14,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
   String? feedback;
   bool? isCorrect;
   double opacityLevel = 0.0;
+  bool isLoading = true; // Added to track loading state
 
   List<Map<String, dynamic>> questions = []; // Store questions and answers
 
@@ -33,6 +34,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
       if (questionsList is List) {
         setState(() {
           questions = List<Map<String, dynamic>>.from(questionsList);
+          isLoading = false; // Data is loaded, set isLoading to false
         });
       }
     } catch (e) {
@@ -113,23 +115,25 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
                       fontSize: 45,
                       color: Colors.white,
                     ),
-                    textAlign: TextAlign center,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 40),
-                  Container(
+                  isLoading // Display loading circle if isLoading is true
+                      ? CircularProgressIndicator()
+                      : Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Text(
-                      questions[currentQuestionIndex]['Future Tense'],
+                      questions[currentQuestionIndex]['Present Tense'], // Display "Present Tense" as the question
                       style: TextStyle(
                         fontFamily: 'NunitoSans',
                         fontSize: 32,
                         color: Colors.white,
                       ),
-                      textAlign: TextAlign center,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   SizedBox(height: 40),
@@ -180,7 +184,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
                           duration: Duration(seconds: 1),
                           child: Icon(
                             isCorrect! ? Icons.check : Icons.close,
-                            color: isCorrect! ? Colors.green : Colors red,
+                            color: isCorrect! ? Colors.green : Colors.red,
                             size: 30,
                           ),
                         ),

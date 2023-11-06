@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
@@ -86,9 +87,11 @@ class GrammarRulesScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => PastTenseScreen()),
             );
-          } else {
-            // Handle the navigation or actions for other rules if needed
-            // You can add more conditions for other rules.
+          } else if (title == "Future Tense"){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FutureTenseScreen()),
+            );
           }
         },
       ),
