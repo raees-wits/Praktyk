@@ -1,5 +1,5 @@
 import 'package:e_learning_app/model/product_model.dart';
-import 'package:e_learning_app/screens/GrammarRulesScreen.dart';
+import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
 

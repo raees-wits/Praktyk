@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
+import 'PastTenseScreen.dart';
+
 class GrammarRulesScreen extends StatelessWidget {
   final String updateMode;
 
@@ -69,7 +71,7 @@ class GrammarRulesScreen extends StatelessWidget {
 
   Widget _buildGrammarRuleTile(BuildContext context, String title, int index) {
     return Card(
-      color: pastelColors[index % pastelColors.length], // Change the color as desired
+      color: pastelColors[index % pastelColors.length],
       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: ListTile(
         title: Text(
@@ -77,11 +79,20 @@ class GrammarRulesScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         onTap: () {
-          // Handle the navigation for each grammar rule
-          // For example, navigate to specific screens or perform actions based on the selected rule.
-          // You can use a similar logic as in the PracticeVocabularyScreen.
+          if (title == "Past Tense") {
+            // Handle the navigation or actions for the "Past Tense" rule
+            // For example, navigate to the PastTenseScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PastTenseScreen()),
+            );
+          } else {
+            // Handle the navigation or actions for other rules if needed
+            // You can add more conditions for other rules.
+          }
         },
       ),
     );
   }
+
 }
