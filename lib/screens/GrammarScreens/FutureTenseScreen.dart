@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:flutter/services.dart';
 import 'dart:async';
 
+import '../../model/current_user.dart';
+
 class FutureTenseScreen extends StatefulWidget {
   @override
   _FutureTenseScreenState createState() => _FutureTenseScreenState();
@@ -50,6 +52,26 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
       if (userAnswer == correctAnswer) {
         feedback = "Correct!";
         isCorrect = true;
+
+        // Update the user's document in the "Users" collection
+        final firestore = FirebaseFirestore.instance;
+        final CollectionReference usersCollection = firestore.collection('Users');
+
+        String? userId = CurrentUser().userId;
+
+        usersCollection.doc(userId).get().then((docSnapshot) {
+          if (docSnapshot.exists) {
+            final userData = docSnapshot.data() as Map<String, dynamic>;
+            final questionsCompleted = userData['Questions Completed']['Future Tense'] ?? 0;
+
+            // Compare with the current question number and update if necessary
+            if (questionsCompleted <= currentQuestionIndex) {
+              usersCollection.doc(userId).update({
+                'Questions Completed.Future Tense': currentQuestionIndex+1,
+              });
+            }
+          }
+        });
       } else {
         feedback = "Incorrect! The correct answer is:\n\n $correctAnswer";
         isCorrect = false;
@@ -57,12 +79,13 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
       opacityLevel = 1.0;
     });
 
-    Timer(Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 2), () {
       setState(() {
         opacityLevel = 0.0;
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

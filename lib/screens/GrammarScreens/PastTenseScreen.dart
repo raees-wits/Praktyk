@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:flutter/services.dart';
 import 'dart:async';
 
+import '../../model/current_user.dart';
+
 class PastTenseScreen extends StatefulWidget {
   @override
   _PastTenseScreenState createState() => _PastTenseScreenState();
@@ -50,6 +52,27 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
       if (userAnswer == correctAnswer) {
         feedback = "Correct!";
         isCorrect = true;
+
+        // Update the user's document in the "Users" collection
+        final firestore = FirebaseFirestore.instance;
+        final CollectionReference usersCollection = firestore.collection('Users');
+
+        String? userId = CurrentUser().userId;
+
+        // Fetch the current 'Questions Completed.Past Tense' count
+        usersCollection.doc(userId).get().then((docSnapshot) {
+          if (docSnapshot.exists) {
+            final userData = docSnapshot.data() as Map<String, dynamic>;
+            final questionsCompleted = userData['Questions Completed']['Past Tense'] ?? 0;
+
+            // Compare with the current question number and update if necessary
+            if (questionsCompleted <= currentQuestionIndex) {
+              usersCollection.doc(userId).update({
+                'Questions Completed.Past Tense': currentQuestionIndex+1,
+              });
+            }
+          }
+        });
       } else {
         feedback = "Incorrect! The correct answer is:\n\n $correctAnswer";
         isCorrect = false;
@@ -57,12 +80,13 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
       opacityLevel = 1.0;
     });
 
-    Timer(Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 2), () {
       setState(() {
         opacityLevel = 0.0;
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
