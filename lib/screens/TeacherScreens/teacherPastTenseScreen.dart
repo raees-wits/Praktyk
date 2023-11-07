@@ -30,6 +30,34 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
     });
   }
 
+
+  void deleteQuestion(String questionId, int index) async {
+    if (questionId.isEmpty) {
+      // If the question doesn't have an ID, it hasn't been saved to Firestore yet
+      // so you can remove it directly from the local list.
+      setState(() {
+        questions.removeAt(index);
+      });
+    } else {
+      // If it has an ID, delete the document from Firestore.
+      final collectionReference = FirebaseFirestore.instance.collection('Tenses');
+      await collectionReference.doc(questionId).delete().then((_) {
+        setState(() {
+          questions.removeAt(index);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Question deleted successfully!')),
+        );
+      }).catchError((error) {
+        print("Error deleting question: $error");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete question')),
+        );
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,15 +78,15 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
               itemBuilder: (ctx, index) {
                 return QuestionEditor(
                   question: questions[index],
+                  index: index, // Pass the current index
+                  id: questions[index].id, // Pass the question's ID
                   onChanged: (updatedQuestion) {
                     setState(() {
                       questions[index] = updatedQuestion;
                     });
                   },
                   onRemove: () {
-                    setState(() {
-                      questions.removeAt(index);
-                    });
+                    deleteQuestion(questions[index].id, index); // Call deleteQuestion with ID and index
                   },
                 );
               },
@@ -107,11 +135,16 @@ class QuestionEditor extends StatefulWidget {
   final Question question;
   final ValueChanged<Question> onChanged;
   final VoidCallback onRemove;
+  final int index; // Add this
+  final String id; // Add this
 
+// Change the constructor accordingly
   QuestionEditor({
     required this.question,
     required this.onChanged,
     required this.onRemove,
+    required this.index, // Add this
+    required this.id, // Add this
   });
 
   @override
@@ -159,10 +192,10 @@ class _QuestionEditorState extends State<QuestionEditor> {
           ),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: widget.onRemove,
+            onPressed: () => widget.onRemove(),
             child: Text('Remove Question'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              primary: Colors.red,
             ),
           ),
         ],
