@@ -53,7 +53,7 @@ class CategoryCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
+                    builder: (context) => TeacherChoiceScreen(screen: 'Vocabulary')),
               );
             } else {
               // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
@@ -65,11 +65,21 @@ class CategoryCard extends StatelessWidget {
             }
           }
       else if (product.title == "Grammar Rules"){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => GrammarRulesScreen(updateMode: '',)),
-        );
+        if (CurrentUser().userType == "Teacher") {
+          // If userType is "Teacher", navigate to TeacherChoiceScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TeacherChoiceScreen(screen: 'Grammar')),
+          );
+        } else {
+          // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GrammarRulesScreen(updateMode: '',)),
+          );
+        }
       }
         },
         child: Container(

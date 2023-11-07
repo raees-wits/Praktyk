@@ -1,8 +1,13 @@
+import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens/practise_vocab_screen.dart'; // ensure you import the PracticeVocabularyScreen
 
 class TeacherChoiceScreen extends StatelessWidget {
-  const TeacherChoiceScreen({Key? key}) : super(key: key);
+  final String screen;
+
+  TeacherChoiceScreen({required this.screen});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,22 +47,41 @@ class TeacherChoiceScreen extends StatelessWidget {
             children: <Widget>[
               buildGradientButton(
                 onPressed: () {
-                  // Navigate to the PracticeVocabularyScreen when this is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
-                  );
+                  
+                  if (screen == "Vocabulary") {
+                    // Navigate to the PracticeVocabularyScreen when this is pressed
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          PracticeVocabularyScreen(updateMode: '',)),
+                    );
+                  }else if (screen == "Grammar"){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          GrammarRulesScreen(updateMode:'')),
+                    );
+                  }
                 },
                 text: 'View Student Perspective', // change the button text
                 colors: [Colors.blue, Colors.purple], // colors for the gradient
               ),
               buildGradientButton(
                 onPressed: () {
-                  // TODO: Navigate to the "Modify Questions" screen when this is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Modify',)),
-                  );
+                  if (screen == "Vocabulary") {
+                    // Navigate to the PracticeVocabularyScreen when this is pressed
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          PracticeVocabularyScreen(updateMode: 'Modify',)),
+                    );
+                  }else if (screen == "Grammar"){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          GrammarRulesScreen(updateMode:'Modify')),
+                    );
+                  }
                 },
                 text: 'Add/Modify Questions',
                 colors: [Colors.green, Colors.teal], // another set of colors for the gradient

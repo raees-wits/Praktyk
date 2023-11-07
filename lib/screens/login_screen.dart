@@ -220,22 +220,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 CurrentUser().userType = userDoc['userType'];
                 CurrentUser().firstName = userDoc['firstName'];
 
-                if (userType == "Student") {
-                  // Navigate to student screen
-                  print("UserType1:"+ userType);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                } else {
-                  // Navigate to teacher screen
-                  print("UserType2:"+ userType);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TeacherHomeScreen()),
-                  );
-                }
               } else {
                 showMessage("User does not exist in the database");
               }
