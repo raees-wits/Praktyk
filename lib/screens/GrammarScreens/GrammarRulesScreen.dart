@@ -4,6 +4,7 @@ import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
+import '../TeacherScreens/teacherPastTenseScreen.dart';
 import 'PastTenseScreen.dart';
 
 class GrammarRulesScreen extends StatelessWidget {
@@ -13,6 +14,11 @@ class GrammarRulesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    String titleText = (updateMode == "Modify")
+        ? "Choose a Grammar Rule to Modify"
+        : "Choose a Grammar Rule";
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -25,7 +31,7 @@ class GrammarRulesScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          "Grammar Rules", // Replace with your desired title
+          "Choose a Grammar Rule", // Replace with your desired text
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -46,7 +52,7 @@ class GrammarRulesScreen extends StatelessWidget {
           children: [
             SizedBox(height: 20.0),
             Text(
-              "Choose a Grammar Rule", // Replace with your desired text
+              titleText,
               style: TextStyle(
                 fontSize: 50,
                 color: Colors.white,
@@ -84,12 +90,17 @@ class GrammarRulesScreen extends StatelessWidget {
         ),
         onTap: () {
           if (title == "Past Tense") {
-            // Handle the navigation or actions for the "Past Tense" rule
-            // For example, navigate to the PastTenseScreen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PastTenseScreen()),
-            );
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PastTenseScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TeacherPastTenseScreen()),
+              );
+            }
           } else if (title == "Future Tense"){
             Navigator.push(
               context,
