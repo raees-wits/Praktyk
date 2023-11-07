@@ -10,6 +10,15 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, TextEditingController>> controllers = [];
 
+  void addNewTenseField() {
+    setState(() {
+      controllers.add({
+        'present': TextEditingController(text: ''),
+        'past': TextEditingController(text: ''),
+      });
+    });
+  }
+
   @override
   void dispose() {
     // Dispose of all the controllers when the widget is removed from the widget tree
@@ -20,19 +29,37 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
     super.dispose();
   }
 
-  Widget _buildSaveButton(List<dynamic> questions) {
+  Widget _buildSaveButton() {
     return ElevatedButton(
-      onPressed: () {
-        var updatedQuestions = questions.asMap().entries.map((entry) {
-          int idx = entry.key;
-          var q = entry.value;
-          q['Present Tense'] = controllers[idx]['present']!.text;
-          q['Past Tense'] = controllers[idx]['past']!.text;
-          return q;
-        }).toList();
+      onPressed: () async {
+        // Get the current snapshot to merge with updates
+        DocumentSnapshot snapshot = await _firestore.collection('Tenses').doc('Questions').get();
+        List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
 
-        // Update the Firestore document with new values
-        _firestore.collection('Tenses').doc('Questions').set({'Questions': updatedQuestions});
+        List updatedQuestions = List.generate(currentQuestions.length, (index) {
+          Map<String, dynamic> question = Map.from(currentQuestions[index]);
+          // Update only the fields that we have controllers for
+          if (index < controllers.length) {
+            question['Present Tense'] = controllers[index]['present']!.text;
+            question['Past Tense'] = controllers[index]['past']!.text;
+          }
+          return question;
+        });
+
+        // If there are more controllers than existing questions, add the new ones
+        if (controllers.length > currentQuestions.length) {
+          updatedQuestions.addAll(
+            controllers.getRange(currentQuestions.length, controllers.length).map((controllerMap) {
+              return {
+                'Present Tense': controllerMap['present']!.text,
+                'Past Tense': controllerMap['past']!.text,
+              };
+            }).toList(),
+          );
+        }
+
+        // Set the merged 'Questions' list to Firestore
+        await _firestore.collection('Tenses').doc('Questions').set({'Questions': updatedQuestions});
       },
       child: Text('Save Changes'),
     );
@@ -54,16 +81,16 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
             return Center(child: CircularProgressIndicator());
           }
 
-          var data = snapshot.data!.data() as Map<String, dynamic>;
-          var questions = data['Questions'] as List<dynamic>;
-          controllers = []; // Reset controllers
-
-          // Initialize a controller for each question
-          for (var question in questions) {
-            controllers.add({
-              'present': TextEditingController(text: question['Present Tense']),
-              'past': TextEditingController(text: question['Past Tense']),
-            });
+          // Check for data existence and if controllers need to be initialized
+          var data = snapshot.data!.data() as Map<String, dynamic>?;
+          if (controllers.isEmpty) { // Check this to avoid resetting controllers
+            var questions = data?['Questions'] ?? [];
+            for (var question in questions) {
+              controllers.add({
+                'present': TextEditingController(text: question['Present Tense']),
+                'past': TextEditingController(text: question['Past Tense']),
+              });
+            }
           }
 
           return SingleChildScrollView(
@@ -72,9 +99,8 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: questions.length,
+                  itemCount: controllers.length,
                   itemBuilder: (context, index) {
-                    var question = questions[index];
                     return ListTile(
                       title: TextFormField(
                         controller: controllers[index]['present'],
@@ -87,23 +113,30 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          // Delete the item
                           setState(() {
-                            questions.removeAt(index);
+                            if (index < data?['Questions'].length) {
+                              // Update Firestore only if the question exists there
+                              data?['Questions'].removeAt(index);
+                              _firestore.collection('Tenses').doc('Questions').update({'Questions': data?['Questions']});
+                            }
+                            // Remove the controller regardless
                             controllers.removeAt(index);
                           });
-                          // Update the Firestore document
-                          _firestore.collection('Tenses').doc('Questions').update({'Questions': questions});
                         },
                       ),
                     );
                   },
                 ),
-                _buildSaveButton(questions),
+                _buildSaveButton(),
               ],
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: addNewTenseField,
+        tooltip: 'Add Tense',
+        child: Icon(Icons.add),
       ),
     );
   }
