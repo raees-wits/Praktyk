@@ -38,7 +38,7 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: () => saveQuestions('PastTense', questions, context),
+            onPressed: () => saveQuestions('Tenses', questions, context),
           ),
         ],
       ),
@@ -77,28 +77,30 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
   void loadQuestions() async {
     try {
       final collectionReference = FirebaseFirestore.instance.collection('Tenses');
-      final documentReference = collectionReference.doc('Questions');
-      final documentSnapshot = await documentReference.get();
+      final querySnapshot = await collectionReference.get();
 
-      if (documentSnapshot.exists) {
-        final data = documentSnapshot.data() as Map<String, dynamic>;
-        final questionsData = data['Questions'] as List<dynamic>;
-
-        final loadedQuestions = questionsData.map((questionMap) {
-          return Question(
-            presentTense: questionMap['Present Tense'],
-            pastTense: questionMap['Past Tense'],
-          );
-        }).toList();
-
-        setState(() {
-          questions = loadedQuestions;
-        });
+      List<Question> loadedQuestions = [];
+      for (var doc in querySnapshot.docs) { // Loop through the document snapshots
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>; // Cast the document data to a Map
+        // Create a new Question only if the expected fields exist
+        if (data.containsKey('Present Tense') && data.containsKey('Past Tense')) {
+          loadedQuestions.add(Question(
+            id: doc.id, // Use the document's ID as the question's ID
+            presentTense: data['Present Tense'],
+            pastTense: data['Past Tense'],
+          ));
+        }
       }
+
+      setState(() {
+        questions = loadedQuestions;
+      });
     } catch (error) {
       print("An error occurred while loading questions: $error");
     }
   }
+
+
 }
 
 class QuestionEditor extends StatefulWidget {
@@ -170,32 +172,41 @@ class _QuestionEditorState extends State<QuestionEditor> {
 }
 
 class Question {
+  String id; // Add an id field
   String presentTense;
   String pastTense;
 
-  Question({required this.presentTense, required this.pastTense});
+  Question({this.id = '', required this.presentTense, required this.pastTense});
+
+  // Add a method to convert a Question to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'Present Tense': presentTense,
+      'Past Tense': pastTense,
+    };
+  }
 }
 
 void saveQuestions(String collectionName, List<Question> questions, BuildContext context) async {
-  // Prepare the structure for the "Questions" array field.
-  List<Map<String, dynamic>> updatedQuestionsList = [];
+  final collectionReference = FirebaseFirestore.instance.collection('Tenses');
+  final batch = FirebaseFirestore.instance.batch(); // Use a batch for multiple writes
 
   for (var question in questions) {
-    // Each question is represented as a map with "Present Tense" and "Past Tense" fields.
-    Map<String, dynamic> questionMap = {
-      'Present Tense': question.presentTense,
-      'Past Tense': question.pastTense,
-    };
-    updatedQuestionsList.add(questionMap);
+    if (question.id.isEmpty) {
+      // If there is no id, we assume it's a new question, so we add it
+      var newDocRef = collectionReference.doc();
+      question.id = newDocRef.id; // Assign the new id to the question
+      batch.set(newDocRef, question.toMap());
+    } else {
+      // If an id exists, we update the specific question
+      var docRef = collectionReference.doc(question.id);
+      batch.update(docRef, question.toMap());
+    }
   }
 
   try {
-    final collectionReference = FirebaseFirestore.instance.collection(collectionName);
-    final documentReference = collectionReference.doc('Questions');
-
-    // Update the "Questions" array field with the new list.
-    await documentReference.set({'Questions': updatedQuestionsList}, SetOptions(merge: true));
-
+    await batch.commit(); // Commit the batch
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Questions updated successfully!')),
     );
