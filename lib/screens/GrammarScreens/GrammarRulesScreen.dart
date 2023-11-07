@@ -103,12 +103,12 @@ class GrammarRulesScreen extends StatelessWidget {
               );
             }
           } else if (title == "Future Tense"){
-            if (updateMode == "") {
+            if (updateMode =='') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => FutureTenseScreen()),
               );
-            }else if (updateMode == "Modify") {
+            }else if (updateMode =='Modify') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => TeacherFutureTenseScreen()),

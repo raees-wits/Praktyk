@@ -1,260 +1,143 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class TeacherPastTenseScreen extends StatefulWidget {
-  const TeacherPastTenseScreen({Key? key}) : super(key: key);
-
   @override
   _TeacherPastTenseScreenState createState() => _TeacherPastTenseScreenState();
 }
 
 class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
-  List<Question> questions = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Map<String, TextEditingController>> controllers = [];
 
-  @override
-  void initState() {
-    super.initState();
-    loadQuestions(); // Load questions when the screen is initialized
-  }
-
-  void addNewQuestion() {
+  void addNewTenseField() {
     setState(() {
-      // Create a new question with default values.
-      var newQuestion = Question(
-        presentTense: '', // Start with empty string
-        pastTense: '', // Start with empty string
-      );
-
-      // Add the new question to the list of questions.
-      questions.add(newQuestion);
+      controllers.add({
+        'present': TextEditingController(text: ''),
+        'past': TextEditingController(text: ''),
+      });
     });
   }
 
-
-  void deleteQuestion(String questionId, int index) async {
-    if (questionId.isEmpty) {
-      // If the question doesn't have an ID, it hasn't been saved to Firestore yet
-      // so you can remove it directly from the local list.
-      setState(() {
-        questions.removeAt(index);
-      });
-    } else {
-      // If it has an ID, delete the document from Firestore.
-      final collectionReference = FirebaseFirestore.instance.collection('Tenses');
-      await collectionReference.doc(questionId).delete().then((_) {
-        setState(() {
-          questions.removeAt(index);
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Question deleted successfully!')),
-        );
-      }).catchError((error) {
-        print("Error deleting question: $error");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete question')),
-        );
-      });
+  @override
+  void dispose() {
+    // Dispose of all the controllers when the widget is removed from the widget tree
+    for (var controllerMap in controllers) {
+      controllerMap['present']?.dispose();
+      controllerMap['past']?.dispose();
     }
+    super.dispose();
   }
 
+  Widget _buildSaveButton() {
+    return ElevatedButton(
+      onPressed: () async {
+        // Get the current snapshot to merge with updates
+        DocumentSnapshot snapshot = await _firestore.collection('Tenses').doc('Questions').get();
+        List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
+
+        List updatedQuestions = List.generate(currentQuestions.length, (index) {
+          Map<String, dynamic> question = Map.from(currentQuestions[index]);
+          // Update only the fields that we have controllers for
+          if (index < controllers.length) {
+            question['Present Tense'] = controllers[index]['present']!.text;
+            question['Past Tense'] = controllers[index]['past']!.text;
+          }
+          return question;
+        });
+
+        // If there are more controllers than existing questions, add the new ones
+        if (controllers.length > currentQuestions.length) {
+          updatedQuestions.addAll(
+            controllers.getRange(currentQuestions.length, controllers.length).map((controllerMap) {
+              return {
+                'Present Tense': controllerMap['present']!.text,
+                'Past Tense': controllerMap['past']!.text,
+              };
+            }).toList(),
+          );
+        }
+
+        // Set the merged 'Questions' list to Firestore
+        await _firestore.collection('Tenses').doc('Questions').set({'Questions': updatedQuestions});
+      },
+      child: Text('Save Changes'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Past Tense Questions'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () => saveQuestions('Tenses', questions, context),
-          ),
-        ],
+        title: Text('Edit Tenses'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: questions.length,
-              itemBuilder: (ctx, index) {
-                return QuestionEditor(
-                  question: questions[index],
-                  index: index, // Pass the current index
-                  id: questions[index].id, // Pass the question's ID
-                  onChanged: (updatedQuestion) {
-                    setState(() {
-                      questions[index] = updatedQuestion;
-                    });
+      body: StreamBuilder(
+        stream: _firestore.collection('Tenses').doc('Questions').snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          // Check for data existence and if controllers need to be initialized
+          var data = snapshot.data!.data() as Map<String, dynamic>?;
+          if (controllers.isEmpty) { // Check this to avoid resetting controllers
+            var questions = data?['Questions'] ?? [];
+            for (var question in questions) {
+              controllers.add({
+                'present': TextEditingController(text: question['Present Tense']),
+                'past': TextEditingController(text: question['Past Tense']),
+              });
+            }
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controllers.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: TextFormField(
+                        controller: controllers[index]['present'],
+                        decoration: InputDecoration(labelText: 'Present Tense'),
+                      ),
+                      subtitle: TextFormField(
+                        controller: controllers[index]['past'],
+                        decoration: InputDecoration(labelText: 'Past Tense'),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            if (index < data?['Questions'].length) {
+                              // Update Firestore only if the question exists there
+                              data?['Questions'].removeAt(index);
+                              _firestore.collection('Tenses').doc('Questions').update({'Questions': data?['Questions']});
+                            }
+                            // Remove the controller regardless
+                            controllers.removeAt(index);
+                          });
+                        },
+                      ),
+                    );
                   },
-                  onRemove: () {
-                    deleteQuestion(questions[index].id, index); // Call deleteQuestion with ID and index
-                  },
-                );
-              },
+                ),
+                _buildSaveButton(),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: addNewQuestion,
+        onPressed: addNewTenseField,
+        tooltip: 'Add Tense',
         child: Icon(Icons.add),
-        backgroundColor: Colors.green,
       ),
     );
-  }
-
-  void loadQuestions() async {
-    try {
-      final collectionReference = FirebaseFirestore.instance.collection(
-          'Tenses');
-      final querySnapshot = await collectionReference.get();
-
-      List<Question> loadedQuestions = [];
-      for (var doc in querySnapshot
-          .docs) { // Loop through the document snapshots
-        Map<String, dynamic> data = doc.data() as Map<String,
-            dynamic>; // Cast the document data to a Map
-        // Check for 'Present Tense' and create a new Question even if 'Past Tense' is missing.
-        String presentTense = data['Present Tense'] ??
-            'No Present Tense added'; // Use a fallback text if 'Present Tense' is null
-        String pastTense = data['Past Tense'] ??
-            'Add Past Tense Here'; // Provide default text for 'Past Tense'
-
-        loadedQuestions.add(Question(
-          id: doc.id, // Use the document's ID as the question's ID
-          presentTense: presentTense,
-          pastTense: pastTense,
-        ));
-      }
-
-      setState(() {
-        questions = loadedQuestions;
-      });
-    } catch (error) {
-      print("An error occurred while loading questions: $error");
-    }
-  }
-}
-
-class QuestionEditor extends StatefulWidget {
-  final Question question;
-  final ValueChanged<Question> onChanged;
-  final VoidCallback onRemove;
-  final int index; // Add this
-  final String id; // Add this
-
-// Change the constructor accordingly
-  QuestionEditor({
-    required this.question,
-    required this.onChanged,
-    required this.onRemove,
-    required this.index, // Add this
-    required this.id, // Add this
-  });
-
-  @override
-  _QuestionEditorState createState() => _QuestionEditorState();
-}
-
-class _QuestionEditorState extends State<QuestionEditor> {
-  late TextEditingController presentTenseController;
-  late TextEditingController pastTenseController;
-
-  @override
-  void initState() {
-    super.initState();
-    presentTenseController = TextEditingController(text: widget.question.presentTense);
-    pastTenseController = TextEditingController(text: widget.question.pastTense);
-  }
-
-  @override
-  void dispose() {
-    presentTenseController.dispose();
-    pastTenseController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: presentTenseController,
-            decoration: InputDecoration(
-              labelText: 'Present Tense',
-              hintText: 'Add new present tense here', // guide text as a hint
-            ),
-            onChanged: (value) {
-              widget.onChanged(widget.question..presentTense = value);
-            },
-          ),
-          TextField(
-            controller: pastTenseController,
-            decoration: InputDecoration(
-              labelText: 'Past Tense',
-              hintText: 'Add new past tense here', // guide text as a hint
-            ),
-            onChanged: (value) {
-              widget.onChanged(widget.question..pastTense = value);
-            },
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () => widget.onRemove(),
-            child: Text('Remove Question'),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.red,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-}
-
-class Question {
-  String id; // Add an id field
-  String presentTense;
-  String pastTense;
-
-  Question({this.id = '', required this.presentTense, required this.pastTense});
-
-  // Add a method to convert a Question to Map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'Present Tense': presentTense,
-      'Past Tense': pastTense,
-    };
-  }
-}
-
-void saveQuestions(String collectionName, List<Question> questions, BuildContext context) async {
-  final collectionReference = FirebaseFirestore.instance.collection('Tenses');
-  final batch = FirebaseFirestore.instance.batch(); // Use a batch for multiple writes
-
-  for (var question in questions) {
-    if (question.id.isEmpty) {
-      // If there is no id, we assume it's a new question, so we add it
-      var newDocRef = collectionReference.doc();
-      question.id = newDocRef.id; // Assign the new id to the question
-      batch.set(newDocRef, question.toMap());
-    } else {
-      // If an id exists, we update the specific question
-      var docRef = collectionReference.doc(question.id);
-      batch.update(docRef, question.toMap());
-    }
-  }
-
-  try {
-    await batch.commit(); // Commit the batch
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Questions updated successfully!')),
-    );
-  } catch (error) {
-    print("An error occurred: $error");
   }
 }
