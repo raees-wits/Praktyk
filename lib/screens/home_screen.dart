@@ -25,14 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
   late TextEditingController controller;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     controller = TextEditingController();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     controller.dispose();
 
     super.dispose();
@@ -54,8 +54,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String avatarPrompt = "Neo";
   String avatarPromptType = "Humans";
   String avatarPromptTypeNumber = '5';
-  List<DropdownMenuItem<String>> myAvatarTypes = <String>["Robots","Monsters","Heads","Kittens","Humans"]
-      .map<DropdownMenuItem<String>>((String value){
+  List<DropdownMenuItem<String>> myAvatarTypes = <String>[
+    "Robots",
+    "Monsters",
+    "Heads",
+    "Kittens",
+    "Humans"
+  ].map<DropdownMenuItem<String>>((String value) {
     return DropdownMenuItem<String>(
       value: value,
       child: Text(value),
@@ -80,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
               activeColor: kpink,
               inactiveColor: Colors.grey[300]),
           BottomNavyBarItem(
-            icon: Icon(Icons.favorite_rounded),
-            title: Text('Favorite'),
+            icon: Icon(Icons.leaderboard_rounded),
+            title: Text('Leaderboard'),
             inactiveColor: Colors.grey[300],
             activeColor: kpink,
           ),
@@ -99,15 +104,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),  // This line switches the content);
-
+      body: _widgetOptions
+          .elementAt(_selectedIndex), // This line switches the content);
     );
   }
 
-
-  void confirmPrompt(){
+  void confirmPrompt() {
     Navigator.of(context).pop(controller.text);
     controller.clear();
   }
-
 }
