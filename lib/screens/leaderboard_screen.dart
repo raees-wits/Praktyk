@@ -10,11 +10,15 @@ class Leader {
   final String winnerName;
   final String rank;
   final String url;
+  final String avatarPrompt;
+  final String avatarPromptTypeNumber;
 
   Leader({
     required this.winnerName,
     required this.rank,
     required this.url,
+    required this.avatarPrompt,
+    required this.avatarPromptTypeNumber,
   });
 }
 
@@ -52,24 +56,37 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         if (data != null) {
           String firstName = data['firstName'] ?? 'N/A';
           String grade = data['grade'] ?? 'N/A';
+          String avatarPrompt = data['avatarPrompt'] ?? 'default';
+          String avatarPromptTypeNumber = data['avatarPromptTypeNumber'] ?? '1';
 
           if (count == 0) {
             first.add(Leader(
                 winnerName: firstName,
                 rank: '1',
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
                 url: 'assets/images/games.png'));
           } else if (count == 1) {
             second.add(Leader(
                 winnerName: firstName,
                 rank: '2',
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
                 url: 'assets/images/games.png'));
           } else if (count == 2) {
             third.add(Leader(
                 winnerName: firstName,
                 rank: '3',
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
                 url: 'assets/images/games.png'));
           } else {
-            contestants.add({'firstName': firstName, 'grade': grade});
+            contestants.add({
+              'firstName': firstName,
+              'grade': grade,
+              'avatarPrompt': avatarPrompt,
+              'avatarPromptTypeNumber': avatarPromptTypeNumber
+            });
           }
 
           count++;
@@ -78,7 +95,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
 
       setState(() {});
     } catch (e) {
-      print('Error querying Firestore: $e');
+      // print('Error querying Firestore: $e');
     }
   }
 
@@ -86,16 +103,16 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.blue,
         elevation: 0.0,
         leading: Icon(
           Icons.arrow_back_ios,
-          color: Colors.white,
+          color: Colors.red,
         ),
         actions: [
           Icon(
             Icons.grid_view,
-            color: Colors.white,
+            color: Colors.red,
           ),
         ],
       ),
@@ -203,8 +220,8 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.yellow.shade600,
-                        Colors.orange,
-                        Colors.red,
+                        Colors.black,
+                        Colors.blue,
                       ],
                     ),
                   ),
@@ -225,9 +242,13 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                         children: [
                           for (var contestant in contestants)
                             ContestantList(
-                              url: 'assets/images/games.png',
+                              url:
+                                  'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
                               firstName: contestant['firstName'],
                               grade: contestant['grade'],
+                              avatarPrompt: contestant['avatarPrompt'],
+                              avatarPromptTypeNumber:
+                                  contestant['avatarPromptTypeNumber'],
                             ),
                         ],
                       ),
@@ -299,8 +320,10 @@ class WinnerContainer extends StatelessWidget {
             child: Stack(
               children: [
                 if (leader != null)
-                  Image.asset(
-                    leader!.url,
+                  //Image.asset(
+                  //leader!.url,
+                  Image.network(
+                    "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
                     height: 70.0,
                     width: 105.0,
                   ),
@@ -327,8 +350,10 @@ class WinnerContainer extends StatelessWidget {
                           child: ClipOval(
                             clipBehavior: Clip.antiAlias,
                             child: leader != null
-                                ? Image.asset(
-                                    leader!.url,
+                                //? Image.asset(
+                                //  leader!.url,
+                                ? Image.network(
+                                    "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
                                     height: 70,
                                     width: 70,
                                     fit: BoxFit.cover,
@@ -361,9 +386,13 @@ class WinnerContainer extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 150.0,
+            top: MediaQuery.of(context).size.height *
+                0.2, // Adjust the percentage as needed
+            left: MediaQuery.of(context).size.width *
+                0.1, // Adjust the percentage as needed
             child: Container(
-              width: 100.0,
+              width: MediaQuery.of(context).size.width *
+                  0.1, // Adjust the width percentage as needed
               child: Center(
                 child: Column(
                   children: [
@@ -395,15 +424,18 @@ class WinnerContainer extends StatelessWidget {
 }
 
 class ContestantList extends StatelessWidget {
-  final String url;
   final String firstName;
   final String grade;
+  final String url;
+  final String avatarPrompt;
+  final String avatarPromptTypeNumber;
 
-  ContestantList({
-    required this.url,
-    required this.firstName,
-    required this.grade,
-  });
+  ContestantList(
+      {required this.url,
+      required this.firstName,
+      required this.grade,
+      required this.avatarPrompt,
+      required this.avatarPromptTypeNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -427,8 +459,8 @@ class ContestantList extends StatelessWidget {
         children: [
           ClipOval(
             clipBehavior: Clip.antiAlias,
-            child: Image.asset(
-              url ?? 'assets/4.jpg',
+            child: Image.network(
+              "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
               height: 60.0,
               width: 60.0,
               fit: BoxFit.fill,
