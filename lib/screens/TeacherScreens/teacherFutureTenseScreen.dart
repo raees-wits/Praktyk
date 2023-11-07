@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TeacherPastTenseScreen extends StatefulWidget {
-  const TeacherPastTenseScreen({Key? key}) : super(key: key);
+class TeacherFutureTenseScreen extends StatefulWidget {
+  const TeacherFutureTenseScreen({Key? key}) : super(key: key);
 
   @override
-  _TeacherPastTenseScreenState createState() => _TeacherPastTenseScreenState();
+  _TeacherFutureTenseScreenState createState() => _TeacherFutureTenseScreenState();
 }
 
-class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
+class _TeacherFutureTenseScreenState extends State<TeacherFutureTenseScreen> {
   List<Question> questions = [];
 
   @override
@@ -19,17 +19,16 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
 
   void addNewQuestion() {
     setState(() {
-      // Create a new question with default values.
+      // Create a new question with default values for the future tense
       var newQuestion = Question(
-        presentTense: '', // Start with empty string
-        pastTense: '', // Start with empty string
+        presentTense: '', // Start with an empty string for present tense
+        futureTense: '', // Start with an empty string for future tense
       );
 
-      // Add the new question to the list of questions.
+      // Add the new question to the list of questions
       questions.add(newQuestion);
     });
   }
-
 
   void deleteQuestion(String questionId, int index) async {
     if (questionId.isEmpty) {
@@ -57,12 +56,11 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Past Tense Questions'),
+        title: Text('Manage Future Tense Questions'), // Updated title for future tense
         actions: [
           IconButton(
             icon: Icon(Icons.save),
@@ -113,16 +111,16 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
           .docs) { // Loop through the document snapshots
         Map<String, dynamic> data = doc.data() as Map<String,
             dynamic>; // Cast the document data to a Map
-        // Check for 'Present Tense' and create a new Question even if 'Past Tense' is missing.
+        // Check for 'Present Tense' and create a new Question even if 'Future Tense' is missing.
         String presentTense = data['Present Tense'] ??
             'No Present Tense added'; // Use a fallback text if 'Present Tense' is null
-        String pastTense = data['Past Tense'] ??
-            'Add Past Tense Here'; // Provide default text for 'Past Tense'
+        String futureTense = data['Future Tense'] ??
+            'Add Future Tense Here'; // Provide default text for 'Future Tense'
 
         loadedQuestions.add(Question(
           id: doc.id, // Use the document's ID as the question's ID
           presentTense: presentTense,
-          pastTense: pastTense,
+          futureTense: futureTense,
         ));
       }
 
@@ -139,16 +137,15 @@ class QuestionEditor extends StatefulWidget {
   final Question question;
   final ValueChanged<Question> onChanged;
   final VoidCallback onRemove;
-  final int index; // Add this
-  final String id; // Add this
+  final int index;
+  final String id;
 
-// Change the constructor accordingly
   QuestionEditor({
     required this.question,
     required this.onChanged,
     required this.onRemove,
-    required this.index, // Add this
-    required this.id, // Add this
+    required this.index,
+    required this.id,
   });
 
   @override
@@ -157,19 +154,19 @@ class QuestionEditor extends StatefulWidget {
 
 class _QuestionEditorState extends State<QuestionEditor> {
   late TextEditingController presentTenseController;
-  late TextEditingController pastTenseController;
+  late TextEditingController futureTenseController;
 
   @override
   void initState() {
     super.initState();
     presentTenseController = TextEditingController(text: widget.question.presentTense);
-    pastTenseController = TextEditingController(text: widget.question.pastTense);
+    futureTenseController = TextEditingController(text: widget.question.futureTense);
   }
 
   @override
   void dispose() {
     presentTenseController.dispose();
-    pastTenseController.dispose();
+    futureTenseController.dispose();
     super.dispose();
   }
 
@@ -184,20 +181,20 @@ class _QuestionEditorState extends State<QuestionEditor> {
             controller: presentTenseController,
             decoration: InputDecoration(
               labelText: 'Present Tense',
-              hintText: 'Add new present tense here', // guide text as a hint
+              hintText: 'Enter present tense here', // guide text as a hint for present tense
             ),
             onChanged: (value) {
               widget.onChanged(widget.question..presentTense = value);
             },
           ),
           TextField(
-            controller: pastTenseController,
+            controller: futureTenseController,
             decoration: InputDecoration(
-              labelText: 'Past Tense',
-              hintText: 'Add new past tense here', // guide text as a hint
+              labelText: 'Future Tense',
+              hintText: 'Enter future tense here', // guide text as a hint for future tense
             ),
             onChanged: (value) {
-              widget.onChanged(widget.question..pastTense = value);
+              widget.onChanged(widget.question..futureTense = value);
             },
           ),
           SizedBox(height: 20),
@@ -212,22 +209,21 @@ class _QuestionEditorState extends State<QuestionEditor> {
       ),
     );
   }
-
 }
 
 class Question {
   String id; // Add an id field
   String presentTense;
-  String pastTense;
+  String futureTense; // Changed to future tense
 
-  Question({this.id = '', required this.presentTense, required this.pastTense});
+  Question({this.id = '', required this.presentTense, required this.futureTense});
 
-  // Add a method to convert a Question to Map
+  // Add a method to convert a Question to Map for future tense
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'Present Tense': presentTense,
-      'Past Tense': pastTense,
+      'Future Tense': futureTense, // Changed to future tense
     };
   }
 }
