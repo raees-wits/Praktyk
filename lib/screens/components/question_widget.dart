@@ -68,7 +68,7 @@ class QuestionWidget extends StatelessWidget {
         .collection('answers')
         .doc(answerId)
         .collection('votes')
-        .doc(CurrentUser().userId); // assuming this is how you access the current user's ID
+        .doc(CurrentUser().userId);
 
     final DocumentSnapshot userVoteSnapshot = await userVoteRef.get();
 
@@ -226,19 +226,42 @@ class QuestionWidget extends StatelessWidget {
                       final answerText = answerData['text'];
                       final upvotes = answerData['upvotes'];
                       final downvotes = answerData['downvotes'];
+                      final answerId = answerDoc.id; // CHANGED: Store answerId for reuse below
                       final userName = answerData.containsKey('user_name') && answerData['user_name'] != null && answerData['user_name'].isNotEmpty
                           ? answerData['user_name']
                           : 'anonymous';
-                      return AnswerWidget(
-                        answer: answerText,
-                        upvotes: upvotes,
-                        downvotes: downvotes,
-                        posterName:userName,
-                        onUpvote: () async {
-                          await _upvoteAnswer(questionId, answerDoc.id);
-                        },
-                        onDownvote: () async {
-                          await _downvoteAnswer(questionId, answerDoc.id);
+
+                      // Add a FutureBuilder to get the user's vote for this specific answer
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('questions')
+                            .doc(questionId)
+                            .collection('answers')
+                            .doc(answerId)
+                            .collection('votes')
+                            .doc(CurrentUser().userId)
+                            .get(),
+                        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> voteSnapshot) {
+                          if (voteSnapshot.connectionState == ConnectionState.waiting) {
+                            return Container(); // Return an empty container to avoid display issues
+                          }
+                          var userVote = '';
+                          if (voteSnapshot.hasData && voteSnapshot.data!.exists) {
+                            userVote = voteSnapshot.data!['voteType']; // Get the vote type
+                          }
+                          return AnswerWidget(
+                            answer: answerText,
+                            upvotes: upvotes,
+                            downvotes: downvotes,
+                            posterName: userName,
+                            userVote: userVote,
+                            onUpvote: () async {
+                              await _upvoteAnswer(questionId, answerId);
+                            },
+                            onDownvote: () async {
+                              await _downvoteAnswer(questionId, answerId);
+                            },
+                          );
                         },
                       );
                     },
