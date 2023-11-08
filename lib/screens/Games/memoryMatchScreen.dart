@@ -94,7 +94,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
         // If the card is flipped, toggle it back
         if (cards[i].isFlipped) {
           cardKeys[i].currentState?.toggleCard();
-          cards[i].isFlipped = false; // Resetting the isFlipped to false
+          cards[i].isFlipped = false;
         }
       }
       // Reset game won status
