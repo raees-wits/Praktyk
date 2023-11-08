@@ -5,6 +5,7 @@ import 'package:e_learning_app/screens/TeacherScreens/teacherFutureTenseScreen.d
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
+import '../TeacherScreens/teacherNegativeFormScreen.dart';
 import '../TeacherScreens/teacherPastTenseScreen.dart';
 import 'PastTenseScreen.dart';
 
@@ -115,10 +116,17 @@ class GrammarRulesScreen extends StatelessWidget {
               );
             }
           }else if (title == "Negatives"){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NegativeFormScreen()),
-            );
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NegativeFormScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TeacherNegativeFormScreen()),
+              );
+            }
           }
           else if (title == "Indirect Speech"){
             Navigator.push(
