@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(home: MemoryMatch()));
@@ -22,28 +22,48 @@ class _MemoryMatchState extends State<MemoryMatch> {
   bool flipBack = false; // flag to prevent flipping more than two cards
 
   bool gameWon = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    fetchCardData();
+  }
 
-    // Create pairs of questions and answers
-    var pairs = List.generate(8, (index) {
-      return [
-        CardModel(text: 'Question ${index + 1}', pairId: 'Pair ${index + 1}'),
-        CardModel(text: 'Answer ${index + 1}', pairId: 'Pair ${index + 1}'),
-      ];
+  void fetchCardData() async {
+    var matchCollection = FirebaseFirestore.instance.collection('Match The Column');
+    var snapshot = await matchCollection.get();
+    var documents = snapshot.docs;
+
+    // Assuming each document has an array field "Questions" which is a list of maps
+    var allQuestions = documents.map((doc) => doc['Questions']).toList();
+
+    // Flatten the list of lists into a single list containing all question/answer pairs
+    var questionPairs = allQuestions.expand((questionList) => questionList).toList();
+
+    // Shuffle the list and take the first 8 pairs
+    questionPairs.shuffle();
+    var selectedPairs = questionPairs.take(8).toList();
+
+    // Map selected pairs to CardModels
+    var cardPairs = selectedPairs.map((pair) {
+      var questionCard = CardModel(text: pair['Question'], pairId: pair['Question']);
+      var answerCard = CardModel(text: pair['Answer'], pairId: pair['Question']);
+      return [questionCard, answerCard];
     }).expand((pair) => pair).toList();
 
-    // Shuffle the card pairs to randomize their positions.
-    pairs.shuffle();
+    // Generate GlobalKeys for the new cards
+    var newCardKeys = List.generate(cardPairs.length, (index) => GlobalKey<FlipCardState>());
 
-    // Now our card list consists of paired questions and answers, instead of identical words.
-    cards = pairs;
+    cardPairs.shuffle();
 
-    // Initialize the list of GlobalKeys for the cards.
-    cardKeys = List.generate(cards.length, (index) => GlobalKey<FlipCardState>());
+    setState(() {
+      cards = cardPairs;
+      cardKeys = newCardKeys;
+      isLoading = false;
+    });
   }
+
 
   void onCardFlip(index) {
     if (!flipBack) {
@@ -119,7 +139,9 @@ class _MemoryMatchState extends State<MemoryMatch> {
       appBar: AppBar(
         title: Text('Memory Match Game'),
       ),
-      body: Stack(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Show a loading spinner when data is loading
+          : Stack(
         children: [
           GridView.builder(
             padding: const EdgeInsets.all(8.0),
