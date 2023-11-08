@@ -135,12 +135,27 @@ class _TeacherFutureTenseScreenState extends State<TeacherFutureTenseScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  // Your delete question logic here
+                                onPressed: () async {
+                                  // Step 1: Remove controller locally
+                                  setState(() {
+                                    controllers.removeAt(index);
+                                  });
+
+                                  // Step 2: Update Firestore
+                                  DocumentSnapshot snapshot = await _firestore.collection('Tenses').doc('Questions').get();
+                                  List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
+                                  // Assuming the 'Questions' array in the database directly correlates to the controllers array.
+                                  if (currentQuestions.length > index) {
+                                    currentQuestions.removeAt(index);
+                                  }
+
+                                  // Save the updated list back to Firestore.
+                                  await _firestore.collection('Tenses').doc('Questions').set({'Questions': currentQuestions});
                                 },
                                 child: Text('Delete Question'),
                                 style: ElevatedButton.styleFrom(primary: Colors.red),
                               ),
+
                             ],
                           ),
                           Divider(),
