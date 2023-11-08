@@ -2,6 +2,7 @@ import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/IndirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacherFutureTenseScreen.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacherSpeechScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/constants.dart';
 
@@ -129,10 +130,17 @@ class GrammarRulesScreen extends StatelessWidget {
             }
           }
           else if (title == "Indirect Speech"){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => IndirectSpeechScreen()),
-            );
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => IndirectSpeechScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TeacherSpeechScreen()),
+              );
+            }
           }
         },
       ),
