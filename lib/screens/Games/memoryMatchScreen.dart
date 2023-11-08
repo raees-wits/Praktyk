@@ -114,24 +114,14 @@ class _MemoryMatchState extends State<MemoryMatch> {
   }
 
   void resetGame() {
+    // Reset the loading status and game won flag
     setState(() {
-      // Shuffle cards for the next level
-      cards.shuffle();
-      // Reset matched status and flip back if needed
-      for (var i = 0; i < cards.length; i++) {
-        cards[i].isMatched = false;
-        // If the card is flipped, toggle it back
-        if (cards[i].isFlipped) {
-          cardKeys[i].currentState?.toggleCard();
-          cards[i].isFlipped = false;
-        }
-      }
-      // Reset game won status
-      gameWon = false;
+      isLoading = true;  // Show loading spinner while new data is fetched
+      gameWon = false;  // Reset game won status
     });
+
+    fetchCardData();  // Fetch new data for the next level
   }
-
-
 
   @override
   Widget build(BuildContext context) {
