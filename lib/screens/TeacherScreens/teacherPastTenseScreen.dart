@@ -101,8 +101,8 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
           }
 
           var data = snapshot.data?.data() as Map<String, dynamic>?;
-          if (controllers.isEmpty) {
-            var questions = data?['Questions'] ?? [];
+          if (controllers.isEmpty && data != null) {
+            var questions = data['Questions'] ?? [];
             for (var question in questions) {
               controllers.add({
                 'present': TextEditingController(text: question['Present Tense']),
@@ -113,56 +113,44 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
 
           return SingleChildScrollView(
             child: Column(
-              children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: controllers.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0), // Add top padding for spacing
+              children: controllers.asMap().map((index, controller) {
+                return MapEntry(
+                  index,
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextFormField(
-                            controller: controllers[index]['present'],
+                            controller: controller['present'],
                             decoration: InputDecoration(labelText: 'Present Tense'),
                           ),
                           TextFormField(
-                            controller: controllers[index]['past'],
+                            controller: controller['past'],
                             decoration: InputDecoration(labelText: 'Past Tense'),
                           ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0), // Add more spacing if needed
-                              child: SizedBox(
-                                width: 150.0, // Set this to your desired width
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (index < data?['Questions'].length) {
-                                        // Update Firestore only if the question exists there
-                                        data?['Questions'].removeAt(index);
-                                        _firestore.collection('Tenses').doc('Questions').update({'Questions': data?['Questions']});
-                                      }
-                                      // Remove the controller regardless
-                                      controllers.removeAt(index);
-                                    });
-                                  },
-                                  child: Text('Delete'),
-                                  style: ElevatedButton.styleFrom(primary: Colors.red),
-                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Your delete question logic here
+                                },
+                                child: Text('Delete Question'),
+                                style: ElevatedButton.styleFrom(primary: Colors.red),
                               ),
-                            ),
+                            ],
                           ),
                           Divider(),
                         ],
                       ),
-                    );
-                  },
-                ),
-              ],
+                    ),
+                  ),
+                );
+              }).values.toList(),
             ),
           );
         },
