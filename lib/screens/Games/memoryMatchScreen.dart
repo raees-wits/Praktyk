@@ -21,6 +21,8 @@ class _MemoryMatchState extends State<MemoryMatch> {
 
   bool flipBack = false; // flag to prevent flipping more than two cards
 
+  bool gameWon = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,26 +37,28 @@ class _MemoryMatchState extends State<MemoryMatch> {
   }
 
   void onCardFlip(index) {
-    if (firstCard == null) {
-      setState(() {
-        firstCard = cards[index];
-      });
-    } else if (secondCard == null && firstCard != cards[index]) {
-      setState(() {
-        secondCard = cards[index];
-      });
-
-      if (firstCard!.word == secondCard!.word) {
+    if (!flipBack) {
+      if (firstCard == null) {
         setState(() {
-          firstCard!.isMatched = true;
-          secondCard!.isMatched = true;
-          firstCard = null;
-          secondCard = null;
+          firstCard = cards[index];
         });
-      } else {
-        // If cards don't match, we start the Timer to flip them back over
-        flipBack = true;
-        Timer(Duration(milliseconds: 500), () => flipCardsBack());
+      } else if (secondCard == null && firstCard != cards[index]) {
+        setState(() {
+          secondCard = cards[index];
+        });
+
+        if (firstCard!.word == secondCard!.word) {
+          setState(() {
+            firstCard!.isMatched = true;
+            secondCard!.isMatched = true;
+            firstCard = null;
+            secondCard = null;
+          });
+          checkWinCondition();
+        } else {
+          flipBack = true; // Prevent flipping more cards
+          Timer(Duration(milliseconds: 500), () => flipCardsBack());
+        }
       }
     }
   }
@@ -71,51 +75,112 @@ class _MemoryMatchState extends State<MemoryMatch> {
     });
   }
 
+  void checkWinCondition() {
+    // If all cards are matched, set the game as won
+    if (cards.every((card) => card.isMatched)) {
+      setState(() {
+        gameWon = true;
+      });
+    }
+  }
+
+  void resetGame() {
+    setState(() {
+      // Shuffle cards for the next level
+      cards.shuffle();
+      // Reset matched status and flip back if needed
+      for (var i = 0; i < cards.length; i++) {
+        cards[i].isMatched = false;
+        // If the card is flipped, toggle it back
+        if (cards[i].isFlipped) {
+          cardKeys[i].currentState?.toggleCard();
+          cards[i].isFlipped = false; // Resetting the isFlipped to false
+        }
+      }
+      // Reset game won status
+      gameWon = false;
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Language Learning Game'),
+        title: Text('Memory Match Game'),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(8.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-        ),
-        itemCount: cards.length,
-        itemBuilder: (context, index) {
-          return FlipCard(
-            key: cardKeys[index],
-            flipOnTouch: !cards[index].isMatched, // Only allow flip if not matched
-            onFlipDone: (isFlipped) {
-              if (!isFlipped || flipBack) return; // Prevent action if the card is flipping back or if we are in flip back process.
+      body: Stack(
+        children: [
+          GridView.builder(
+            padding: const EdgeInsets.all(8.0),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
+            ),
+            itemCount: cards.length,
+            itemBuilder: (context, index) {
+              return FlipCard(
+                key: cardKeys[index],
+                flipOnTouch: !cards[index].isMatched,
+                onFlipDone: (isFlipped) {
+                  if (!isFlipped || flipBack) return;
 
-              onCardFlip(index);
+                  setState(() {
+                    cards[index].isFlipped = isFlipped;
+                  });
+
+                  onCardFlip(index);
+                },
+                direction: FlipDirection.HORIZONTAL,
+                front: Card(
+                  color: Colors.blue,
+                  child: Center(
+                    child: Text('Tap to flip'),
+                  ),
+                ),
+                back: Card(
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(cards[index].word),
+                  ),
+                ),
+              );
             },
+          ),
+          gameWon ? winOverlay(context) : SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
 
-            direction: FlipDirection.HORIZONTAL,
-            front: Card(
-              color: Colors.blue,
-              child: Center(
-                child: Text('Tap to flip'),
-              ),
+  Widget winOverlay(BuildContext context) {
+    return Center(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.black54,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              'Congratulations! You have won.',
+              style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.white),
+              textAlign: TextAlign.center,
             ),
-            back: Card(
-              color: Colors.white,
-              child: Center(
-                child: Text(cards[index].word),
-              ),
-            ),
-          );
-        },
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Next Level'),
+              onPressed: resetGame,
+            )
+          ],
+        ),
       ),
     );
   }
 }
-
 
 class CardModel {
   String word;
