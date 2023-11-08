@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import 'dart:async';
+
 
 void main() {
   runApp(MaterialApp(home: MemoryMatch()));
@@ -12,7 +14,12 @@ class MemoryMatch extends StatefulWidget {
 
 class _MemoryMatchState extends State<MemoryMatch> {
   List<CardModel> cards = [];
-  List<GlobalKey<FlipCardState>> cardKeys = []; // Add this line
+  List<GlobalKey<FlipCardState>> cardKeys = [];
+
+  CardModel? firstCard;
+  CardModel? secondCard;
+
+  bool flipBack = false; // flag to prevent flipping more than two cards
 
   @override
   void initState() {
@@ -26,6 +33,44 @@ class _MemoryMatchState extends State<MemoryMatch> {
     // Initialize the list of GlobalKeys
     cardKeys = List.generate(cards.length, (index) => GlobalKey<FlipCardState>());
   }
+
+  void onCardFlip(index) {
+    if (firstCard == null) {
+      setState(() {
+        firstCard = cards[index];
+      });
+    } else if (secondCard == null && firstCard != cards[index]) {
+      setState(() {
+        secondCard = cards[index];
+      });
+
+      if (firstCard!.word == secondCard!.word) {
+        setState(() {
+          firstCard!.isMatched = true;
+          secondCard!.isMatched = true;
+          firstCard = null;
+          secondCard = null;
+        });
+      } else {
+        // If cards don't match, we start the Timer to flip them back over
+        flipBack = true;
+        Timer(Duration(milliseconds: 500), () => flipCardsBack());
+      }
+    }
+  }
+
+  void flipCardsBack() {
+    cardKeys[cards.indexOf(firstCard!)].currentState?.toggleCard();
+    cardKeys[cards.indexOf(secondCard!)].currentState?.toggleCard();
+    setState(() {
+      firstCard!.isFlipped = false;
+      secondCard!.isFlipped = false;
+      firstCard = null;
+      secondCard = null;
+      flipBack = false; // reset the flag after flipping back
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +91,11 @@ class _MemoryMatchState extends State<MemoryMatch> {
             key: cardKeys[index],
             flipOnTouch: !cards[index].isMatched, // Only allow flip if not matched
             onFlipDone: (isFlipped) {
+              if (!isFlipped || flipBack) return; // Prevent action if the card is flipping back or if we are in flip back process.
 
+              onCardFlip(index);
             },
+
             direction: FlipDirection.HORIZONTAL,
             front: Card(
               color: Colors.blue,
