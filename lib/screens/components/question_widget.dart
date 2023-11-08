@@ -9,32 +9,130 @@ class QuestionWidget extends StatelessWidget {
   final String questionText;
 
   Future<void> _upvoteAnswer(String questionId, String answerId) async {
-    final answerRef = FirebaseFirestore.instance
+    final userVoteRef = FirebaseFirestore.instance
         .collection('questions')
         .doc(questionId)
         .collection('answers')
-        .doc(answerId);
+        .doc(answerId)
+        .collection('votes')
+        .doc(CurrentUser().userId);
+
+    final DocumentSnapshot userVoteSnapshot = await userVoteRef.get();
+
+    Map<String, dynamic>? userVoteData = userVoteSnapshot.data() as Map<String, dynamic>?;
+
+    if (userVoteSnapshot.exists && userVoteData?['voteType'] == 'upvote') {
+      print('User has already upvoted');
+      return;
+    }
 
     await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final answerRef = FirebaseFirestore.instance
+          .collection('questions')
+          .doc(questionId)
+          .collection('answers')
+          .doc(answerId);
+
       final answerDoc = await transaction.get(answerRef);
-      final currentUpvotes = answerDoc['upvotes'] ?? 0;
-      transaction.update(answerRef, {'upvotes': currentUpvotes + 1});
+      final answerData = answerDoc.data();
+      final currentUpvotes = (answerData != null ? answerData['upvotes'] : 0) ?? 0;
+      final currentDownvotes = (answerData != null ? answerData['downvotes'] : 0) ?? 0;
+
+      // If user previously downvoted, remove downvote and increment upvotes
+      if (userVoteSnapshot.exists && userVoteData?['voteType'] == 'downvote') {
+        transaction.update(answerRef, {
+          'upvotes': currentUpvotes + 1,
+          'downvotes': currentDownvotes > 0 ? currentDownvotes - 1 : 0
+        });
+      } else {
+        // If there was no previous vote or it wasn't a downvote, just increment upvotes
+        transaction.update(answerRef, {
+          'upvotes': currentUpvotes + 1
+        });
+      }
+
+      // Set or update the user's vote to upvote
+      transaction.set(userVoteRef, {
+        'userId': CurrentUser().userId,
+        'voteType': 'upvote',
+      });
     });
   }
+
+
 
   Future<void> _downvoteAnswer(String questionId, String answerId) async {
-    final answerRef = FirebaseFirestore.instance
+    final userVoteRef = FirebaseFirestore.instance
         .collection('questions')
         .doc(questionId)
         .collection('answers')
-        .doc(answerId);
+        .doc(answerId)
+        .collection('votes')
+        .doc(CurrentUser().userId); // assuming this is how you access the current user's ID
 
-    await FirebaseFirestore.instance.runTransaction((transaction) async {
-      final answerDoc = await transaction.get(answerRef);
-      final currentDownvotes = answerDoc['downvotes'] ?? 0;
-      transaction.update(answerRef, {'downvotes': currentDownvotes + 1});
-    });
+    final DocumentSnapshot userVoteSnapshot = await userVoteRef.get();
+
+    if (userVoteSnapshot.exists) {
+      // Check if the user has already downvoted
+      Map<String, dynamic>? userVoteData = userVoteSnapshot.data() as Map<String, dynamic>?;
+
+      if (userVoteSnapshot.exists && userVoteData?['voteType'] == 'downvote') {
+        print('User has already downvoted');
+        return;
+      }
+
+      // If previously upvoted, remove upvote as part of downvoting process
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final answerRef = FirebaseFirestore.instance
+            .collection('questions')
+            .doc(questionId)
+            .collection('answers')
+            .doc(answerId);
+
+        final answerDoc = await transaction.get(answerRef);
+        final answerData = answerDoc.data();
+        final currentUpvotes = (answerData != null ? answerData['upvotes'] : 0) ?? 0;
+        final currentDownvotes = (answerData != null ? answerData['downvotes'] : 0) ?? 0;
+
+        // If user previously upvoted, decrement upvotes
+        if (userVoteSnapshot.exists && userVoteData?['voteType'] == 'upvote') {
+          transaction.update(answerRef, {
+            'upvotes': currentUpvotes - 1,
+            'downvotes': currentDownvotes + 1
+          });
+        } else {
+          // Or else just increment downvotes
+          transaction.update(answerRef, {'downvotes': currentDownvotes + 1});
+        }
+
+        // Finally, update the user's vote to downvote
+        transaction.set(userVoteRef, {
+          'userId': CurrentUser().userId,
+          'voteType': 'downvote',
+        });
+      });
+    } else {
+      // If the user hasn't voted before, just add the downvote
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final answerRef = FirebaseFirestore.instance
+            .collection('questions')
+            .doc(questionId)
+            .collection('answers')
+            .doc(answerId);
+
+        final answerDoc = await transaction.get(answerRef);
+        final currentDownvotes = answerDoc['downvotes'] ?? 0;
+
+        // Increment the downvotes and add the user's vote to the sub-collection
+        transaction.update(answerRef, {'downvotes': currentDownvotes + 1});
+        transaction.set(userVoteRef, {
+          'userId': CurrentUser().userId,
+          'voteType': 'downvote',
+        });
+      });
+    }
   }
+
 
 
 
