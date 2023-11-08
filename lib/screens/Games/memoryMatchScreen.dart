@@ -27,12 +27,21 @@ class _MemoryMatchState extends State<MemoryMatch> {
   void initState() {
     super.initState();
 
-    // Initialize your card list with words and set the initial state.
-    // For demonstration, all words are 'Hello'. You should replace them with your word pairs and shuffle.
-    cards = List.generate(8, (index) => CardModel(word: 'Word ${index+1}'))..addAll(List.generate(8, (index) => CardModel(word: 'Word ${index+1}')));
-    cards.shuffle();
+    // Create pairs of questions and answers
+    var pairs = List.generate(8, (index) {
+      return [
+        CardModel(text: 'Question ${index + 1}', pairId: 'Pair ${index + 1}'),
+        CardModel(text: 'Answer ${index + 1}', pairId: 'Pair ${index + 1}'),
+      ];
+    }).expand((pair) => pair).toList();
 
-    // Initialize the list of GlobalKeys
+    // Shuffle the card pairs to randomize their positions.
+    pairs.shuffle();
+
+    // Now our card list consists of paired questions and answers, instead of identical words.
+    cards = pairs;
+
+    // Initialize the list of GlobalKeys for the cards.
     cardKeys = List.generate(cards.length, (index) => GlobalKey<FlipCardState>());
   }
 
@@ -47,7 +56,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
           secondCard = cards[index];
         });
 
-        if (firstCard!.word == secondCard!.word) {
+        if (firstCard!.pairId == secondCard!.pairId) {
           setState(() {
             firstCard!.isMatched = true;
             secondCard!.isMatched = true;
@@ -143,7 +152,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
                 back: Card(
                   color: Colors.white,
                   child: Center(
-                    child: Text(cards[index].word),
+                    child: Text(cards[index].text),
                   ),
                 ),
               );
@@ -183,9 +192,10 @@ class _MemoryMatchState extends State<MemoryMatch> {
 }
 
 class CardModel {
-  String word;
+  String text;
+  String pairId; // Use this ID to identify which question matches which answer
   bool isFlipped;
   bool isMatched;
 
-  CardModel({required this.word, this.isFlipped = false, this.isMatched = false});
+  CardModel({required this.text, required this.pairId, this.isFlipped = false, this.isMatched = false});
 }
