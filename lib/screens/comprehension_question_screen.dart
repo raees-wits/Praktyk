@@ -59,6 +59,8 @@ class _ComprehensionQuestionScreenState
       questionAnswer = questions[questionNo].answer;
       if (questionNo == (questions.length - 1)) {
         nextText = "Done";
+      } else {
+        nextText = "Next";
       }
       answerTxtController.text = "";
     });
@@ -301,9 +303,9 @@ class _ComprehensionQuestionScreenState
                                   setState(() {
                                     questionNo++;
                                   });
+                                  setUpQuestion();
                                   answerTxtController.text =
                                       questions[questionNo].userAnswer;
-                                  setUpQuestion();
                                 }
                               },
                               child: Text(
