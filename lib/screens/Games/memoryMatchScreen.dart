@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(home: MemoryMatch()));
@@ -22,19 +22,48 @@ class _MemoryMatchState extends State<MemoryMatch> {
   bool flipBack = false; // flag to prevent flipping more than two cards
 
   bool gameWon = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize your card list with words and set the initial state.
-    // For demonstration, all words are 'Hello'. You should replace them with your word pairs and shuffle.
-    cards = List.generate(8, (index) => CardModel(word: 'Word ${index+1}'))..addAll(List.generate(8, (index) => CardModel(word: 'Word ${index+1}')));
-    cards.shuffle();
-
-    // Initialize the list of GlobalKeys
-    cardKeys = List.generate(cards.length, (index) => GlobalKey<FlipCardState>());
+    fetchCardData();
   }
+
+  void fetchCardData() async {
+    var matchCollection = FirebaseFirestore.instance.collection('Match The Column');
+    var snapshot = await matchCollection.get();
+    var documents = snapshot.docs;
+
+    // Assuming each document has an array field "Questions" which is a list of maps
+    var allQuestions = documents.map((doc) => doc['Questions']).toList();
+
+    // Flatten the list of lists into a single list containing all question/answer pairs
+    var questionPairs = allQuestions.expand((questionList) => questionList).toList();
+
+    // Shuffle the list and take the first 8 pairs
+    questionPairs.shuffle();
+    var selectedPairs = questionPairs.take(8).toList();
+
+    // Map selected pairs to CardModels
+    var cardPairs = selectedPairs.map((pair) {
+      var questionCard = CardModel(text: pair['Question'], pairId: pair['Question']);
+      var answerCard = CardModel(text: pair['Answer'], pairId: pair['Question']);
+      return [questionCard, answerCard];
+    }).expand((pair) => pair).toList();
+
+    // Generate GlobalKeys for the new cards
+    var newCardKeys = List.generate(cardPairs.length, (index) => GlobalKey<FlipCardState>());
+
+    cardPairs.shuffle();
+
+    setState(() {
+      cards = cardPairs;
+      cardKeys = newCardKeys;
+      isLoading = false;
+    });
+  }
+
 
   void onCardFlip(index) {
     if (!flipBack) {
@@ -47,7 +76,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
           secondCard = cards[index];
         });
 
-        if (firstCard!.word == secondCard!.word) {
+        if (firstCard!.pairId == secondCard!.pairId) {
           setState(() {
             firstCard!.isMatched = true;
             secondCard!.isMatched = true;
@@ -85,24 +114,14 @@ class _MemoryMatchState extends State<MemoryMatch> {
   }
 
   void resetGame() {
+    // Reset the loading status and game won flag
     setState(() {
-      // Shuffle cards for the next level
-      cards.shuffle();
-      // Reset matched status and flip back if needed
-      for (var i = 0; i < cards.length; i++) {
-        cards[i].isMatched = false;
-        // If the card is flipped, toggle it back
-        if (cards[i].isFlipped) {
-          cardKeys[i].currentState?.toggleCard();
-          cards[i].isFlipped = false;
-        }
-      }
-      // Reset game won status
-      gameWon = false;
+      isLoading = true;  // Show loading spinner while new data is fetched
+      gameWon = false;  // Reset game won status
     });
+
+    fetchCardData();  // Fetch new data for the next level
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +129,9 @@ class _MemoryMatchState extends State<MemoryMatch> {
       appBar: AppBar(
         title: Text('Memory Match Game'),
       ),
-      body: Stack(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Show a loading spinner when data is loading
+          : Stack(
         children: [
           GridView.builder(
             padding: const EdgeInsets.all(8.0),
@@ -143,7 +164,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
                 back: Card(
                   color: Colors.white,
                   child: Center(
-                    child: Text(cards[index].word),
+                    child: Text(cards[index].text),
                   ),
                 ),
               );
@@ -183,9 +204,10 @@ class _MemoryMatchState extends State<MemoryMatch> {
 }
 
 class CardModel {
-  String word;
+  String text;
+  String pairId; // Use this ID to identify which question matches which answer
   bool isFlipped;
   bool isMatched;
 
-  CardModel({required this.word, this.isFlipped = false, this.isMatched = false});
+  CardModel({required this.text, required this.pairId, this.isFlipped = false, this.isMatched = false});
 }
