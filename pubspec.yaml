@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^4.7.2
   image_picker: ^1.0.4
   firebase_storage: ^11.2.8
+  flip_card: ^0.7.0
 
 dev_dependencies:
   flutter_test:
