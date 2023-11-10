@@ -26,7 +26,7 @@ class _TeacherFillInTheBlankScreen extends State<TeacherFillInTheBlankScreen> {
   @override
   void initState() {
     super.initState();
-    loadComprehensions();
+    loadSentences();
   }
 
   @override
@@ -44,7 +44,7 @@ class _TeacherFillInTheBlankScreen extends State<TeacherFillInTheBlankScreen> {
     Navigator.pop(context);
   }
 
-  Future<void> loadComprehensions() async {
+  Future<void> loadSentences() async {
     final querySnapshot = await firestore.collection("sentences").get();
     setState(() {
       sentences = querySnapshot.docs.map((doc) {
@@ -74,22 +74,12 @@ class _TeacherFillInTheBlankScreen extends State<TeacherFillInTheBlankScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Afrikaans',
                               ),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  afrikaansTxt.text = newValue;
-                                });
-                              },
                             ),
                             TextField(
                               controller: englishTxt,
                               decoration: InputDecoration(
                                 labelText: 'English',
                               ),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  englishTxt.text = newValue;
-                                });
-                              },
                             )
                           ],
                         ),
