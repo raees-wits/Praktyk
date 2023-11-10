@@ -24,7 +24,7 @@ class _MemoryMatchLevelSelectState extends State<MemoryMatchLevelSelect> {
   @override
   Widget build(BuildContext context) {
     // Use the widest button's width as the standard for all buttons.
-    double buttonWidth = MediaQuery.of(context).size.width * 0.8; // For example, 80% of screen width
+    double buttonWidth = MediaQuery.of(context).size.width * 0.2; // For example, 80% of screen width
 
     return Scaffold(
       appBar: AppBar(
