@@ -53,15 +53,38 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
     }
   }
 
+  // Add the feedback dialog method
+  void _showFeedbackDialog(String message, Color color) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            message,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
+          backgroundColor: color,
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void checkAnswer(String selectedOption) {
     if (selectedOption == correctAnswer) {
-      // Correct answer
-      print("Correct!");
-      // TODO: Handle correct answer logic here
+      _showFeedbackDialog('Correct!', Colors.green); // Correct answer
     } else {
-      // Wrong answer
-      print("Wrong. Try again.");
-      // TODO: Handle wrong answer logic here
+      _showFeedbackDialog('Wrong. Try again.', Colors.red); // Wrong answer
     }
   }
 
