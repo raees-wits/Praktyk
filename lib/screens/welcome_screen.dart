@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:e_learning_app/constants.dart';
-import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:e_learning_app/screens/login_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -80,6 +80,7 @@ class WelcomeScreen extends StatelessWidget {
                                 color: kpink,
                                 onPressed: () {
                                   //home screen path
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -92,9 +93,9 @@ class WelcomeScreen extends StatelessWidget {
                                       fontSize: 18,
                                       color: Colors.white),
                                 ),
-                              )
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),

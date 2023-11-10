@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/anki_card_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'anki_update_screen.dart';
@@ -66,7 +67,7 @@ class _AnkiCategoryScreenState extends State<AnkiCategoryScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AnkiUpdateScreen(category: category),
+                    builder: (context) => AnkiCardScreen(category: category),
                   ),
                 );
               },
