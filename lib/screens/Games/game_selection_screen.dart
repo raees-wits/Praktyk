@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/Games/MemoryMatchSelectLevel.dart';
 import 'package:e_learning_app/screens/Games/memoryMatchScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +70,7 @@ class GameSelectionScreen extends StatelessWidget {
                   // Navigate to the "Hangman" game screen when this is pressed
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MemoryMatch()), // replace with your actual HangmanGameScreen widget
+                    MaterialPageRoute(builder: (context) => MemoryMatchLevelSelect()), // replace with your actual HangmanGameScreen widget
                   );
                 },
                 text: 'Memory Match',

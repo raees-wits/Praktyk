@@ -4,10 +4,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
-  runApp(MaterialApp(home: MemoryMatch()));
+  runApp(MaterialApp(home: MemoryMatch(level: "medium"))); // Default level set to "medium" for direct navigation
 }
 
 class MemoryMatch extends StatefulWidget {
+  final String level;
+
+  MemoryMatch({Key? key, required this.level}) : super(key: key);
+
   @override
   _MemoryMatchState createState() => _MemoryMatchState();
 }
@@ -15,6 +19,7 @@ class MemoryMatch extends StatefulWidget {
 class _MemoryMatchState extends State<MemoryMatch> {
   List<CardModel> cards = [];
   List<GlobalKey<FlipCardState>> cardKeys = [];
+  late int crossAxisCount; // To be determined by level
 
   CardModel? firstCard;
   CardModel? secondCard;
@@ -27,8 +32,10 @@ class _MemoryMatchState extends State<MemoryMatch> {
   @override
   void initState() {
     super.initState();
+    crossAxisCount = widget.level == "easy" ? 2 : 4; // Determines grid based on level
     fetchCardData();
   }
+
 
   void fetchCardData() async {
     var matchCollection = FirebaseFirestore.instance.collection('Match The Column');
@@ -43,7 +50,8 @@ class _MemoryMatchState extends State<MemoryMatch> {
 
     // Shuffle the list and take the first 8 pairs
     questionPairs.shuffle();
-    var selectedPairs = questionPairs.take(8).toList();
+    int numberOfPairs = widget.level == "easy" ? 4 : 8; // Easy has 4 pairs, medium has 8
+    var selectedPairs = questionPairs.take(numberOfPairs).toList();
 
     // Map selected pairs to CardModels
     var cardPairs = selectedPairs.map((pair) {
@@ -125,18 +133,26 @@ class _MemoryMatchState extends State<MemoryMatch> {
 
   @override
   Widget build(BuildContext context) {
+    double screenPadding = 16.0; // total horizontal padding (8.0 * 2)
+    double cardWidth = (MediaQuery.of(context).size.width - screenPadding - (3 * 8.0)) / 4; // 4 cards, 3 spacings of 8.0
+    double cardHeight = cardWidth * (widget.level == "easy" ? 1 : 1); // Adjust the multiplier to set height
+    double aspectRatio = cardWidth / cardHeight;
+
+    // For 'medium' level, you might want a different card height, hence a different multiplier
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Memory Match Game'),
+        title: Text('Memory Match Game - ${widget.level.capitalize()}'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Show a loading spinner when data is loading
+          ? Center(child: CircularProgressIndicator())
           : Stack(
         children: [
           GridView.builder(
             padding: const EdgeInsets.all(8.0),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: widget.level == "easy" ? 4 : 4, // Number of columns fixed at 4
+              childAspectRatio: aspectRatio, // Use the new aspect ratio
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
             ),
@@ -147,11 +163,9 @@ class _MemoryMatchState extends State<MemoryMatch> {
                 flipOnTouch: !cards[index].isMatched,
                 onFlipDone: (isFlipped) {
                   if (!isFlipped || flipBack) return;
-
                   setState(() {
                     cards[index].isFlipped = isFlipped;
                   });
-
                   onCardFlip(index);
                 },
                 direction: FlipDirection.HORIZONTAL,
@@ -175,6 +189,8 @@ class _MemoryMatchState extends State<MemoryMatch> {
       ),
     );
   }
+
+
 
   Widget winOverlay(BuildContext context) {
     return Center(
@@ -200,6 +216,12 @@ class _MemoryMatchState extends State<MemoryMatch> {
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1)}";
   }
 }
 
