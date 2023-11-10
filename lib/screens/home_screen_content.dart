@@ -21,6 +21,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   String? userName;
   String? avatarPrompt;
   String? avatarPromptTypeNumber;
+  String? tempAvatarPromptType;
 
   Future<void> fetchUserName() async {
     try {
@@ -34,6 +35,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         userName = document.data()?['firstName'];
         avatarPrompt = document.data()?['avatarPrompt'];
         avatarPromptTypeNumber = document.data()?['avatarPromptTypeNumber'];
+        tempAvatarPromptType = avatarPromptTypeNumber;
         print('Fetched username: $userName'); // Added this print statement
       });
     } catch (error) {
@@ -87,7 +89,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     "Kittens",
     "Humans"
   ].map<DropdownMenuItem<String>>((String value) {
-    return DropdownMenuItem<String>(
+    return DropdownMenuItem(
       child: Text(value),
       value: value,
     );
@@ -156,7 +158,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                                   setState(() {
                                                     avatarPromptType =
                                                         newValue!;
-
                                                     if (newValue == "Robots") {
                                                       avatarPromptTypeNumber =
                                                           '1';
@@ -182,8 +183,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                                       avatarPromptTypeNumber =
                                                           '5';
                                                     }
-                                                    print(
-                                                        avatarPromptTypeNumber);
+
+                                                    print(avatarPromptType);
                                                   });
                                                 }),
                                             TextField(

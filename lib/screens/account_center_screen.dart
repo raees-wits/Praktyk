@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountCenterScreen extends StatefulWidget {
-  const AccountCenterScreen({Key? key, required this.initialData}) : super(key: key);
+  const AccountCenterScreen({Key? key, required this.initialData})
+      : super(key: key);
 
   final Map<String, String> initialData;
 
@@ -19,6 +20,8 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
   late TextEditingController emailController2;
   late TextEditingController passwordController;
   String userType = "Student"; // Default user type
+  String avatarPrompt = "Default";
+  String avatarPromptTypeNumber = "1";
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -26,13 +29,21 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
   @override
   void initState() {
     super.initState();
-    firstNameController = TextEditingController(text: widget.initialData['firstName'] ?? '');
-    lastNameController = TextEditingController(text: widget.initialData['lastName'] ?? '');
-    emailController = TextEditingController(text: widget.initialData['email'] ?? '');
-    phoneController = TextEditingController(text: widget.initialData['phone'] ?? '');
-    emailController2 = TextEditingController(text: widget.initialData['guardianEmail'] ?? '');
-    passwordController = TextEditingController(); // Assuming password is passed for the sake of completion
+    firstNameController =
+        TextEditingController(text: widget.initialData['firstName'] ?? '');
+    lastNameController =
+        TextEditingController(text: widget.initialData['lastName'] ?? '');
+    emailController =
+        TextEditingController(text: widget.initialData['email'] ?? '');
+    phoneController =
+        TextEditingController(text: widget.initialData['phone'] ?? '');
+    emailController2 =
+        TextEditingController(text: widget.initialData['guardianEmail'] ?? '');
+    passwordController =
+        TextEditingController(); // Assuming password is passed for the sake of completion
     userType = widget.initialData['userType'] ?? userType;
+    avatarPrompt = widget.initialData['avatarPrompt'] ?? "";
+    avatarPromptTypeNumber = widget.initialData['avatarPromptTypeNumber'] ?? "";
   }
 
   Future<void> updateUserDetails() async {
@@ -80,8 +91,8 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
         title: Text(
           "Account Center",
           style: Theme.of(context).textTheme.headline6?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -97,9 +108,8 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     width: 100,
                     height: 100,
                     child: ClipOval(
-                      child: const Image(
-                        image: AssetImage("assets/images/profile.png"),
-                        fit: BoxFit.cover,
+                      child: Image.network(
+                        "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
                       ),
                     ),
                   ),
@@ -167,7 +177,9 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         prefixIcon: const Icon(Icons.attach_email_outlined),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty || value.contains('@')) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            value.contains('@')) {
                           return null; // valid or empty is allowed
                         }
                         return 'Please enter a valid email'; // invalid email
@@ -176,7 +188,8 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     Divider(color: Colors.black),
                     DropdownButtonFormField<String>(
                       value: userType,
-                      items: ["Teacher", "Student", "Parent"].map((String value) {
+                      items:
+                          ["Teacher", "Student", "Parent"].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -196,7 +209,8 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     SizedBox(
                       width: 150,
                       child: ElevatedButton(
-                        onPressed: updateUserDetails, // This saves the data to Firestore
+                        onPressed:
+                            updateUserDetails, // This saves the data to Firestore
                         style: ElevatedButton.styleFrom(
                           primary: Colors.deepPurpleAccent,
                           onPrimary: Colors.white,
