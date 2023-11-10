@@ -9,6 +9,7 @@ class LeaderBoardScreen extends StatefulWidget {
 class Leader {
   final String winnerName;
   final String rank;
+  final String rankInCircle; // Add this property
   final String url;
   final String avatarPrompt;
   final String avatarPromptTypeNumber;
@@ -16,6 +17,7 @@ class Leader {
   Leader({
     required this.winnerName,
     required this.rank,
+    required this.rankInCircle, // Add this property
     required this.url,
     required this.avatarPrompt,
     required this.avatarPromptTypeNumber,
@@ -27,10 +29,28 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   List<Leader> second = [];
   List<Leader> third = [];
   List<Map<String, dynamic>> contestants = [];
+  bool isLoading = true;
+
+  /*@override
+  void initState() {
+    super.initState();
+
+    
+    queryLeaderboard();
+  }*/
 
   @override
   void initState() {
     super.initState();
+    // Simulate data loading for 2 seconds (you can adjust the duration)
+    Future.delayed(Duration(seconds: 3), () {
+      // After the delay, set isLoading to false to show the main content
+      setState(() {
+        isLoading = false;
+      });
+    });
+
+    // Fetch data
     queryLeaderboard();
   }
 
@@ -58,33 +78,40 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
           String grade = data['grade'] ?? 'N/A';
           String avatarPrompt = data['avatarPrompt'] ?? 'default';
           String avatarPromptTypeNumber = data['avatarPromptTypeNumber'] ?? '1';
+          int totalQuestionsAnswered = data['Total Questions Answered'] ?? 0;
+          totalQuestionsAnswered = totalQuestionsAnswered * 321;
+          String stringValue = totalQuestionsAnswered.toString();
 
           if (count == 0) {
             first.add(Leader(
                 winnerName: firstName,
-                rank: '1',
+                rank: stringValue,
                 avatarPrompt: avatarPrompt,
                 avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '1',
                 url: 'assets/images/games.png'));
           } else if (count == 1) {
             second.add(Leader(
                 winnerName: firstName,
-                rank: '2',
+                rank: stringValue,
                 avatarPrompt: avatarPrompt,
                 avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '2',
                 url: 'assets/images/games.png'));
           } else if (count == 2) {
             third.add(Leader(
                 winnerName: firstName,
-                rank: '3',
+                rank: stringValue,
                 avatarPrompt: avatarPrompt,
                 avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '3',
                 url: 'assets/images/games.png'));
           } else {
             contestants.add({
               'firstName': firstName,
               'grade': grade,
               'avatarPrompt': avatarPrompt,
+              'rank': stringValue,
               'avatarPromptTypeNumber': avatarPromptTypeNumber
             });
           }
@@ -101,166 +128,171 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        elevation: 0.0,
-        leading: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.red,
-        ),
-        actions: [
-          Icon(
-            Icons.grid_view,
-            color: Colors.red,
-          ),
-        ],
-      ),
-      body: ListView(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
+    return isLoading
+        ? LoadingScreen() // Display the loading screen while data is loading
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.blue,
+              elevation: 0.0,
+              leading: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.red,
+              ),
+              actions: [
+                Icon(
+                  Icons.grid_view,
+                  color: Colors.red,
+                ),
+              ],
             ),
-            child: Column(
+            body: ListView(
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.yellow.shade600,
-                        Colors.orange,
-                        Colors.red,
-                      ],
-                    ),
+                    color: Colors.blue,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Container(
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.black,
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.yellow.shade600,
+                              Colors.orange,
+                              Colors.red,
+                            ],
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Container(
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              color: Colors.black,
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Regional',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    '',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    'National',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(
-                              'Regional',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
+                            Expanded(
+                              child: WinnerContainer(
+                                leader: first.isEmpty ? null : first[0],
+                                color: Colors.green,
                               ),
                             ),
-                            Text(
-                              '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
+                            Expanded(
+                              child: WinnerContainer(
+                                leader: second.isEmpty ? null : second[0],
+                                color: Colors.orange,
                               ),
                             ),
-                            Text(
-                              'National',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
+                            Expanded(
+                              child: WinnerContainer(
+                                leader: third.isEmpty ? null : third[0],
+                                color: Colors.blue,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: first.isEmpty ? null : first[0],
-                          color: Colors.green,
-                        ),
+                      SizedBox(
+                        height: 20.0,
                       ),
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: second.isEmpty ? null : second[0],
-                          color: Colors.orange,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.yellow.shade600,
+                              Colors.black,
+                              Colors.blue,
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: third.isEmpty ? null : third[0],
-                          color: Colors.blue,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Container(
+                            height: 360.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0),
+                              ),
+                              color: Colors.purple,
+                            ),
+                            child: GridView.count(
+                              crossAxisCount: 1,
+                              childAspectRatio: 3.5,
+                              children: [
+                                for (var contestant in contestants)
+                                  ContestantList(
+                                    url:
+                                        'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
+                                    firstName: contestant['firstName'],
+                                    grade: contestant['grade'],
+                                    rank: contestant['rank'],
+                                    avatarPrompt: contestant['avatarPrompt'],
+                                    avatarPromptTypeNumber:
+                                        contestant['avatarPromptTypeNumber'],
+                                  ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.yellow.shade600,
-                        Colors.black,
-                        Colors.blue,
-                      ],
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Container(
-                      height: 360.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                        color: Colors.purple,
-                      ),
-                      child: GridView.count(
-                        crossAxisCount: 1,
-                        childAspectRatio: 3.5,
-                        children: [
-                          for (var contestant in contestants)
-                            ContestantList(
-                              url:
-                                  'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
-                              firstName: contestant['firstName'],
-                              grade: contestant['grade'],
-                              avatarPrompt: contestant['avatarPrompt'],
-                              avatarPromptTypeNumber:
-                                  contestant['avatarPromptTypeNumber'],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 }
 
@@ -376,7 +408,8 @@ class WinnerContainer extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        leader?.rank ?? '1',
+                        //leader?.rank ?? '1',
+                        leader?.rankInCircle ?? '1',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -427,6 +460,7 @@ class ContestantList extends StatelessWidget {
   final String firstName;
   final String grade;
   final String url;
+  final String rank;
   final String avatarPrompt;
   final String avatarPromptTypeNumber;
 
@@ -435,6 +469,7 @@ class ContestantList extends StatelessWidget {
       required this.firstName,
       required this.grade,
       required this.avatarPrompt,
+      required this.rank,
       required this.avatarPromptTypeNumber});
 
   @override
@@ -491,7 +526,7 @@ class ContestantList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Rank: N/A',
+                'XP: $rank',
                 style: TextStyle(color: Colors.white),
               ),
               Icon(
@@ -501,6 +536,17 @@ class ContestantList extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
