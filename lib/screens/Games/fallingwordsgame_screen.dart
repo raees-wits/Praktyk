@@ -42,7 +42,7 @@ class _FallingBubbleState extends State<FallingBubble> {
 
   _startFalling() async {
     // Calculate the number of possible segments based on bubble width plus padding
-    int numberOfSegments = MediaQuery.of(context).size.width ~/ 80.0;
+    int numberOfSegments = MediaQuery.of(context).size.width ~/ 50.0;
     double segmentWidth = MediaQuery.of(context).size.width / numberOfSegments;
 
     // Find an available segment by checking activeBubblePositions
@@ -52,17 +52,17 @@ class _FallingBubbleState extends State<FallingBubble> {
       segment = Random().nextInt(numberOfSegments);
       double tentativeLeftPosition = segment * segmentWidth;
       isPositionOccupied = widget.activeBubblePositions.any(
-            (position) => (position - tentativeLeftPosition).abs() < 80.0,
+            (position) => (position - tentativeLeftPosition).abs() < 50.0,
       );
     } while (isPositionOccupied);
 
     // Set the left position only once when the bubble is created
     if (leftPosition == null) {
-      leftPosition = segment * segmentWidth + (segmentWidth - 80.0) / 2; // Center the bubble in the segment;
+      leftPosition = segment * segmentWidth + (segmentWidth - 25.0) / 2; // Center the bubble in the segment;
     }
 
-    final fallingDuration = Duration(seconds: 10); // Standardized falling duration
-    await Future.delayed(Duration(milliseconds: Random().nextInt(7000)));
+    final fallingDuration = Duration(seconds: 6); // Standardized falling duration
+    await Future.delayed(Duration(milliseconds: Random().nextInt(8000)));
 
     setState(() {
       topPosition = MediaQuery.of(context).size.height * 0.75;
@@ -73,11 +73,14 @@ class _FallingBubbleState extends State<FallingBubble> {
     await Future.delayed(fallingDuration);
 
     setState(() {
-      topPosition = -610.0;
+      // Reset the top position to start above the screen
+      topPosition = -MediaQuery.of(context).size.height * 0.55;
       widget.activeBubblePositions.remove(leftPosition);
-    });
 
-    _startFalling();
+    });
+    _startFalling();  // Continue the falling loop
+
+
   }
 
 
@@ -90,7 +93,7 @@ class _FallingBubbleState extends State<FallingBubble> {
     return AnimatedPositioned(
       top: topPosition,
       left: leftPosition,
-      duration: Duration(seconds: 10), // This should match the fallingDuration
+      duration: Duration(seconds: 6), // This should match the fallingDuration
       child: Bubble(
         word: widget.word,
         onTap: widget.onTap,
