@@ -68,6 +68,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "csv",
+      "rootUri": "file:///Users/Pastorjoy/.pub-cache/hosted/pub.dev/csv-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///Users/Pastorjoy/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6",
       "packageUri": "lib/",
@@ -156,6 +162,12 @@
       "rootUri": "file:///Users/Pastorjoy/.pub-cache/hosted/pub.dev/firebase_storage_web-3.6.8",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "flip_card",
+      "rootUri": "file:///Users/Pastorjoy/.pub-cache/hosted/pub.dev/flip_card-0.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "flutter",
@@ -368,7 +380,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2023-10-20T21:11:41.727147Z",
+  "generated": "2023-11-10T10:34:24.381517Z",
   "generator": "pub",
   "generatorVersion": "3.1.4"
 }
