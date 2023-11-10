@@ -40,14 +40,10 @@ dependencies:
   image_picker: ^1.0.4
   firebase_storage: ^11.2.8
   flip_card: ^0.7.0
-  csv: ^5.1.1
-  firebase_messaging: ^14.6.2
-  firebase_analytics: ^10.6.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -55,7 +51,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
-  awesome_notifications: ^0.8.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -74,8 +69,6 @@ flutter:
     - assets/images/
     - assets/images/talkingtoucan2.png
     - assets/images/talkingtoucan.png
-    - assets/images/flappy-bird.png
-
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

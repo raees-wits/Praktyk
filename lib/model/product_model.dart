@@ -6,6 +6,7 @@ import '../screens/category_tree.dart';
 import 'category_modal.dart';
 import 'current_user.dart';
 
+
 class Product {
   final String image, title;
   final int id, courses;
@@ -27,8 +28,9 @@ List<Product> products = [
     title: "Practise Vocabulary",
     image: "assets/images/practisevocab.png",
     color: Color(0xFF71b8ff),
-    courses: 4,
+    courses: 16,
   ),
+
   Product(
     id: 2,
     title: "Grammar Rules",
@@ -37,26 +39,25 @@ List<Product> products = [
     courses: 22,
   ),
   Product(
-      id: 3,
-      title: "Pronounciation",
-      image: "assets/images/pronounciation.png",
-      color: Color(0xFFffaa5b),
-      courses: 15,
-      onTap: (BuildContext context) {
-        // Add the onTap functionality
+    id: 3,
+    title: "Pronounciation",
+    image: "assets/images/pronounciation.png",
+    color: Color(0xFFffaa5b),
+    courses: 15,
+      onTap: (BuildContext context) { // Add the onTap functionality
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => CategoryTree(
-                    categories: categories,
-                  )),
+          MaterialPageRoute(builder: (context) => CategoryTree(
+            categories: categories,
+          )),
         );
-      }),
+      }
+  ),
   Product(
     id: 4,
     title: "Games",
     image: "assets/images/games.png",
     color: Color(0xFF9ba0fc),
-    courses: 2,
+    courses: 18,
   ),
 ];

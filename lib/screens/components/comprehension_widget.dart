@@ -30,6 +30,7 @@ class ComprehensionWidget extends StatelessWidget {
                                   comprehensionID: comprehensionID,
                                   comprehensionTitle: comprehensionTitle,
                                   comprehensionText: comprehensionText,
+                                  questionNo: 0,
                                 )));
                   },
                   child: Text(

@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-class Question {
-  final String text;
-  final String answer;
-  bool answered = false;
-  bool correct = false;
-  String userAnswer = "";
-  String feedback = "";
-
-  Question(this.text, this.answer);
-}
+import 'dart:async'; // Import dart:async for Timer
 
 class ShortAnswerQuestions extends StatefulWidget {
   @override
@@ -19,46 +8,47 @@ class ShortAnswerQuestions extends StatefulWidget {
 }
 
 class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final TextEditingController answerController = TextEditingController();
   int currentQuestionIndex = 0;
-  String nextText = "Next";
+  String? feedback;
+  bool? isCorrect;
+  double opacityLevel = 0.0; // Initial opacity level
 
-  List<Question> questions = [];
+  final List<String> questions = [
+    "Wanneer het Tom die tee vir sy ma gemaak?",
+    "Wat is die hoofstad van Frankryk?",
+    "In the following sentence:\n\nDie hond by die kat\n\n \"Hond\" is a:",
+  ];
 
-  @override
-  void initState() {
-    loadQuestions();
-    super.initState();
-  }
+  final List<String> correctAnswers = [
+    "Yes",
+    "Paris",
+    "Dog",
+  ];
+
+  final Map<int, String> userAnswers = {};
 
   void submitAnswer() {
     setState(() {
       String userAnswer = answerController.text.trim();
-      String correctAnswer = questions[currentQuestionIndex].answer;
+      String correctAnswer = correctAnswers[currentQuestionIndex];
 
-      questions[currentQuestionIndex].answered = true;
-      questions[currentQuestionIndex].userAnswer = userAnswer;
+      userAnswers[currentQuestionIndex] = userAnswer;
 
       if (userAnswer == correctAnswer) {
-        questions[currentQuestionIndex].feedback = "Correct!";
-        questions[currentQuestionIndex].correct = true;
+        feedback = "Correct!";
+        isCorrect = true;
       } else {
-        questions[currentQuestionIndex].feedback =
-            "Incorrect! The correct answer is:\n\n $correctAnswer";
-        questions[currentQuestionIndex].correct = false;
+        feedback = "Incorrect! The correct answer is:\n\n $correctAnswer";
+        isCorrect = false;
       }
+      opacityLevel = 1.0; // Set opacity level to 1 to make the icon visible
     });
-  }
 
-  loadQuestions() async {
-    final querySnapshot =
-        await firestore.collection('ShortAnswerQuestions').get();
-    setState(() {
-      questions = querySnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return Question(data['Text'], data['Answer']);
-      }).toList();
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        opacityLevel = 0.0; // Set opacity level to 0 to hide the icon after 2 seconds
+      });
     });
   }
 
@@ -123,7 +113,7 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Text(
-                      questions[currentQuestionIndex].text,
+                      questions[currentQuestionIndex],
                       style: TextStyle(
                         fontFamily: 'NunitoSans',
                         fontSize: 32,
@@ -145,47 +135,44 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                     ),
                   ),
                   SizedBox(height: 40),
-                  if (!questions[currentQuestionIndex].answered)
-                    ElevatedButton(
-                      onPressed: submitAnswer,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      child: Text(
-                        "Submit",
-                        style: TextStyle(
-                          color: Color(0xFF9ba0fc),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  ElevatedButton(
+                    onPressed: submitAnswer,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                  if (questions[currentQuestionIndex].answered)
+                    child: Text(
+                      "Submit",
+                      style: TextStyle(
+                        color: Color(0xFF9ba0fc),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (feedback != null)
                     Column(
                       children: [
                         SizedBox(height: 20),
                         Text(
-                          questions[currentQuestionIndex].feedback,
+                          feedback!,
                           style: TextStyle(
-                            color: questions[currentQuestionIndex].correct
-                                ? Colors.green
-                                : Colors.red,
+                            color: isCorrect! ? Colors.green : Colors.red,
                             fontSize: 18,
                           ),
                         ),
                         SizedBox(height: 20),
-                        Icon(
-                          questions[currentQuestionIndex].correct
-                              ? Icons.check
-                              : Icons.close,
-                          color: questions[currentQuestionIndex].correct
-                              ? Colors.green
-                              : Colors.red,
-                          size: 30,
+                        AnimatedOpacity(
+                          opacity: opacityLevel,
+                          duration: Duration(seconds: 1),
+                          child: Icon(
+                            isCorrect! ? Icons.check : Icons.close,
+                            color: isCorrect! ? Colors.green : Colors.red,
+                            size: 30,
+                          ),
                         ),
                       ],
                     ),
@@ -208,13 +195,11 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                   onPressed: () {
                     if (currentQuestionIndex > 0) {
                       setState(() {
-                        nextText = "Next";
                         currentQuestionIndex--;
+                        feedback = null; // Clear the feedback
+                        isCorrect = null; // Clear the correctness status
+                        answerController.clear(); // Clear the TextField content
                       });
-                      answerController.text =
-                          questions[currentQuestionIndex].userAnswer;
-                    } else {
-                      Navigator.pop(context);
                     }
                   },
                   child: Text("Prev"),
@@ -231,17 +216,13 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
                     if (currentQuestionIndex < questions.length - 1) {
                       setState(() {
                         currentQuestionIndex++;
-                        if (currentQuestionIndex == questions.length - 1) {
-                          nextText = "Done";
-                        }
+                        feedback = null; // Clear the feedback
+                        isCorrect = null; // Clear the correctness status
+                        answerController.clear(); // Clear the TextField content
                       });
-                      answerController.text =
-                          questions[currentQuestionIndex].userAnswer;
-                    } else {
-                      Navigator.pop(context);
                     }
                   },
-                  child: Text(nextText),
+                  child: Text("Next"),
                 ),
               ],
             ),
@@ -251,3 +232,4 @@ class _ShortAnswerQuestionsState extends State<ShortAnswerQuestions> {
     );
   }
 }
+

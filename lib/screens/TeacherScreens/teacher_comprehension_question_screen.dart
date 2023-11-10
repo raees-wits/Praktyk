@@ -6,9 +6,8 @@ class Question {
   final String id;
   final String text;
   final String answer;
-  final int questionNo;
 
-  Question(this.id, this.text, this.answer, this.questionNo);
+  Question(this.id, this.text, this.answer);
 }
 
 class TeacherComprehensionQuestionScreen extends StatefulWidget {
@@ -64,11 +63,8 @@ class _TeacherComprehensionQuestionScreenState
     setState(() {
       questions = querySnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return Question(
-            doc.id, data['Text'], data['Answer'], data['QuestionNo']);
+        return Question(doc.id, data['Text'], data['Answer']);
       }).toList();
-
-      questions.sort((a, b) => a.questionNo.compareTo(b.questionNo));
 
       if (widget.questionNo < questions.length) {
         questionText = questions[widget.questionNo].text;
@@ -319,8 +315,7 @@ class _TeacherComprehensionQuestionScreenState
                                   .collection("Questions")
                                   .add({
                                 'Answer': answerTxt.text,
-                                'Text': questionTxt.text,
-                                'QuestionNo': widget.questionNo
+                                'Text': questionTxt.text
                               });
                             } else {
                               await FirebaseFirestore.instance
@@ -330,8 +325,7 @@ class _TeacherComprehensionQuestionScreenState
                                   .doc(questionID)
                                   .update({
                                 'Answer': answerTxt.text,
-                                'Text': questionTxt.text,
-                                'QuestionNo': widget.questionNo
+                                'Text': questionTxt.text
                               });
                             }
                           },

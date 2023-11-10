@@ -1,58 +1,16 @@
-import 'package:e_learning_app/screens/components/teacher_short_answer_questions_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Question {
-  String id;
-  String text;
-  String answer;
-
-  Question(this.id, this.text, this.answer);
-}
-
 class ManageShortAnswerScreen extends StatefulWidget {
   @override
-  _ManageShortAnswerScreenState createState() =>
-      _ManageShortAnswerScreenState();
+  _ManageShortAnswerScreenState createState() => _ManageShortAnswerScreenState();
 }
 
 class _ManageShortAnswerScreenState extends State<ManageShortAnswerScreen> {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  List<Question> questions = [];
-  var questionTxt = TextEditingController();
-  var answerTxt = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    loadQuestions();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void onDeleted(Question s) {
-    firestore.collection('ShortAnswerQuestions').doc(s.id).delete();
-
-    setState(() {
-      questions.remove(s);
-    });
-
-    Navigator.pop(context);
-  }
-
-  Future<void> loadQuestions() async {
-    final querySnapshot =
-        await firestore.collection("ShortAnswerQuestions").get();
-    setState(() {
-      questions = querySnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return Question(doc.id, data['Text'], data['Answer']);
-      }).toList();
-    });
-  }
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? selectedCategory;
+  Map<String, TextEditingController> questionControllers = {};
+  Map<String, TextEditingController> answerControllers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -62,74 +20,71 @@ class _ManageShortAnswerScreenState extends State<ManageShortAnswerScreen> {
       ),
       body: Column(
         children: [
-          GestureDetector(
-            onTap: () async {
-              final result = (await showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Question'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextField(
-                              controller: questionTxt,
-                              decoration: InputDecoration(
-                                labelText: 'Question',
-                              ),
-                            ),
-                            TextField(
-                              controller: answerTxt,
-                              decoration: InputDecoration(
-                                labelText: 'Answer',
-                              ),
-                            )
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                              onPressed: () async {
-                                var result = await firestore
-                                    .collection("ShortAnswerQuestions")
-                                    .add({
-                                  "Text": questionTxt.text,
-                                  "Answer": answerTxt.text
-                                });
-
-                                setState(() {
-                                  questions.add(Question(result.id,
-                                      questionTxt.text, answerTxt.text));
-                                });
-
-                                Navigator.of(context).pop(questionTxt.text);
-                                questionTxt.clear();
-                                answerTxt.clear();
-                              },
-                              child: Text('Confirm'))
-                        ],
-                      )));
+          // Category selection dropdown
+          DropdownButton<String>(
+            hint: Text("Select a category"),
+            value: selectedCategory,
+            onChanged: (newValue) {
+              setState(() {
+                selectedCategory = newValue;
+                _loadQuestions(); // Load questions when a category is selected.
+              });
             },
-            child: Card(
-              margin: EdgeInsets.all(10.0),
-              child: Text(
-                "Add New Question",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+            items: [], // Populate this with categories from Firestore.
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: questionControllers.length,
+              itemBuilder: (context, index) {
+                String questionKey = questionControllers.keys.elementAt(index);
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: questionControllers[questionKey],
+                        decoration: InputDecoration(labelText: 'Question'),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: TextField(
+                        controller: answerControllers[questionKey],
+                        decoration: InputDecoration(labelText: 'Answer'),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        // Remove question logic
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-          for (var question in questions)
-            TeacherShortAnswerWidget(
-                id: question.id,
-                text: question.text,
-                answer: question.answer,
-                onDeleted: () {
-                  onDeleted(question);
-                })
+          ElevatedButton(
+            onPressed: _addNewQuestionField,
+            child: Text('Add New Question'),
+          ),
+          ElevatedButton(
+            onPressed: _saveQuestions,
+            child: Text('Save Questions'),
+          ),
         ],
       ),
     );
+  }
+
+  void _loadQuestions() {
+    // Implement question loading logic
+  }
+
+  void _addNewQuestionField() {
+    // Implement UI changes and state update for adding a new question
+  }
+
+  Future<void> _saveQuestions() async {
+    // Implement saving logic to Firestore
   }
 }

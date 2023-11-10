@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_learning_app/screens/comprehension_question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -61,12 +62,22 @@ class _FillInTheBlankWidget extends State<FillInTheBlankWidget> {
                                 decoration: InputDecoration(
                                   labelText: 'Afrikaans',
                                 ),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    afrikaansTxt.text = newValue;
+                                  });
+                                },
                               ),
                               TextField(
                                 controller: englishTxt,
                                 decoration: InputDecoration(
                                   labelText: 'English',
                                 ),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    englishTxt.text = newValue;
+                                  });
+                                },
                               )
                             ],
                           ),
