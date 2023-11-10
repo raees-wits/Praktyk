@@ -1,28 +1,52 @@
 import 'package:flutter/material.dart';
 
-class AnkiModal extends StatelessWidget {
-  final String word;
-  final VoidCallback onConfirm;
+class AnkiModal extends StatefulWidget {
+  final String englishWord;
+  final String afrikaansWord;
+  final String audioClipUrl;
+  final Function(String) onConfirm;
 
   AnkiModal({
-    required this.word,
+    required this.englishWord,
+    required this.afrikaansWord,
+    required this.audioClipUrl,
     required this.onConfirm,
   });
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController textController = TextEditingController();
+  _AnkiModalState createState() => _AnkiModalState();
+}
 
+class _AnkiModalState extends State<AnkiModal> {
+  TextEditingController textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Type what you hear'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            word,
+            widget.englishWord,
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 20.0),
+          ElevatedButton(
+            onPressed: () {
+              // Play the audio clip from 'widget.audioClipUrl'
+              // Implement your audio playback logic here.
+            },
+            child: Icon(
+              Icons.volume_up,
+              size: 48.0,
+            ),
+            style: ElevatedButton.styleFrom(
+              shape: CircleBorder(),
+              padding: EdgeInsets.all(24.0),
             ),
           ),
           SizedBox(height: 20.0),
@@ -36,7 +60,7 @@ class AnkiModal extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               String userResponse = textController.text;
-              onConfirm(); // Pass the user's response to the callback
+              widget.onConfirm(userResponse); // Pass the user's response to the callback
               Navigator.of(context).pop(); // Close the modal
             },
             child: Text("Confirm"),

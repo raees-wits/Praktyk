@@ -6,6 +6,9 @@ import 'package:e_learning_app/screens//practise_vocab_screen.dart';
 import '../../model/current_user.dart';
 import '../Games/game_selection_screen.dart';
 import '../TeacherScreens/teacher_choice_screen.dart';
+import '../anki_card_screen.dart';
+import '../category_tree.dart';
+import '../anki_category_screen.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({
@@ -47,7 +50,17 @@ class CategoryCard extends StatelessWidget {
               builder: (context) =>
                   const GameSelectionScreen()), // The new screen you're navigating to.
         );
-      }else if (product.title == "Practise Vocabulary") {
+      }
+      else if (product.title == "Pronounciation") {
+        // Pronounciation card to anki card 
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                   AnkiCategoryScreen()), 
+        );
+      }
+      else if (product.title == "Practise Vocabulary") {
             if (CurrentUser().userType == "Teacher") {
               // If userType is "Teacher", navigate to TeacherChoiceScreen
               Navigator.push(

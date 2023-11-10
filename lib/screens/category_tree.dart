@@ -154,12 +154,14 @@ class _CategoryTreeState extends State<CategoryTree> {
                         ElevatedButton(
                           onPressed: () {
                             // Navigate to the Anki card screen with the selected word
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AnkiCardScreen(word: category.name),
-                              ),
-                            );
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AnkiCardScreen(category: category.name),
+                            ),
+                          );
+
+
                           },
                           child: Text("Practice"),
                         ),
