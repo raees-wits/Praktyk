@@ -18,6 +18,10 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
   int currentQuestionIndex = 0;
   List<Map<String, dynamic>> questions = [];
   int score = 0; // Added score variable
+  int totalCorrectAnswers = 0;
+  DateTime startTime = DateTime.now();
+
+
 
   @override
   void initState() {
@@ -78,26 +82,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
     }
   }
 
-  // Future<void> _updateUserScore() async {
-  //   User? currentUser = FirebaseAuth.instance.currentUser;
-  //   if (currentUser == null) return;
-  //
-  //   // Fetch the user's document from Firestore
-  //   final userDocs = await FirebaseFirestore.instance.collection('Users')
-  //       .where('firstName', isEqualTo: firstName)
-  //       .where('lastName', isEqualTo: lastName)
-  //       .get();
-  //
-  //   // Ensure we have a matching document
-  //   if (userDocs.docs.isNotEmpty) {
-  //     final userDoc = userDocs.docs.first;
-  //
-  //     // Update the 'Fill in the blanks' score
-  //     await userDoc.reference.update({
-  //       'Questions Completed.Fill in the blanks': FieldValue.increment(1)
-  //     });
-  //   }
-  // }
+
 
   void _showHelpDialog(String message) {
     showDialog(
@@ -191,6 +176,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                       setState(() {
                         if (word == currentQuestion['answer']) {
                           score += 10;
+                          totalCorrectAnswers++;
                           _showFeedbackDialog('Correct!', Colors.green[200]!);
                         } else {
                           score -= 2;
@@ -260,7 +246,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                           currentQuestionIndex++;
                         });
                       } else {
-                        _showFeedbackDialog('You have answered all questions!', Colors.indigoAccent[100]!);
+                        // Show results dialog
+                        _showResultsDialog();
                       }
                     },
                     child: Text('Next'),
@@ -275,6 +262,46 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
       ),
     );
   }
+
+  void _showResultsDialog() {
+    Duration timeTaken = DateTime.now().difference(startTime);
+    double averageTimePerQuestion = timeTaken.inSeconds / questions.length;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Final Results"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Score: $score"),
+              Text("Time Taken: ${timeTaken.inSeconds} seconds"),
+              Text("Average Time per Question: ${averageTimePerQuestion.toStringAsFixed(2)} seconds"),
+              Text("Total Correct: $totalCorrectAnswers"),
+            ],
+          ),
+          backgroundColor: Colors.purpleAccent[100],
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Try Again'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetGame();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
 
 
@@ -296,17 +323,17 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
         );
       },
     );
-    // if (message == 'Correct!') {
-    //   _updateUserScore(); // Update the user's score in Firestore
-    // }
   }
 
 
+  void _resetGame() {
+    setState(() {
+      score = 0;
+      currentQuestionIndex = 0;
+      totalCorrectAnswers = 0;
+      startTime = DateTime.now();
+      _fetchQuestionsFromFirestore(); // Fetch new questions or shuffle existing ones
+    });
+  }
 
-  //
-  // void _handleAssistantClick() {
-  //   final currentQuestion = questions[currentQuestionIndex];
-  //   final translation = currentQuestion['english']; // Assuming you have an 'english' key in your question map
-  //   _showTranslationDialog(translation);
-  // }
 }
