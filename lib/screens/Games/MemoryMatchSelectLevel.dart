@@ -23,6 +23,9 @@ class _MemoryMatchLevelSelectState extends State<MemoryMatchLevelSelect> {
 
   @override
   Widget build(BuildContext context) {
+    // Use the widest button's width as the standard for all buttons.
+    double buttonWidth = MediaQuery.of(context).size.width * 0.8; // For example, 80% of screen width
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Level'),
@@ -31,14 +34,20 @@ class _MemoryMatchLevelSelectState extends State<MemoryMatchLevelSelect> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              child: Text('Easy'),
-              onPressed: () => navigateToMemoryMatch("easy"),
+            ConstrainedBox(
+              constraints: BoxConstraints.tightFor(width: buttonWidth),
+              child: ElevatedButton(
+                child: Text('Easy'),
+                onPressed: () => navigateToMemoryMatch("easy"),
+              ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Medium'),
-              onPressed: () => navigateToMemoryMatch("medium"),
+            ConstrainedBox(
+              constraints: BoxConstraints.tightFor(width: buttonWidth),
+              child: ElevatedButton(
+                child: Text('Medium'),
+                onPressed: () => navigateToMemoryMatch("medium"),
+              ),
             ),
           ],
         ),
@@ -46,5 +55,3 @@ class _MemoryMatchLevelSelectState extends State<MemoryMatchLevelSelect> {
     );
   }
 }
-
-// Add modifications to your MemoryMatch and CardModel classes to support level selection.
