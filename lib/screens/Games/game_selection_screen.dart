@@ -50,7 +50,7 @@ class GameSelectionScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => FallingWordsGameScreen()),
                   );
                 },
-                text: 'Falling Words', // change the button text
+                text: 'Bubble Bananza', // change the button text
                 colors: [Colors.blue, Colors.purple], // colors for the gradient
               ),
               buildGradientButton(
