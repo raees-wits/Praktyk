@@ -73,7 +73,6 @@ class PracticeVocabularyScreen extends StatelessWidget {
                   _buildChoiceTile(context, "Multiple Choice", 1),
                   _buildChoiceTile(context, "Short Questions", 2),
                   _buildChoiceTile(context, "Match The Column", 3),
-                  _buildChoiceTile(context, "Comprehension Texts", 4),
                 ],
               ),
             ),
@@ -123,7 +122,7 @@ class PracticeVocabularyScreen extends StatelessWidget {
               ));
             }
           } else if (title == "Short Questions") {
-            if (updateMode == "Modify"){
+            if (updateMode == "Modify") {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -132,40 +131,27 @@ class PracticeVocabularyScreen extends StatelessWidget {
               );
             } else {
               Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ShortAnswerQuestions(),
-              ),
-            );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShortAnswerQuestions(),
+                ),
+              );
             }
-          } else if (title == "Comprehension Texts") {
+          } else if (title == "Multiple Choice") {
             if (updateMode == "Modify") {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => TeacherComprehensionChoiceScreen()),
+                    builder: (context) => const TeacherMultipleChoice()),
               );
             } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ComprehensionChoiceScreen()),
+                  builder: (context) => MultiPurposeCategoryScreen(
+                      questionType: "MultipleChoice"),
+                ),
               );
-            }
-          } else  if (title == "Multiple Choice") {
-            if (updateMode == "Modify"){
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                  builder: (context) => const TeacherMultipleChoice()),
-          );
-            }else {
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MultiPurposeCategoryScreen(questionType: "MultipleChoice"),
-              ),
-            );
             }
           }
         },

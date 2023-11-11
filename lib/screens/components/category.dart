@@ -1,5 +1,6 @@
 import 'package:e_learning_app/model/product_model.dart';
 import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
+import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
 
@@ -42,58 +43,76 @@ class CategoryCard extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
         onTap: () {
-      if (product.title == "Games") {
-        // Navigating to gameSelectionScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const GameSelectionScreen()), // The new screen you're navigating to.
-        );
-      }
-      else if (product.title == "Pronounciation") {
-        // Pronounciation card to anki card 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                   AnkiCategoryScreen()), 
-        );
-      }
-      else if (product.title == "Practise Vocabulary") {
+          if (product.title == "Games") {
+            // Navigating to gameSelectionScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const GameSelectionScreen()), // The new screen you're navigating to.
+            );
+          } else if (product.title == "Pronounciation") {
+            // Pronounciation card to anki card
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AnkiCategoryScreen()),
+            );
+          } else if (product.title == "Practise Vocabulary") {
             if (CurrentUser().userType == "Teacher") {
               // If userType is "Teacher", navigate to TeacherChoiceScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => TeacherChoiceScreen(screen: 'Vocabulary')),
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Vocabulary')),
               );
             } else {
               // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
+                    builder: (context) => PracticeVocabularyScreen(
+                          updateMode: '',
+                        )),
+              );
+            }
+          } else if (product.title == "Grammar Rules") {
+            if (CurrentUser().userType == "Teacher") {
+              // If userType is "Teacher", navigate to TeacherChoiceScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Grammar')),
+              );
+            } else {
+              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GrammarRulesScreen(
+                          updateMode: '',
+                        )),
+              );
+            }
+          } else if (product.title == "Comprehension Texts") {
+            if (CurrentUser().userType == "Teacher") {
+              // If userType is "Teacher", navigate to TeacherChoiceScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Comprehension')),
+              );
+            } else {
+              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ComprehensionChoiceScreen()),
               );
             }
           }
-      else if (product.title == "Grammar Rules"){
-        if (CurrentUser().userType == "Teacher") {
-          // If userType is "Teacher", navigate to TeacherChoiceScreen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TeacherChoiceScreen(screen: 'Grammar')),
-          );
-        } else {
-          // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => GrammarRulesScreen(updateMode: '',)),
-          );
-        }
-      }
         },
         child: Container(
           padding: const EdgeInsets.all(10.0),

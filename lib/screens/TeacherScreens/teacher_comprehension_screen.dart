@@ -59,7 +59,7 @@ class _TeacherComprehensionChoiceScreen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Comprehension')),
+      appBar: AppBar(title: Text('Teacher`s Comprehension')),
       body: ListView(
         children: [
           GestureDetector(

@@ -45,7 +45,7 @@ class _ComprehensionChoiceScreen extends State<ComprehensionChoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Comprehension')),
+      appBar: AppBar(title: Text('Comprehension Texts')),
       body: ListView(
         children: [
           for (var comprehension in comprehensions)

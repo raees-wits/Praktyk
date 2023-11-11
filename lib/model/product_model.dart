@@ -59,4 +59,11 @@ List<Product> products = [
     color: Color(0xFF9ba0fc),
     courses: 4,
   ),
+  Product(
+    id: 5,
+    title: "Comprehension Texts",
+    image: "assets/images/book2.png",
+    color: Color(0xFF9ba0fc),
+    courses: 3,
+  ),
 ];
