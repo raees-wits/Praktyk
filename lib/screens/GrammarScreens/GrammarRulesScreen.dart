@@ -1,3 +1,4 @@
+import 'package:e_learning_app/screens/GrammarScreens/DirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/IndirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
@@ -70,6 +71,7 @@ class GrammarRulesScreen extends StatelessWidget {
                   _buildGrammarRuleTile(context, "Future Tense", 1),
                   _buildGrammarRuleTile(context, "Negatives", 2),
                   _buildGrammarRuleTile(context, "Indirect Speech", 3),
+                  _buildGrammarRuleTile(context, "Direct Speech", 0),
                 ],
               ),
             ),
@@ -139,6 +141,19 @@ class GrammarRulesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => TeacherSpeechScreen()),
+              );
+            }
+          }
+          else if (title == "Direct Speech"){
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DirectSpeechScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DirectSpeechScreen()),
               );
             }
           }
