@@ -2,6 +2,7 @@ import 'package:e_learning_app/screens/GrammarScreens/DirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/FutureTenseScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/IndirectSpeechScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
+import 'package:e_learning_app/screens/GrammarScreens/ActiveFormScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/STOMPIScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacherFutureTenseScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacherSpeechScreen.dart';
@@ -10,6 +11,7 @@ import 'package:e_learning_app/constants.dart';
 
 import '../TeacherScreens/teacherNegativeFormScreen.dart';
 import '../TeacherScreens/teacherPastTenseScreen.dart';
+import 'PassiveFormScreen.dart';
 import 'PastTenseScreen.dart';
 
 class GrammarRulesScreen extends StatelessWidget {
@@ -74,6 +76,8 @@ class GrammarRulesScreen extends StatelessWidget {
                   _buildGrammarRuleTile(context, "Indirect Speech", 3),
                   _buildGrammarRuleTile(context, "Direct Speech", 0),
                   _buildGrammarRuleTile(context, "STOMPI", 1),
+                  _buildGrammarRuleTile(context, "Active Form", 2),
+                  _buildGrammarRuleTile(context, "Passive Form", 3),
                 ],
               ),
             ),
@@ -169,6 +173,32 @@ class GrammarRulesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => STOMPIScreen()),
+              );
+            }
+          }
+          else if (title == "Active Form"){
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ActiveScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ActiveScreen()),
+              );
+            }
+          }
+          else if (title == "Passive Form"){
+            if (updateMode =='') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PassiveScreen()),
+              );
+            }else if (updateMode =='Modify') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PassiveScreen()),
               );
             }
           }
