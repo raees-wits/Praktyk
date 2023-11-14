@@ -160,7 +160,7 @@ class GrammarRulesScreen extends StatelessWidget {
             }else if (updateMode =='Modify') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DirectSpeechScreen()),
+                MaterialPageRoute(builder: (context) => TeacherSpeechScreen()),
               );
             }
           }

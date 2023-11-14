@@ -46,7 +46,7 @@ class _TeacherSpeechScreenState extends State<TeacherSpeechScreen> {
         TextFormField(
           controller: answerController,
           decoration: InputDecoration(
-            labelText: 'Answer ${answerIndex + 1}',
+            labelText: 'Indirect Speech Option ${answerIndex + 1}',
             suffixIcon: IconButton(
               icon: Icon(Icons.delete),
               onPressed: () => removeAnswerField(questionIndex, answerIndex),
@@ -174,14 +174,14 @@ class _TeacherSpeechScreenState extends State<TeacherSpeechScreen> {
                       children: [
                         TextFormField(
                           controller: form['question'],
-                          decoration: InputDecoration(labelText: 'Question'),
+                          decoration: InputDecoration(labelText: 'Direct Speech'),
                         ),
                         ..._buildAnswerFields(index),
                         Row(
                           children: [
                             ElevatedButton(
                               onPressed: () => addNewAnswerField(index),
-                              child: Text('Add Answer'),
+                              child: Text('Add Indirect Speech Option'),
                             ),
                             Spacer(),
                             ElevatedButton(
