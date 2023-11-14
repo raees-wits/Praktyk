@@ -7,6 +7,7 @@ import 'answer_widget.dart';
 class QuestionWidget extends StatelessWidget {
   final String questionId;
   final String questionText;
+  final String askerName;
 
   Future<void> _upvoteAnswer(String questionId, String answerId) async {
     final userVoteRef = FirebaseFirestore.instance
@@ -137,7 +138,7 @@ class QuestionWidget extends StatelessWidget {
 
 
 
-  QuestionWidget({required this.questionId, required this.questionText});
+  QuestionWidget({required this.questionId, required this.questionText, required this.askerName});
 
   Widget buildCard(BuildContext context, bool hasImage) {
     return Card(
@@ -158,7 +159,7 @@ class QuestionWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
-              "Asked by John Doe",
+              askerName != "Anonymous" ? "Asked by $askerName" : "Asked Anonymously",
               style: TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
