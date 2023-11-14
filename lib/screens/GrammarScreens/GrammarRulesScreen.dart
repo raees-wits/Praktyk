@@ -4,6 +4,7 @@ import 'package:e_learning_app/screens/GrammarScreens/IndirectSpeechScreen.dart'
 import 'package:e_learning_app/screens/GrammarScreens/NegativeFormScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/ActiveFormScreen.dart';
 import 'package:e_learning_app/screens/GrammarScreens/STOMPIScreen.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacherActivePassiveScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacherFutureTenseScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacherSpeechScreen.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +186,7 @@ class GrammarRulesScreen extends StatelessWidget {
             }else if (updateMode =='Modify') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ActiveScreen()),
+                MaterialPageRoute(builder: (context) => TeacherActivePassiveScreen()),
               );
             }
           }
@@ -198,7 +199,7 @@ class GrammarRulesScreen extends StatelessWidget {
             }else if (updateMode =='Modify') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PassiveScreen()),
+                MaterialPageRoute(builder: (context) => TeacherActivePassiveScreen()),
               );
             }
           }
