@@ -233,6 +233,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                     "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
                                   ),
                                 )),
+                            Text("Customize"),
                           ],
                         ),
                       ],
