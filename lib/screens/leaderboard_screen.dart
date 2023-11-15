@@ -352,51 +352,44 @@ class WinnerContainer extends StatelessWidget {
             child: Stack(
               children: [
                 if (leader != null)
-                  //Image.asset(
-                  //leader!.url,
-                  Image.network(
-                    "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
-                    height: 70.0,
-                    width: 105.0,
-                  ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50.0, left: 15.0),
-                    child: ClipOval(
-                      clipBehavior: Clip.antiAlias,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.yellow.shade600,
-                              Colors.orange,
-                              Colors.red,
-                            ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 50.0, left: 15.0),
+                      child: ClipOval(
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.yellow.shade600,
+                                Colors.orange,
+                                Colors.red,
+                              ],
+                            ),
+                            border: Border.all(
+                              color: Colors.amber,
+                            ),
                           ),
-                          border: Border.all(
-                            color: Colors.amber,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: ClipOval(
-                            clipBehavior: Clip.antiAlias,
-                            child: leader != null
-                                //? Image.asset(
-                                //  leader!.url,
-                                ? Image.network(
-                                    "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.cover,
-                                  )
-                                : SizedBox.shrink(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: leader != null
+                                  //? Image.asset(
+                                  //  leader!.url,
+                                  ? Image.network(
+                                      "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : SizedBox.shrink(),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 115.0, left: 45.0),
                   child: Container(
