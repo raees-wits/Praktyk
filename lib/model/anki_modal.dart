@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AnkiModal extends StatefulWidget {
   final String englishWord;
   final String afrikaansWord;
-  final String audioClipUrl;
+  final String? audioClipUrl; // Change the type to accept null
   final Function(String) onConfirm;
 
   AnkiModal({

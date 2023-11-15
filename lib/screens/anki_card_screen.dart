@@ -1,9 +1,12 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:audioplayers/audioplayers.dart';
+
+
+import '../model/anki_modal.dart';
 
 class AnkiCardScreen extends StatefulWidget {
   final String category;
@@ -15,76 +18,127 @@ class AnkiCardScreen extends StatefulWidget {
 }
 
 class _AnkiCardScreenState extends State<AnkiCardScreen> {
-  String englishWord = "";
-  String afrikaansWord = "";
-  String audioClipUrl = "";
-  int currentItemIndex = 0;
+  late AudioPlayer audioPlayer;
+  int currentIndex = 0;
+  List<String> englishWords = [];  // Add this line
+  List<String> afrikaansWords = [];  // Add this line
+  List<String?> audioClipUrls = [];  // Add this line
+  bool userEnteredAnswer = false;  // Add this line
 
   @override
   void initState() {
     super.initState();
-    // Fetch data for the selected category from Firebase Storage or any other source.
+    audioPlayer = AudioPlayer();
+    playAudio(); // Call the method to play audio
     fetchData();
   }
-
   Future<void> fetchData() async {
     try {
-      final FirebaseStorage storage = FirebaseStorage.instance;
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-      // Reference to the category folder
-      final Reference categoryReference = storage.ref('gs://praktyk-cb1c1.appspot.com/Audio/${widget.category}');
-      // ...
-      print("Storage Path: ${categoryReference.fullPath}");
+      // Reference to the category document
+      final DocumentReference categoryReference =
+          firestore.collection('Anki').doc(widget.category);
 
+      // Fetch data from the document
+      final DocumentSnapshot ankiCardsSnapshot =
+          await categoryReference.get();
 
-      // Fetch data from CSV files
-      final englishCsvData = await categoryReference.child('english.csv').getData();
-      final afrikaansCsvData = await categoryReference.child('afrikaans.csv').getData();
+      if (ankiCardsSnapshot.exists) {
+        // Extract data map from the document
+        final Map<String, dynamic> data =
+            ankiCardsSnapshot.data() as Map<String, dynamic>;
 
-      // Decode CSV data
-      final englishCsvString = utf8.decode(englishCsvData!);
-      final afrikaansCsvString = utf8.decode(afrikaansCsvData!);
+        // Initialize lists to store fetched data
+        englishWords = [];
+        afrikaansWords = [];
+        audioClipUrls = []; // Change the type to accept null
 
-      // Parse CSV data
-      final englishTable = CsvToListConverter().convert(englishCsvString);
-      final afrikaansTable = CsvToListConverter().convert(afrikaansCsvString);
+        // Iterate over the data map to extract values
+        data.forEach((key, value) {
+          if (value is Map<String, dynamic>) {
+            // Extract values from the nested map
+            final afrikaansWord = value['${key}_afr'];
+            final englishWord = value['${key}_eng'];
 
-      // Assuming the CSV structure is consistent, and the first row contains headers
-      final englishPhrase = englishTable[1][0];
-      final afrikaansPhrase = afrikaansTable[1][0];
+            // Construct the sound key dynamically based on available keys
+            final soundKey = value.keys
+                .firstWhere((k) => k.startsWith('sound_$key'), orElse: () => '');
 
-      final audioClipUrl = 'gs://praktyk-cb1c1.appspot.com/Audio/${widget.category}/sound_${currentItemIndex + 1}.mp3';
-      // Fetch data from Firebase Storage or any other data source
-  // Replace the following with your actual data retrieval logic.
-  final englishWordUrl = await categoryReference.child('englishWord.txt').getDownloadURL();
-  final afrikaansWordUrl = await categoryReference.child('afrikaansWord.txt').getDownloadURL();
-  //final audioClipUrl = await categoryReference.child('audio.mp3').getDownloadURL();
-  print("Storage Path: ${categoryReference.fullPath}");
-  print("English Word: $englishWordUrl");
-  print("Afrikaans Word: $afrikaansWordUrl");
-  print("Audio Clip URL: $audioClipUrl");
+            final soundUrl = value[soundKey];
 
+            // Add the fetched data to the lists
+            afrikaansWords.add(afrikaansWord.toString());
+            englishWords.add(englishWord.toString());
+            audioClipUrls.add(soundUrl?.toString()); // Handle null for audio clip URL
+          }
+        });
 
-
-      // Update the state with fetched data
-      setState(() {
-        englishWord = englishPhrase;
-        afrikaansWord = afrikaansPhrase;
-        //audioClipUrl = audioClipUrl;
-      });
+        // Update the state with fetched data
+        setState(() {
+          print('Afrikaans Words: $afrikaansWords');
+          print('English Words: $englishWords');
+          print('Audio Clip URLs: $audioClipUrls');
+        });
+      }
     } catch (error) {
-      print('Error fetching data: $error');
-      print('its bugged');
       // Handle error (show a message to the user, retry, etc.)
+      print('Error fetching data: $error');
     }
   }
 
-  void navigateToNextItem() {
-    // Increment the index to navigate to the next item
-    currentItemIndex++;
+  void playAudio() async {
+    if (audioClipUrls.isNotEmpty) {
+      await audioPlayer.play(audioClipUrls[currentIndex]!);
+    }
+  }
+  void showAnkiModal() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AnkiModal(
+        englishWord: englishWords[currentIndex],
+        afrikaansWord: afrikaansWords[currentIndex],
+        audioClipUrl: audioClipUrls[currentIndex],
+        onConfirm: (String userResponse) async {
+          // Handle the user's response
+          print('User response: $userResponse');
 
-    // Fetch data for the next item
-    fetchData();
+          // Play the audio clip if available
+          if (audioClipUrls[currentIndex] != null) {
+            await audioPlayer.play(audioClipUrls[currentIndex]!);
+          }
+
+          // Move to the next card
+          setState(() {
+            userEnteredAnswer = true; // Set to true when the user enters an answer
+            if (currentIndex < englishWords.length - 1) {
+              currentIndex++;
+            } else {
+              // Optionally, show a message or perform an action when all cards are done
+            }
+          });
+        },
+      );
+    },
+  );
+}
+    @override
+  void dispose() {
+    // Release resources when the widget is disposed
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void moveToNextCard() {
+    setState(() {
+      userEnteredAnswer = false; // Reset to false when moving to the next card
+      if (currentIndex < englishWords.length - 1) {
+        currentIndex++;
+      } else {
+        // Optionally, show a message or perform an action when all cards are done
+      }
+    });
   }
 
   @override
@@ -105,36 +159,68 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
               ),
             ),
             SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                // Play the audio clip from 'audioClipUrl'
-                // Implement your audio playback logic here.
-              },
-              child: Icon(
-                Icons.volume_up,
-                size: 48.0,
-              ),
-              style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                padding: EdgeInsets.all(24.0),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            Text(
-              'English: $englishWord',
-              style: TextStyle(fontSize: 18.0),
-            ),
-            Text(
-              'Afrikaans: $afrikaansWord',
-              style: TextStyle(fontSize: 18.0),
-            ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the next item in the category
-                navigateToNextItem();
-              },
-              child: Text("Next Item"),
+            Column(
+              children: [
+                if (!userEnteredAnswer) ...{
+                  ElevatedButton(
+                    onPressed: () {
+                      // Play the audio clip from 'audioClipUrl'
+                      // Implement your audio playback logic here.
+                    },
+                    child: Icon(
+                      Icons.volume_up,
+                      size: 48.0,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(24.0),
+                    ),
+                  ),
+                },
+                if (userEnteredAnswer) ...{
+                  SizedBox(height: 20.0),
+                  Text(
+                    'English: ${englishWords[currentIndex]}',
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                  Text(
+                    'Afrikaans: ${afrikaansWords[currentIndex]}',
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Play the audio clip from 'audioClipUrl'
+                      // Implement your audio playback logic here.
+                    },
+                    child: Icon(
+                      Icons.volume_up,
+                      size: 48.0,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(24.0),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Move to the next card
+                      moveToNextCard();
+                    },
+                    child: Text("Next"),
+                  ),
+                },
+                if (!userEnteredAnswer) ...{
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Show the AnkiModal when the button is pressed
+                      showAnkiModal();
+                    },
+                    child: Text("Enter your answer"),
+                  ),
+                },
+              ],
             ),
           ],
         ),

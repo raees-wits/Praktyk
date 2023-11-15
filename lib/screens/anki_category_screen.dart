@@ -1,7 +1,6 @@
-import 'package:e_learning_app/screens/anki_card_screen.dart';
 import 'package:flutter/material.dart';
+import 'anki_card_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'anki_update_screen.dart';
 
 class AnkiCategoryScreen extends StatefulWidget {
   @override
@@ -18,27 +17,32 @@ class _AnkiCategoryScreenState extends State<AnkiCategoryScreen> {
     fetchCategories();
   }
 
-  Future<void> fetchCategories() async {
-    // Initialize Firebase Storage instance
+Future<void> fetchCategories() async {
+  try {
     final FirebaseStorage storage = FirebaseStorage.instance;
 
-    // Reference to the root folder
-    final Reference rootReference = storage.ref('gs://praktyk-cb1c1.appspot.com/Audio');
+    // Reference to the 'Audio' folder in Firebase Storage
+    final Reference audioReference = storage.ref('Audio');
 
-    // List the items (subfolders) under the root folder
-    final ListResult result = await rootReference.list();
+    // List items in the 'Audio' folder
+    final ListResult result = await audioReference.list();
 
-    // Extract the subfolder names and update the state with just the category names
+   
+
+    // Extract folder (category) names from the list
+    final List<String> categoryNames = result.prefixes.map((prefix) => prefix.name).toList();
+
     setState(() {
-      categories = result.prefixes.map((prefix) {
-        final parts = prefix.fullPath.split('/');
-        return parts.isNotEmpty ? parts.last : '';
-      }).toList();
+      categories = categoryNames;
     });
 
-    // Log the list of categories to the console
-    //print("Categories: $categories");
+    // Output category names to logs
+   
+  } catch (error) {
+    print('Error fetching categories: $error');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,23 +79,6 @@ class _AnkiCategoryScreenState extends State<AnkiCategoryScreen> {
           );
         },
       ),
-    );
-  }
-}
-
-
-class AnkiUpdateScreen extends StatelessWidget {
-  final String category;
-
-  AnkiUpdateScreen({required this.category});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(category),
-      ),
-      // Display the details of the selected category here
     );
   }
 }
