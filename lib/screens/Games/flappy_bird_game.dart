@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/screens/Games/bird.dart';
 import 'package:e_learning_app/screens/Games/flappy_bird_barrier.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -89,18 +91,33 @@ class _FlappyBirdState extends State<FlappyBird> {
     initialPos = birdY;
   }
 
-  void resetGame() {
+  void resetGame() async {
     Navigator.pop(context); // Closes the dialog
+    var user = FirebaseAuth.instance.currentUser;
+
+    // Update play count in Firebase if the user is logged in
+    if (user != null) {
+      var userRef = FirebaseFirestore.instance.collection('Users').doc(user.uid);
+      var doc = await userRef.get();
+
+      if (doc.exists && doc.data() != null && doc.data()!.containsKey('flappyBirdPlays')) {
+        var plays = doc.data()!['flappyBirdPlays'];
+        if (plays < 5) {
+          await userRef.update({'flappyBirdPlays': plays + 1});
+        }
+      }
+    }
+
     setState(() {
       birdY = 0;
       gameHasStarted = false;
       time = 0;
       initialPos = birdY;
-      // Reset barrier positions
-      barrierX = [2, 2 + 1.5, 2+3]; // Reset to initial positions
+      barrierX = [2, 2 + 1.5, 2 + 3]; // Reset to initial positions
       // Reset other game states if necessary
     });
   }
+
 
   void _showDialog() {
     showDialog(
@@ -116,6 +133,29 @@ class _FlappyBirdState extends State<FlappyBird> {
             ),
           ),
           actions: [
+            // Exit button
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); // Exit the game screen
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  padding: EdgeInsets.all(7),
+                  color: Colors.white,
+                  child: Text(
+                    "EXIT",
+                    style: TextStyle(color: Colors.brown),
+                  ),
+                ),
+              ),
+            ),
+
+            // Spacing between the buttons
+            SizedBox(width: 10),
+
+            // Play Again button
             GestureDetector(
               onTap: resetGame,
               child: ClipRRect(
