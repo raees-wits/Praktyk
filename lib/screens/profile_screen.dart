@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/current_user.dart';
 import 'account_center_screen.dart';
 import 'settings_screen.dart';
+import 'package:e_learning_app/screens/achievements_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -189,6 +190,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
+        } else if (text == "Achievements") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AchievementsPage()),
           );
         }
         // You can add more conditions here for other tiles like "Friends" or "Achievements"
