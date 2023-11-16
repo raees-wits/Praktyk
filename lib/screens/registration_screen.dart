@@ -165,6 +165,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'lastName': lastNameController.text,
                             'email': emailController.text,
                             'phone': phoneController.text,
+                            'Questions Completed': {
+                              'Comprehension': 0,
+                              'Fill In The Blanks': 0,
+                              'Match The Column': 0,
+                              'Multiple Choice': 0,
+                              'Short Questions': 0,
+                            },
                           };
 
                           if (registrationType == "Student") {

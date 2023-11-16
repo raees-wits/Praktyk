@@ -143,152 +143,150 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 ),
               ],
             ),
-            body: ListView(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.yellow.shade600,
-                              Colors.orange,
-                              Colors.red,
-                            ],
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Container(
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.0),
-                              color: Colors.black,
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Regional',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    '',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    'National',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: WinnerContainer(
-                                leader: first.isEmpty ? null : first[0],
-                                color: Colors.green,
-                              ),
-                            ),
-                            Expanded(
-                              child: WinnerContainer(
-                                leader: second.isEmpty ? null : second[0],
-                                color: Colors.orange,
-                              ),
-                            ),
-                            Expanded(
-                              child: WinnerContainer(
-                                leader: third.isEmpty ? null : third[0],
-                                color: Colors.blue,
-                              ),
-                            ),
+            body: SingleChildScrollView(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.yellow.shade600,
+                            Colors.orange,
+                            Colors.red,
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: Colors.black,
                           ),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.yellow.shade600,
-                              Colors.black,
-                              Colors.blue,
-                            ],
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Container(
-                            height: 360.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0),
-                              ),
-                              color: Colors.purple,
-                            ),
-                            child: GridView.count(
-                              crossAxisCount: 1,
-                              childAspectRatio: 3.5,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                for (var contestant in contestants)
-                                  ContestantList(
-                                    url:
-                                        'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
-                                    firstName: contestant['firstName'],
-                                    grade: contestant['grade'],
-                                    rank: contestant['rank'],
-                                    avatarPrompt: contestant['avatarPrompt'],
-                                    avatarPromptTypeNumber:
-                                        contestant['avatarPromptTypeNumber'],
+                                Text(
+                                  'Regional',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
                                   ),
+                                ),
+                                Text(
+                                  '',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                Text(
+                                  'National',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: first.isEmpty ? null : first[0],
+                              color: Colors.green,
+                            ),
+                          ),
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: second.isEmpty ? null : second[0],
+                              color: Colors.orange,
+                            ),
+                          ),
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: third.isEmpty ? null : third[0],
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.yellow.shade600,
+                            Colors.black,
+                            Colors.blue,
+                          ],
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          // Update the height based on your design needs
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
+                            ),
+                            color: Colors.purple,
+                          ),
+                          child: GridView.count(
+                            crossAxisCount: 1,
+                            childAspectRatio: 3.5,
+                            children: [
+                              for (var contestant in contestants)
+                                ContestantList(
+                                  url:
+                                      'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
+                                  firstName: contestant['firstName'],
+                                  grade: contestant['grade'],
+                                  rank: contestant['rank'],
+                                  avatarPrompt: contestant['avatarPrompt'],
+                                  avatarPromptTypeNumber:
+                                      contestant['avatarPromptTypeNumber'],
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
   }
