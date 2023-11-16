@@ -104,6 +104,14 @@ class _ManageShortAnswerScreenState extends State<ManageShortAnswerScreen> {
                                 Navigator.of(context).pop(questionTxt.text);
                                 questionTxt.clear();
                                 answerTxt.clear();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Question successfully submitted'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+
                               },
                               child: Text('Confirm'))
                         ],

@@ -86,6 +86,13 @@ class _TeacherFutureTenseScreenState extends State<TeacherFutureTenseScreen> {
                   .collection('Tenses')
                   .doc('Questions')
                   .set({'Questions': updatedQuestions});
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Question successfully submitted'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             tooltip: 'Save Changes',
             child: Icon(Icons.save),
