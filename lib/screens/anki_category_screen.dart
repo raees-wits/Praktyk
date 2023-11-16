@@ -49,8 +49,11 @@ Future<void> fetchCategories() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Choose a Category"),
-        backgroundColor: korange,
+        title: Text(
+          "Choose a Category",
+           // App title color
+        ),
+        backgroundColor: Colors.orange, // App bar background color
       ),
       body: ListView.builder(
         itemCount: categories.length,
@@ -73,7 +76,8 @@ Future<void> fetchCategories() async {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AnkiCardScreen(category: category),
+                    builder: (context) =>
+                        AnkiCardScreen(category: category),
                   ),
                 );
               },

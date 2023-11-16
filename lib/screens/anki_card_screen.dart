@@ -154,6 +154,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
+         backgroundColor: Colors.purple[100], 
       ),
       backgroundColor: backgroundColor, // Set the background color
       body: Center(
