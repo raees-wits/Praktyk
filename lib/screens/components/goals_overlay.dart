@@ -79,12 +79,11 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
   }
 
   Widget _buildChallengeWithProgress(List<String> challenges) {
-    final random = Random();
     final selectedChallenges = challenges.take(3).toList();
 
     return Column(
       children: selectedChallenges.map((challengeTitle) {
-        final progress = random.nextDouble(); // Random progress value between 0 and 1
+        final progress = 0.5; // Example fixed progress value
         return Column(
           children: [
             ListTile(
@@ -106,4 +105,5 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
       }).toList(),
     );
   }
+
 }

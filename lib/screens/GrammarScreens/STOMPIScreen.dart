@@ -74,6 +74,15 @@ class _STOMPIScreenState extends State<STOMPIScreen> {
       ),
       body: Column(
         children: <Widget>[
+          // New text element added
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Using the following words, write them out in STOMPI format:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Word buttons updated to be square
           words == null
               ? Expanded(child: Center(child: CircularProgressIndicator()))
               : Wrap(
@@ -81,6 +90,7 @@ class _STOMPIScreenState extends State<STOMPIScreen> {
             runSpacing: 4.0, // gap between lines
             children: words!.map((word) => InputChip(
               label: Text(word),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero), // Square shape
               onPressed: () {
                 print('Word clicked: $word');
                 // Add functionality as needed.
