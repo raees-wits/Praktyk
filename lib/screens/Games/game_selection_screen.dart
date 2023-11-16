@@ -2,7 +2,7 @@ import 'package:e_learning_app/screens/Games/MemoryMatchSelectLevel.dart';
 import 'package:e_learning_app/screens/Games/flappy_bird_game.dart';
 import 'package:e_learning_app/screens/Games/memoryMatchScreen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:e_learning_app/constants.dart';
 import 'hangman_screen.dart';
 import 'fallingwordsgame_screen.dart';
 
@@ -37,7 +37,8 @@ class GameSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Game'), // Changed app bar title
+        title: Text('Select Game'),
+        backgroundColor: kpurple,// Changed app bar title
       ),
       body: Center(
         child: Padding(
@@ -92,6 +93,7 @@ class GameSelectionScreen extends StatelessWidget {
           ),
         ),
       ),
+
     );
   }
 }

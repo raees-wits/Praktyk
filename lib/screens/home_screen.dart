@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       //bottom bar
       // now we will use bottom bar package
+
       bottomNavigationBar: BottomNavyBar(
         selectedIndex: _selectedIndex,
         showElevation: true, // use this to remove appBar's elevation
@@ -103,8 +104,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _widgetOptions
-          .elementAt(_selectedIndex), // This line switches the content);
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/back2school.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      child: _widgetOptions.elementAt(_selectedIndex),
+      ),// This line switches the content);
     );
   }
 

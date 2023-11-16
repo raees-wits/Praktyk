@@ -57,7 +57,7 @@ List<Product> products = [
     id: 4,
     title: "Games",
     image: "assets/images/games.png",
-    color: Color(0xFF9ba0fc),
+    color: Color(0xFFBA68C8),
     courses: 4,
   ),
   Product(

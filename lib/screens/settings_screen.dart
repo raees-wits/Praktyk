@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'profile_change_password_screen.dart'; // Import the new screen
+import 'components/privacy_policy_screen.dart';
+import 'components/terms_conditions_screen.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -53,13 +56,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ),
-          ListTile(
-            title: Text('Language'),
-            leading: Icon(Icons.language),
-            onTap: () {
-              // Navigate to Language screen
-            },
-          ),
+          //if we want to add language changes:
+          // ListTile(
+          //   title: Text('Language'),
+          //   leading: Icon(Icons.language),
+          //   onTap: () {
+          //     // Navigate to Language screen
+          //   },
+          // ),
           SwitchListTile(
             title: Text('Dark Mode'),
             value: isDarkMode,
@@ -73,14 +77,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text('Privacy Policy'),
             leading: Icon(Icons.privacy_tip),
             onTap: () {
-              // Navigate to Privacy Policy screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
+              );
             },
           ),
+
           ListTile(
             title: Text('Terms and Conditions'),
             leading: Icon(Icons.gavel),
             onTap: () {
-              // Navigate to Terms and Conditions screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TermsConditionsScreen()),
+              );
             },
           ),
           ListTile(
