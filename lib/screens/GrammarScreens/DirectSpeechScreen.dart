@@ -54,16 +54,13 @@ class _DirectSpeechScreenState extends State<DirectSpeechScreen> {
       if (isUserAnswerCorrect) {
         feedback = "Correct!";
         isCorrect = true;
-        // Perform any additional logic for correct answer if necessary
       } else {
-        // Provide the correct 'Question' as feedback
         feedback = "Incorrect! The correct statement was: $correctQuestion";
         isCorrect = false;
       }
-      opacityLevel = 1.0; // Set the opacity to show the feedback immediately
+      opacityLevel = 1.0;
     });
 
-    // If the answer is correct, update the Firestore data
     if (isCorrect == true) {
       final firestore = FirebaseFirestore.instance;
       final CollectionReference usersCollection = firestore.collection('Users');
@@ -83,7 +80,6 @@ class _DirectSpeechScreenState extends State<DirectSpeechScreen> {
       });
     }
 
-    // Hide the feedback after a delay and clear the answer controller
     Timer(const Duration(seconds: 2), () {
       setState(() {
         opacityLevel = 0.0;
@@ -164,7 +160,7 @@ class _DirectSpeechScreenState extends State<DirectSpeechScreen> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Text(
-                      questions[currentQuestionIndex]['Answers'][0], // Display the first answer as the question as the "Question"
+                      questions[currentQuestionIndex]['Answers'][0], //The "Answer" is the "Question" because it swapped from the indirect speech page
                       style: TextStyle(
                         fontFamily: 'NunitoSans',
                         fontSize: 32,

@@ -87,7 +87,6 @@ class GrammarRulesScreen extends StatelessWidget {
     );
   }
 
-  // Define the pastel colors list
   final List<Color> pastelColors = [kgreen, kpink, kpurple, korange, kyellow];
 
   Widget _buildGrammarRuleTile(BuildContext context, String title, int index, String updateMode) {

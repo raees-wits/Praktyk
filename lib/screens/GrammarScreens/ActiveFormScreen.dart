@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
@@ -16,14 +16,13 @@ class _ActiveScreenState extends State<ActiveScreen> {
   String? feedback;
   bool? isCorrect;
   double opacityLevel = 0.0;
-  bool isLoading = true; // Added to track loading state
+  bool isLoading = true;
 
-  List<Map<String, dynamic>> questions = []; // Store questions and answers
+  List<Map<String, dynamic>> questions = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch questions and answers from Firestore
     _fetchQuestionsFromFirestore();
   }
 
@@ -36,7 +35,7 @@ class _ActiveScreenState extends State<ActiveScreen> {
       if (questionsList is List) {
         setState(() {
           questions = List<Map<String, dynamic>>.from(questionsList);
-          isLoading = false; // Data is loaded, set isLoading to false
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -53,13 +52,11 @@ class _ActiveScreenState extends State<ActiveScreen> {
         feedback = "Correct!";
         isCorrect = true;
 
-        // Update the user's document in the "Users" collection
         final firestore = FirebaseFirestore.instance;
         final CollectionReference usersCollection = firestore.collection('Users');
 
         String? userId = CurrentUser().userId;
 
-        // Fetch the current 'Questions Completed.Passive' count
         usersCollection.doc(userId).get().then((docSnapshot) {
           if (docSnapshot.exists) {
             final userData = docSnapshot.data() as Map<String, dynamic>;
@@ -141,7 +138,7 @@ class _ActiveScreenState extends State<ActiveScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 10), // Add space between question number and additional text
+                  SizedBox(height: 10),
                   Text(
                     "Give the Active form of the following sentence:",
                     style: TextStyle(

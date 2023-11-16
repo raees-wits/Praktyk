@@ -3,13 +3,34 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<List<String>> fetchChallenges() async {
+import '../../model/current_user.dart';
+
+Future<int> fetchUserProgress(String userId, String category) async {
+  final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('Users')
+      .doc(userId)
+      .get();
+
+  if (!userDoc.exists) {
+    return 0; // Return 0 if the user document doesn't exist
+  }
+
+  final Map<String, dynamic> questionsCompleted = userDoc['Questions Completed'];
+  return questionsCompleted[category] ?? 0; // Return the user's progress for the category, defaulting to 0
+}
+
+
+Future<List<Map<String, String>>> fetchChallenges() async {
   final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('Daily Challenges')
       .get();
 
-  final List<String> challenges = querySnapshot.docs
-      .map((doc) => doc['Challenge'] as String)
+  final List<Map<String, String>> challenges = querySnapshot.docs
+      .map((doc) => {
+    'Challenge': doc['Challenge'] as String,
+    'Total': doc['Total'] as String,
+    'Category': doc['Category'] as String,
+  })
       .toList();
 
   return challenges;
@@ -25,7 +46,7 @@ class GoalsOverlayWidget extends StatefulWidget {
 }
 
 class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
-  late Future<List<String>> _challengesFuture;
+  late Future<List<Map<String, String>>> _challengesFuture;
 
   @override
   void initState() {
@@ -35,7 +56,7 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<List<Map<String, String>>>(
       future: _challengesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -78,32 +99,46 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
     );
   }
 
-  Widget _buildChallengeWithProgress(List<String> challenges) {
+  Widget _buildChallengeWithProgress(List<Map<String, String>> challenges) {
     final selectedChallenges = challenges.take(3).toList();
+    String userId = CurrentUser().userId!; // Assuming CurrentUser() is your user retrieval logic
 
     return Column(
-      children: selectedChallenges.map((challengeTitle) {
-        final progress = 0.5; // Example fixed progress value
-        return Column(
-          children: [
-            ListTile(
-              leading: Icon(Icons.check_circle),
-              title: Text(challengeTitle),
-            ),
-            SizedBox(height: 8.0), // Add spacing between challenge and progress bar
-            SizedBox(
-              height: 8.0, // Set the height here to make it taller
-              child: LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-              ),
-            ),
-            SizedBox(height: 16.0), // Add spacing between challenges
-          ],
+      children: selectedChallenges.map((challenge) {
+        return FutureBuilder<int>(
+          future: fetchUserProgress(userId, challenge['Category']!),
+          builder: (context, snapshot) {
+            double progress = 0.0;
+            if (snapshot.hasData) {
+              int userProgress = snapshot.data!;
+              int total = int.parse(challenge['Total'] ?? '0');
+              progress = total > 0 ? userProgress / total : 0.0;
+            }
+
+            return Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.check_circle),
+                  title: Text(challenge['Challenge'] ?? ''),
+                  //subtitle: Text('Total: ${challenge['Total']}, Category: ${challenge['Category']}'),
+                ),
+                SizedBox(height: 8.0),
+                SizedBox(
+                  height: 8.0,
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+              ],
+            );
+          },
         );
       }).toList(),
     );
   }
+
 
 }

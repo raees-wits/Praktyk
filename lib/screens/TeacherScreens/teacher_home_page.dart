@@ -102,13 +102,12 @@ class TeacherChoiceScreen extends StatelessWidget {
   Widget buildWelcomePanel(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15.0),
-      color: Colors.blue[100],  // Adjust this to your theme's color.
+      color: Colors.blue[100],
       child: Row(
         children: [
-          // Using CircleAvatar with Icon
           CircleAvatar(
             radius: 40,
-            backgroundColor: Colors.blue,  // or any other color you'd like
+            backgroundColor: Colors.blue,
             child: Icon(
               Icons.person,
               size: 40,
@@ -145,7 +144,7 @@ class TeacherChoiceScreen extends StatelessWidget {
       child: Column(
         children: [
           buildWelcomePanel(context),
-          SizedBox(height: 16.0), // Some space between the panel and the tiles
+          SizedBox(height: 16.0),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
