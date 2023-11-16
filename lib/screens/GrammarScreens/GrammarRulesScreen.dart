@@ -22,7 +22,6 @@ class GrammarRulesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     String titleText = (updateMode == "Modify")
         ? "Choose a Grammar Rule to Modify"
         : "Choose a Grammar Rule";
@@ -39,7 +38,7 @@ class GrammarRulesScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          "Choose a Grammar Rule", // Replace with your desired text
+          titleText,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -71,14 +70,14 @@ class GrammarRulesScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  _buildGrammarRuleTile(context, "Past Tense", 0),
-                  _buildGrammarRuleTile(context, "Future Tense", 1),
-                  _buildGrammarRuleTile(context, "Negatives", 2),
-                  _buildGrammarRuleTile(context, "Indirect Speech", 3),
-                  _buildGrammarRuleTile(context, "Direct Speech", 0),
-                  _buildGrammarRuleTile(context, "STOMPI", 1),
-                  _buildGrammarRuleTile(context, "Active Form", 2),
-                  _buildGrammarRuleTile(context, "Passive Form", 3),
+                  _buildGrammarRuleTile(context, "Past Tense", 0, updateMode),
+                  _buildGrammarRuleTile(context, "Future Tense", 1, updateMode),
+                  _buildGrammarRuleTile(context, "Negatives", 2, updateMode),
+                  _buildGrammarRuleTile(context, "Indirect Speech", 3, updateMode),
+                  _buildGrammarRuleTile(context, "Direct Speech", 0, updateMode),
+                  if (updateMode != "Modify") _buildGrammarRuleTile(context, "STOMPI", 1, updateMode),
+                  _buildGrammarRuleTile(context, "Active Form", 2, updateMode),
+                  _buildGrammarRuleTile(context, "Passive Form", 3, updateMode),
                 ],
               ),
             ),
@@ -91,7 +90,7 @@ class GrammarRulesScreen extends StatelessWidget {
   // Define the pastel colors list
   final List<Color> pastelColors = [kgreen, kpink, kpurple, korange, kyellow];
 
-  Widget _buildGrammarRuleTile(BuildContext context, String title, int index) {
+  Widget _buildGrammarRuleTile(BuildContext context, String title, int index, String updateMode) {
     return Card(
       color: pastelColors[index % pastelColors.length],
       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -102,110 +101,31 @@ class GrammarRulesScreen extends StatelessWidget {
         ),
         onTap: () {
           if (title == "Past Tense") {
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PastTenseScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherPastTenseScreen()),
-              );
-            }
-          } else if (title == "Future Tense"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FutureTenseScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherFutureTenseScreen()),
-              );
-            }
-          }else if (title == "Negatives"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NegativeFormScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherNegativeFormScreen()),
-              );
-            }
-          }
-          else if (title == "Indirect Speech"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => IndirectSpeechScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherSpeechScreen()),
-              );
-            }
-          }
-          else if (title == "Direct Speech"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DirectSpeechScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherSpeechScreen()),
-              );
-            }
-          }
-          else if (title == "STOMPI"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => STOMPIScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => STOMPIScreen()),
-              );
-            }
-          }
-          else if (title == "Active Form"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ActiveScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherActivePassiveScreen()),
-              );
-            }
-          }
-          else if (title == "Passive Form"){
-            if (updateMode =='') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PassiveScreen()),
-              );
-            }else if (updateMode =='Modify') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TeacherActivePassiveScreen()),
-              );
-            }
+            navigateToScreen(context, updateMode, PastTenseScreen(), TeacherPastTenseScreen());
+          } else if (title == "Future Tense") {
+            navigateToScreen(context, updateMode, FutureTenseScreen(), TeacherFutureTenseScreen());
+          } else if (title == "Negatives") {
+            navigateToScreen(context, updateMode, NegativeFormScreen(), TeacherNegativeFormScreen());
+          } else if (title == "Indirect Speech") {
+            navigateToScreen(context, updateMode, IndirectSpeechScreen(), TeacherSpeechScreen());
+          } else if (title == "Direct Speech") {
+            navigateToScreen(context, updateMode, DirectSpeechScreen(), TeacherSpeechScreen());
+          } else if (title == "STOMPI") {
+            navigateToScreen(context, updateMode, STOMPIScreen(), STOMPIScreen());
+          } else if (title == "Active Form") {
+            navigateToScreen(context, updateMode, ActiveScreen(), TeacherActivePassiveScreen());
+          } else if (title == "Passive Form") {
+            navigateToScreen(context, updateMode, PassiveScreen(), TeacherActivePassiveScreen());
           }
         },
       ),
     );
   }
 
+  void navigateToScreen(BuildContext context, String updateMode, Widget defaultScreen, Widget modifyScreen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => updateMode == "Modify" ? modifyScreen : defaultScreen),
+    );
+  }
 }
