@@ -3,12 +3,9 @@ import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
 import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
-
 import '../../model/current_user.dart';
 import '../Games/game_selection_screen.dart';
 import '../TeacherScreens/teacher_choice_screen.dart';
-import '../anki_card_screen.dart';
-import '../category_tree.dart';
 import '../anki_category_screen.dart';
 
 class CategoryList extends StatelessWidget {
@@ -45,12 +42,11 @@ class CategoryCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           if (product.title == "Games") {
-            // Navigating to gameSelectionScreen
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      const GameSelectionScreen()), // The new screen you're navigating to.
+                      const GameSelectionScreen()),
             );
           } else if (product.title == "Pronounciation") {
             // Pronounciation card to anki card
@@ -68,7 +64,7 @@ class CategoryCard extends StatelessWidget {
                         TeacherChoiceScreen(screen: 'Vocabulary')),
               );
             } else {
-              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              // If userType is not "Teacher" (student), navigate to PracticeVocabularyScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -87,7 +83,7 @@ class CategoryCard extends StatelessWidget {
                         TeacherChoiceScreen(screen: 'Grammar')),
               );
             } else {
-              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              // otherwise, navigate to PracticeVocabularyScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -106,7 +102,7 @@ class CategoryCard extends StatelessWidget {
                         TeacherChoiceScreen(screen: 'Comprehension')),
               );
             } else {
-              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              // otherwise, navigate to PracticeVocabularyScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
