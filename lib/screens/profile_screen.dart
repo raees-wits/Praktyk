@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         colorTile(Icons.person_outline, Colors.deepPurple, "Account Center"),
         colorTile(Icons.settings_outlined, Colors.blue, "Settings"),
-        colorTile(Icons.people_outline, Colors.pink, "Friends"),
+        colorTile(Icons.people_outline, Colors.pink, "Friends (COMING SOON)"),
         colorTile(Icons.star_outline, Colors.orange, "Achievements"),
       ],
     );
