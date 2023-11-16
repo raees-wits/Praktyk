@@ -41,7 +41,14 @@ class GameSelectionScreen extends StatelessWidget {
         title: Text('Select Game'),
         backgroundColor: kpurple,// Changed app bar title
       ),
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/game_background.jpg'), // Replace with your image path
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -122,7 +129,7 @@ class GameSelectionScreen extends StatelessWidget {
           ),
         ),
       ),
-
+      ),
     );
   }
 
