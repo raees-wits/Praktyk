@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../MultipleChoiceScreen.dart';
 
 class MultiPurposeCategoryScreen extends StatelessWidget {
@@ -46,7 +45,8 @@ class MultiPurposeCategoryScreen extends StatelessWidget {
               },
             );
           } else {
-            return Center(child: CircularProgressIndicator());  // Show loading indicator until the data is loaded
+            //shows loading indicator until the data is loaded from the database
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
