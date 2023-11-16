@@ -44,18 +44,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             },
           ),
-          ListTile(
-            title: Text('Notifications'),
-            leading: Icon(Icons.notifications),
-            trailing: Switch(
-              value: notify,
-              onChanged: (value) {
-                setState(() {
-                  notify = value;
-                });
-              },
-            ),
-          ),
+          // ListTile(
+          //   title: Text('Notifications'),
+          //   leading: Icon(Icons.notifications),
+          //   trailing: Switch(
+          //     value: notify,
+          //     onChanged: (value) {
+          //       setState(() {
+          //         notify = value;
+          //       });
+          //     },
+          //   ),
+          // ),
           //if we want to add language changes:
           // ListTile(
           //   title: Text('Language'),
