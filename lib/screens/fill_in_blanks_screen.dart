@@ -168,8 +168,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
             ),
             SizedBox(height: 25.0),
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              scrollDirection: Axis.vertical,
+              child: Column(
                 children: currentQuestion['options'].map<Widget>((word) {
                   return GestureDetector(
                     onTap: () {
