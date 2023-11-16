@@ -3,14 +3,23 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<List<String>> fetchChallenges() async {
+Future<List<Map<String, String>>> fetchChallenges() async {
   final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('Daily Challenges')
       .get();
 
-  final List<String> challenges = querySnapshot.docs
-      .map((doc) => doc['Challenge'] as String)
+  final List<Map<String, String>> challenges = querySnapshot.docs
+      .map((doc) => {
+    'Challenge': doc['Challenge'] as String,
+    'Total': doc['Total'] as String,
+    'Category': doc['Category'] as String,
+  })
       .toList();
+
+  // Print each challenge with its total and category
+  for (var challenge in challenges) {
+    print('Challenge: ${challenge['Challenge']}, Total: ${challenge['Total']}, Category: ${challenge['Category']}');
+  }
 
   return challenges;
 }
@@ -25,7 +34,7 @@ class GoalsOverlayWidget extends StatefulWidget {
 }
 
 class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
-  late Future<List<String>> _challengesFuture;
+  late Future<List<Map<String, String>>> _challengesFuture;
 
   @override
   void initState() {
@@ -35,7 +44,7 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<List<Map<String, String>>>(
       future: _challengesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -78,17 +87,18 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
     );
   }
 
-  Widget _buildChallengeWithProgress(List<String> challenges) {
+  Widget _buildChallengeWithProgress(List<Map<String, String>> challenges) {
     final selectedChallenges = challenges.take(3).toList();
 
     return Column(
-      children: selectedChallenges.map((challengeTitle) {
+      children: selectedChallenges.map((challenge) {
         final progress = 0.5; // Example fixed progress value
         return Column(
           children: [
             ListTile(
               leading: Icon(Icons.check_circle),
-              title: Text(challengeTitle),
+              title: Text(challenge['Challenge'] ?? ''),
+              subtitle: Text('Total: ${challenge['Total']}, Category: ${challenge['Category']}'),
             ),
             SizedBox(height: 8.0), // Add spacing between challenge and progress bar
             SizedBox(
