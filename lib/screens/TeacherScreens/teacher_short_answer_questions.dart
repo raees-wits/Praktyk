@@ -61,6 +61,7 @@ class _ManageShortAnswerScreenState extends State<ManageShortAnswerScreen> {
         title: Text('Manage Short Answer Questions'),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
             onTap: () async {
