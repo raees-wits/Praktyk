@@ -148,22 +148,7 @@ class _CategoryTreeState extends State<CategoryTree> {
                               ),
                             );
                           },
-                          child: Text("Learn"),
-                        ),
-                        SizedBox(width: 8), // Add some spacing between buttons
-                        ElevatedButton(
-                          onPressed: () {
-                            // Navigate to the Anki card screen with the selected word
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AnkiCardScreen(category: category.name),
-                            ),
-                          );
-
-
-                          },
-                          child: Text("Practice"),
+                          child: Text("Start"),
                         ),
                         SizedBox(width: 8), // Add some spacing between buttons and score
                         Text(
