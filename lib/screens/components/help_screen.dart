@@ -7,7 +7,7 @@ class HelpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Help & FAQs'),
-        backgroundColor: Colors.grey, // Setting the app bar color to grey
+        backgroundColor: Colors.grey,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -19,7 +19,7 @@ class HelpScreen extends StatelessWidget {
   RichText _buildFAQText(List<TextSpan> faqTextSpans) {
     return RichText(
       text: TextSpan(
-        style: TextStyle(fontSize: 16.0, color: Colors.black), // Default text style
+        style: TextStyle(fontSize: 16.0, color: Colors.black),
         children: faqTextSpans,
       ),
     );
@@ -51,10 +51,6 @@ class HelpScreen extends StatelessWidget {
       TextSpan(text: 'Through the use of teacher users, the apps content is regularly updated by teachers posting new content.\n\n'),
       TextSpan(text: 'Is the app available on multiple devices?\n', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
       TextSpan(text: 'Yes the app is available to android devices and use on web browser.\n\n'),
-
-
-      // Add more TextSpan widgets for each question and answer
-      // ...
     ];
   }
 }

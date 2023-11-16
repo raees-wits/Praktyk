@@ -1,5 +1,4 @@
 import 'package:e_learning_app/screens/TeacherScreens/teacher_comprehension_question_screen.dart';
-import 'package:e_learning_app/screens/comprehension_question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

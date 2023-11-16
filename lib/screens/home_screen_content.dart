@@ -2,7 +2,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
-import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
+import 'package:e_learning_app/screens/profile_screen.dart';
 import 'components/appbar.dart';
 import 'components/category.dart';
 import 'components/goals_overlay.dart';
@@ -36,7 +36,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         avatarPrompt = document.data()?['avatarPrompt'];
         avatarPromptTypeNumber = document.data()?['avatarPromptTypeNumber'];
         tempAvatarPromptType = avatarPromptTypeNumber;
-        print('Fetched username: $userName'); // Added this print statement
       });
     } catch (error) {
       print("Error fetching user name: $error");
@@ -151,7 +150,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             DropdownButton<String>(
-                                                //items: myAvatarTypes,
                                                 items: myAvatarTypes,
                                                 value: avatarPromptType,
                                                 onChanged: (String? newValue) {
@@ -241,7 +239,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     const SizedBox(
                       height: 20,
                     ),
-                    //sorting
                     Sorting(
                       showGoalsOverlay: showGoalsOverlay,
                       toggleGoalsOverlay: _toggleGoalsOverlay,
@@ -249,8 +246,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     const SizedBox(
                       height: 20,
                     ),
-                    //category list
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -263,13 +258,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         ),
                       ],
                     ),
-
-                    //now we create model of our images and colors which we will use in our app
                     const SizedBox(
                       height: 20,
                     ),
-                    //we can not use gridview inside column
-                    //use shrinkwrap and physical scroll
                     CategoryList(),
                     const SizedBox(
                       height: 20,
@@ -286,15 +277,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   .withOpacity(0.5), // Semi-transparent black background
               child: Center(
                 child: FractionallySizedBox(
-                  widthFactor: 0.9, // Adjust the width as needed
-                  heightFactor: 0.9, // Adjust the height as needed
+                  widthFactor: 0.9,
+                  heightFactor: 0.9,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        20.0), // Adjust the radius as needed
+                    borderRadius: BorderRadius.circular(20.0),
                     child: Container(
                       color: Colors.white, // Background color of the overlay
                       child: GoalsOverlayWidget(
-                        onClose: _closeGoalsOverlay, // Pass the close callback
+                        onClose: _closeGoalsOverlay,
                       ),
                     ),
                   ),

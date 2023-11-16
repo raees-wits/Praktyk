@@ -48,14 +48,19 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
           child: FloatingActionButton(
             onPressed: () async {
               // Get the current snapshot to merge with updates
-              DocumentSnapshot snapshot = await _firestore.collection('Tenses').doc('Questions').get();
-              List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
+              DocumentSnapshot snapshot =
+                  await _firestore.collection('Tenses').doc('Questions').get();
+              List currentQuestions =
+                  (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
 
-              List updatedQuestions = List.generate(currentQuestions.length, (index) {
-                Map<String, dynamic> question = Map.from(currentQuestions[index]);
+              List updatedQuestions =
+                  List.generate(currentQuestions.length, (index) {
+                Map<String, dynamic> question =
+                    Map.from(currentQuestions[index]);
                 // Update only the fields that we have controllers for
                 if (index < controllers.length) {
-                  question['Present Tense'] = controllers[index]['present']!.text;
+                  question['Present Tense'] =
+                      controllers[index]['present']!.text;
                   question['Past Tense'] = controllers[index]['past']!.text;
                 }
                 return question;
@@ -64,7 +69,9 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
               // If there are more controllers than existing questions, add the new ones
               if (controllers.length > currentQuestions.length) {
                 updatedQuestions.addAll(
-                  controllers.getRange(currentQuestions.length, controllers.length).map((controllerMap) {
+                  controllers
+                      .getRange(currentQuestions.length, controllers.length)
+                      .map((controllerMap) {
                     return {
                       'Present Tense': controllerMap['present']!.text,
                       'Past Tense': controllerMap['past']!.text,
@@ -74,7 +81,18 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
               }
 
               // Set the merged 'Questions' list to Firestore
-              await _firestore.collection('Tenses').doc('Questions').set({'Questions': updatedQuestions});
+              await _firestore
+                  .collection('Tenses')
+                  .doc('Questions')
+                  .set({'Questions': updatedQuestions});
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Question successfully submitted'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+
             },
             tooltip: 'Save Changes',
             child: Icon(Icons.save),
@@ -105,7 +123,8 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
             var questions = data['Questions'] ?? [];
             for (var question in questions) {
               controllers.add({
-                'present': TextEditingController(text: question['Present Tense']),
+                'present':
+                    TextEditingController(text: question['Present Tense']),
                 'past': TextEditingController(text: question['Past Tense']),
               });
             }
@@ -113,59 +132,74 @@ class _TeacherPastTenseScreenState extends State<TeacherPastTenseScreen> {
 
           return SingleChildScrollView(
             child: Column(
-              children: controllers.asMap().map((index, controller) {
-                return MapEntry(
-                  index,
-                  Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFormField(
-                            controller: controller['present'],
-                            decoration: InputDecoration(labelText: 'Present Tense'),
-                          ),
-                          TextFormField(
-                            controller: controller['past'],
-                            decoration: InputDecoration(labelText: 'Past Tense'),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: controllers
+                  .asMap()
+                  .map((index, controller) {
+                    return MapEntry(
+                      index,
+                      Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 4.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
-                              ElevatedButton(
-                                onPressed: () async {
-                                  // Step 1: Remove controller locally
-                                  setState(() {
-                                    controllers.removeAt(index);
-                                  });
-
-                                  // Step 2: Update Firestore
-                                  DocumentSnapshot snapshot = await _firestore.collection('Tenses').doc('Questions').get();
-                                  List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
-                                  // Assuming the 'Questions' array in the database directly correlates to the controllers array.
-                                  if (currentQuestions.length > index) {
-                                    currentQuestions.removeAt(index);
-                                  }
-
-                                  // Save the updated list back to Firestore.
-                                  await _firestore.collection('Tenses').doc('Questions').set({'Questions': currentQuestions});
-                                },
-                                child: Text('Delete Question'),
-                                style: ElevatedButton.styleFrom(primary: Colors.red),
+                              TextFormField(
+                                controller: controller['present'],
+                                decoration:
+                                    InputDecoration(labelText: 'Present Tense'),
                               ),
+                              TextFormField(
+                                controller: controller['past'],
+                                decoration:
+                                    InputDecoration(labelText: 'Past Tense'),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      // Step 1: Remove controller locally
+                                      setState(() {
+                                        controllers.removeAt(index);
+                                      });
 
+                                      // Step 2: Update Firestore
+                                      DocumentSnapshot snapshot =
+                                          await _firestore
+                                              .collection('Tenses')
+                                              .doc('Questions')
+                                              .get();
+                                      List currentQuestions = (snapshot.data()
+                                                  as Map<String, dynamic>)[
+                                              'Questions'] ??
+                                          [];
+                                      if (currentQuestions.length > index) {
+                                        currentQuestions.removeAt(index);
+                                      }
+                                      // Save the updated list back to Firestore.
+                                      await _firestore
+                                          .collection('Tenses')
+                                          .doc('Questions')
+                                          .set({'Questions': currentQuestions});
+                                    },
+                                    child: Text('Delete Question'),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.red),
+                                  ),
+                                ],
+                              ),
+                              Divider(),
                             ],
                           ),
-                          Divider(),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              }).values.toList(),
+                    );
+                  })
+                  .values
+                  .toList(),
             ),
           );
         },

@@ -1,4 +1,3 @@
-// privacy_policy_screen.dart
 import 'package:flutter/material.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -12,7 +11,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: RichText(
           text: TextSpan(
-            style: TextStyle(fontSize: 16.0, color: Colors.black), // Default text style
+            style: TextStyle(fontSize: 16.0, color: Colors.black),
             children: <TextSpan>[
               TextSpan(text: 'Privacy Policy for [Praktyk]\n', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
               TextSpan(text: 'Last Updated: 16 November 2023\n\n', style: TextStyle(fontWeight: FontWeight.w500)),

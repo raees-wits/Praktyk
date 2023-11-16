@@ -1,10 +1,8 @@
-// terms_conditions_screen.dart
 import 'package:flutter/material.dart';
 
 class TermsConditionsScreen extends StatelessWidget {
-  // Assuming you have a known, fixed number of images
   final List<String> imageNames = [
-    'image1.png', // Replace with your actual image file names
+    'image1.png',
     'image2.png',
     'image3.png',
     'image4.png',

@@ -81,6 +81,13 @@ class _TeacherSpeechScreenState extends State<TeacherSpeechScreen> {
           .collection('Indirect Speech')
           .doc('Questions')
           .set({'Questions': updatedForms});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Question successfully submitted'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
       print('Error saving to Firestore: $e');
     }

@@ -22,8 +22,8 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
 
   void addNewAnswerField(int questionIndex) {
     setState(() {
-      questionForms[questionIndex]['answers'].add(
-          TextEditingController(text: ''));
+      questionForms[questionIndex]['answers']
+          .add(TextEditingController(text: ''));
     });
   }
 
@@ -39,12 +39,11 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
     super.dispose();
   }
 
-  // Ensure this method returns a List<Widget> for the spread operator to work properly.
   List<Widget> _buildAnswerFields(int questionIndex) {
     List<Widget> answerFields = [];
     for (var answerController in questionForms[questionIndex]['answers']) {
-      int answerIndex = questionForms[questionIndex]['answers'].indexOf(
-          answerController);
+      int answerIndex =
+          questionForms[questionIndex]['answers'].indexOf(answerController);
       answerFields.add(
         TextFormField(
           controller: answerController,
@@ -69,8 +68,8 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
 
   Future<void> saveToFirestore() async {
     try {
-      List<Map<String, dynamic>> updatedForms = questionForms.map((
-          questionForm) {
+      List<Map<String, dynamic>> updatedForms =
+          questionForms.map((questionForm) {
         List<String> answers = questionForm['answers']
             .map<String>((TextEditingController controller) => controller.text)
             .toList();
@@ -84,9 +83,15 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
           .collection('Negative Form')
           .doc('Questions')
           .set({'Questions': updatedForms});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Question successfully submitted'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
       print('Error saving to Firestore: $e');
-      // Handle the error state here, if necessary
     }
   }
 
@@ -95,14 +100,13 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
     // Remove the item from the list of question forms
     var removedQuestion = questionForms.removeAt(index);
 
-    // Dispose of the text controllers to prevent memory leaks
+    // Dispose of the text controllers
     removedQuestion['question'].dispose();
     removedQuestion['answers'].forEach((controller) => controller.dispose());
 
     // Save the updated list to Firestore
-    await saveToFirestore(); // Make sure to await this call
+    await saveToFirestore();
 
-    // Then, if necessary, update the state to reflect the new list
     setState(() {});
   }
 
@@ -141,9 +145,8 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
         title: Text('Edit Negative Forms'),
       ),
       body: StreamBuilder(
-        stream: _firestore.collection('Negative Form')
-            .doc('Questions')
-            .snapshots(),
+        stream:
+            _firestore.collection('Negative Form').doc('Questions').snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -156,10 +159,10 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
           if (questionForms.isEmpty && data != null) {
             var forms = data['Questions'] ?? [];
             forms.forEach((form) {
-              List<TextEditingController> answerControllers = List<
-                  TextEditingController>.from(
-                (form['Answers'] as List<dynamic>).map((answer) =>
-                    TextEditingController(text: answer)),
+              List<TextEditingController> answerControllers =
+                  List<TextEditingController>.from(
+                (form['Answers'] as List<dynamic>)
+                    .map((answer) => TextEditingController(text: answer)),
               );
               questionForms.add({
                 'question': TextEditingController(text: form['Question']),
@@ -170,21 +173,15 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
 
           return SingleChildScrollView(
             child: Column(
-              children: questionForms
-                  .asMap()
-                  .entries
-                  .map((entry) {
+              children: questionForms.asMap().entries.map((entry) {
                 int index = entry.key;
                 Map<String, dynamic> form = entry.value;
 
-                return Card( // Use Card for better UI representation
+                return Card(
                   elevation: 4.0,
-                  // Elevation gives a shadow to the Card
                   margin: EdgeInsets.all(10.0),
-                  // Spacing out each question's Card
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    // Padding inside the Card
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -193,13 +190,13 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
                           decoration: InputDecoration(labelText: 'Question'),
                         ),
                         ..._buildAnswerFields(index),
-                        Row( // Use Row to layout buttons side by side
+                        Row(
                           children: [
                             ElevatedButton(
                               onPressed: () => addNewAnswerField(index),
                               child: Text('Add Answer'),
                             ),
-                            Spacer(), // Use Spacer to put space between buttons
+                            Spacer(),
                             ElevatedButton(
                               onPressed: () => deleteQuestion(index),
                               child: Text('Delete Question'),
@@ -210,7 +207,6 @@ class _TeacherNegativeFormScreenState extends State<TeacherNegativeFormScreen> {
                           ],
                         ),
                         SizedBox(height: 10),
-                        // Give some space after buttons before next Card
                       ],
                     ),
                   ),

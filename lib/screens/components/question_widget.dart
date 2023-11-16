@@ -395,10 +395,10 @@ class QuestionWidget extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.network(imageUrl), // Display the image using the URL
+                    Image.network(imageUrl),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();
                       },
                       child: Text('Close'),
                     ),
@@ -418,7 +418,7 @@ class QuestionWidget extends StatelessWidget {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.of(context).pop();
                     },
                     child: Text('OK'),
                   ),
@@ -438,7 +438,7 @@ class QuestionWidget extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: Text('OK'),
                 ),
@@ -458,7 +458,7 @@ class QuestionWidget extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                 },
                 child: Text('OK'),
               ),

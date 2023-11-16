@@ -22,7 +22,7 @@ class MyBarrier extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.green[800], // Dark green color
+              color: Colors.green[800], //dark green
               border: Border.all(
                 color: Colors.green[900]!, // even darker green color for the border
                 width: 10, // border width

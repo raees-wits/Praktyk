@@ -65,7 +65,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 style: TextStyle(fontSize:18.0),
               ),
             ),
-          SizedBox(height: 2), // Add spacing between answer text and vote buttons
+          SizedBox(height: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -87,7 +87,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 child: IconButton(
                   icon: Icon(Icons.thumb_down),
                   onPressed: widget.onDownvote,
-                  color: widget.userVote == 'downvote' ? Colors.blue : Colors.black, // Change color based on the user's vote
+                  color: widget.userVote == 'downvote' ? Colors.blue : Colors.black,
 
                 ),
               ),

@@ -70,6 +70,13 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
               }
 
               await _firestore.collection('Active-Passive').doc('Questions').set({'Questions': updatedQuestions});
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Question successfully submitted'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             tooltip: 'Save Changes',
             child: Icon(Icons.save),

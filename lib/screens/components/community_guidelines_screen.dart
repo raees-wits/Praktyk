@@ -1,4 +1,3 @@
-// community_guidelines_screen.dart
 import 'package:flutter/material.dart';
 
 class CommunityGuidelinesScreen extends StatelessWidget {
@@ -19,8 +18,8 @@ class CommunityGuidelinesScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            _buildGuidelinesText(_afrikaansGuidelines()), // Afrikaans guidelines
-            _buildGuidelinesText(_englishGuidelines()),   // English guidelines
+            _buildGuidelinesText(_afrikaansGuidelines()),
+            _buildGuidelinesText(_englishGuidelines()),
           ],
         ),
       ),

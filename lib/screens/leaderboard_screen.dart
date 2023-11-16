@@ -112,7 +112,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
 
       setState(() {});
     } catch (e) {
-      // print('Error querying Firestore: $e');
+      print('Error querying Firestore: $e');
     }
   }
 
@@ -255,7 +255,6 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Container(
-                          // Update the height based on your design needs
                           height: MediaQuery.of(context).size.height * 0.6,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -371,8 +370,6 @@ class WinnerContainer extends StatelessWidget {
                             child: ClipOval(
                               clipBehavior: Clip.antiAlias,
                               child: leader != null
-                                  //? Image.asset(
-                                  //  leader!.url,
                                   ? Image.network(
                                       "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
                                       height: 70,
@@ -397,7 +394,6 @@ class WinnerContainer extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        //leader?.rank ?? '1',
                         leader?.rankInCircle ?? '1',
                         style: TextStyle(color: Colors.white),
                       ),
@@ -408,13 +404,10 @@ class WinnerContainer extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height *
-                0.2, // Adjust the percentage as needed
-            left: MediaQuery.of(context).size.width *
-                0.1, // Adjust the percentage as needed
+            top: MediaQuery.of(context).size.height * 0.2,
+            left: MediaQuery.of(context).size.width * 0.1,
             child: Container(
-              width: MediaQuery.of(context).size.width *
-                  0.1, // Adjust the width percentage as needed
+              width: MediaQuery.of(context).size.width * 0.1,
               child: Center(
                 child: Column(
                   children: [
