@@ -414,7 +414,6 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
