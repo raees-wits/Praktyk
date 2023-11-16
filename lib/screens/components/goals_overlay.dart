@@ -3,6 +3,23 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../model/current_user.dart';
+
+Future<int> fetchUserProgress(String userId, String category) async {
+  final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('Users')
+      .doc(userId)
+      .get();
+
+  if (!userDoc.exists) {
+    return 0; // Return 0 if the user document doesn't exist
+  }
+
+  final Map<String, dynamic> questionsCompleted = userDoc['Questions Completed'];
+  return questionsCompleted[category] ?? 0; // Return the user's progress for the category, defaulting to 0
+}
+
+
 Future<List<Map<String, String>>> fetchChallenges() async {
   final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('Daily Challenges')
@@ -15,11 +32,6 @@ Future<List<Map<String, String>>> fetchChallenges() async {
     'Category': doc['Category'] as String,
   })
       .toList();
-
-  // Print each challenge with its total and category
-  for (var challenge in challenges) {
-    print('Challenge: ${challenge['Challenge']}, Total: ${challenge['Total']}, Category: ${challenge['Category']}');
-  }
 
   return challenges;
 }
@@ -89,31 +101,44 @@ class _GoalsOverlayWidgetState extends State<GoalsOverlayWidget> {
 
   Widget _buildChallengeWithProgress(List<Map<String, String>> challenges) {
     final selectedChallenges = challenges.take(3).toList();
+    String userId = CurrentUser().userId!; // Assuming CurrentUser() is your user retrieval logic
 
     return Column(
       children: selectedChallenges.map((challenge) {
-        final progress = 0.5; // Example fixed progress value
-        return Column(
-          children: [
-            ListTile(
-              leading: Icon(Icons.check_circle),
-              title: Text(challenge['Challenge'] ?? ''),
-              subtitle: Text('Total: ${challenge['Total']}, Category: ${challenge['Category']}'),
-            ),
-            SizedBox(height: 8.0), // Add spacing between challenge and progress bar
-            SizedBox(
-              height: 8.0, // Set the height here to make it taller
-              child: LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-              ),
-            ),
-            SizedBox(height: 16.0), // Add spacing between challenges
-          ],
+        return FutureBuilder<int>(
+          future: fetchUserProgress(userId, challenge['Category']!),
+          builder: (context, snapshot) {
+            double progress = 0.0;
+            if (snapshot.hasData) {
+              int userProgress = snapshot.data!;
+              int total = int.parse(challenge['Total'] ?? '0');
+              progress = total > 0 ? userProgress / total : 0.0;
+            }
+
+            return Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.check_circle),
+                  title: Text(challenge['Challenge'] ?? ''),
+                  //subtitle: Text('Total: ${challenge['Total']}, Category: ${challenge['Category']}'),
+                ),
+                SizedBox(height: 8.0),
+                SizedBox(
+                  height: 8.0,
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+              ],
+            );
+          },
         );
       }).toList(),
     );
   }
+
 
 }
