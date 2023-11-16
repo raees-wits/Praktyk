@@ -24,8 +24,12 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
   }
 
   Future<void> _fetchQuestionData() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
-    Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('MultipleChoice')
+        .doc(widget.category)
+        .get();
+    Map<String, dynamic> questionsMap =
+        (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
     questionKeys = questionsMap.keys.toList();
     _loadCurrentQuestion(questionsMap);
   }
@@ -130,7 +134,10 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
                 ),
               ),
               SizedBox(height: 25.0),
-              ...options.map((option) => OptionButton(option: option, onSelected: checkAnswer)).toList(),
+              ...options
+                  .map((option) =>
+                      OptionButton(option: option, onSelected: checkAnswer))
+                  .toList(),
               Spacer(),
               Align(
                 alignment: Alignment.bottomRight,
@@ -139,16 +146,26 @@ class _MultipleChoiceScreenState extends State<MultipleChoiceScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
-                        Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                        DocumentSnapshot doc = await FirebaseFirestore.instance
+                            .collection('MultipleChoice')
+                            .doc(widget.category)
+                            .get();
+                        Map<String, dynamic> questionsMap = (doc.data()
+                                as Map<String, dynamic>)?['Questions'] ??
+                            {};
                         goToPreviousQuestion(questionsMap);
                       },
                       child: Text("Back"),
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('MultipleChoice').doc(widget.category).get();
-                        Map<String, dynamic> questionsMap = (doc.data() as Map<String, dynamic>)?['Questions'] ?? {};
+                        DocumentSnapshot doc = await FirebaseFirestore.instance
+                            .collection('MultipleChoice')
+                            .doc(widget.category)
+                            .get();
+                        Map<String, dynamic> questionsMap = (doc.data()
+                                as Map<String, dynamic>)?['Questions'] ??
+                            {};
                         goToNextQuestion(questionsMap);
                       },
                       child: Text("Next"),
@@ -179,14 +196,14 @@ class OptionButton extends StatelessWidget {
       },
       child: Card(
         child: ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: 150, height: 60), // Define your desired width and height
+          constraints: BoxConstraints.tightFor(width: 150, height: 60),
           child: Center(
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
                 option,
                 style: TextStyle(fontSize: 18.0),
-                textAlign: TextAlign.center,  // Ensures text is centered in the button
+                textAlign: TextAlign.center,
               ),
             ),
           ),

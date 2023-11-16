@@ -1,9 +1,7 @@
-//import 'dart:ffi';
-
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
-import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
+import 'package:e_learning_app/screens/profile_screen.dart';
 import 'package:e_learning_app/screens/home_screen_content.dart';
 import 'package:e_learning_app/screens/Community_Screen.dart';
 import 'package:e_learning_app/screens/leaderboard_screen.dart';
@@ -40,16 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
 
-  // Create a list of widgets to display conditionally based on the selected index
   final List<Widget> _widgetOptions = [
-    // Your Home screen widget here
     HomeScreenContent(),
     LeaderBoardScreen(),
     CommunityScreen(),
-    ProfileScreen(), // Your ProfileScreen widget here
+    ProfileScreen(),
   ];
 
-  //Initialise Avatar properties
   String avatarPrompt = "Neo";
   String avatarPromptType = "Humans";
   String avatarPromptTypeNumber = '5';
@@ -69,12 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //bottom bar
-      // now we will use bottom bar package
-
       bottomNavigationBar: BottomNavyBar(
         selectedIndex: _selectedIndex,
-        showElevation: true, // use this to remove appBar's elevation
+        showElevation: true,
         onItemSelected: (index) => setState(() {
           _selectedIndex = index;
         }),
@@ -111,8 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
             fit: BoxFit.cover,
           ),
         ),
-      child: _widgetOptions.elementAt(_selectedIndex),
-      ),// This line switches the content);
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
     );
   }
 

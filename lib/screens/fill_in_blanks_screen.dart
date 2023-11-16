@@ -6,9 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:e_learning_app/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class FillInTheBlanksScreen extends StatefulWidget {
-
   @override
   _FillInTheBlanksScreenState createState() => _FillInTheBlanksScreenState();
 }
@@ -21,8 +19,6 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
   int totalCorrectAnswers = 0;
   DateTime startTime = DateTime.now();
 
-
-
   @override
   void initState() {
     super.initState();
@@ -31,8 +27,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
 
   _fetchQuestionsFromFirestore() async {
     try {
-      final sentences = await FirebaseFirestore.instance.collection('sentences')
-          .get();
+      final sentences =
+          await FirebaseFirestore.instance.collection('sentences').get();
 
       // Collect all individual words from all sentences
       final allWords = sentences.docs
@@ -45,26 +41,30 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
         if (data == null) return false; // Skip this document if data is null
 
         final words = (data['afrikaans'] as String?)?.split(' ');
-        if (words == null) return false; // Skip this document if 'afrikaans' field is null or not a string
+        if (words == null)
+          return false; // Skip this document if 'afrikaans' field is null or not a string
 
         return words.any((String word) => word.length >= 4);
       }).toList();
-
-
 
       validSentences.shuffle(); // Randomize the list
 
       for (var i = 0; i < 10 && i < validSentences.length; i++) {
         final sentence = validSentences[i].data()['afrikaans'] as String;
-        final englishTranslation = validSentences[i].data()['english'] as String; // Fetching the English translation
+        final englishTranslation = validSentences[i].data()['english']
+            as String; // Fetching the English translation
         final words = sentence.split(' ');
         final answer = words.firstWhere((word) => word.length >= 4);
 
-        final otherOptions = allWords.where((word) =>
-        word != answer && word.length >= answer.length).toList()
+        final otherOptions = allWords
+            .where((word) => word != answer && word.length >= answer.length)
+            .toList()
           ..shuffle();
 
-        final options = [answer, ...otherOptions.sublist(0, min(3, otherOptions.length))];
+        final options = [
+          answer,
+          ...otherOptions.sublist(0, min(3, otherOptions.length))
+        ];
 
         questions.add({
           'sentence': sentence.replaceAll(answer, '___'),
@@ -75,14 +75,10 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
       }
 
       setState(() {});
-    }
-    catch (e) {
+    } catch (e) {
       print("Error fetching sentences: $e");
-      // Optionally, show an error dialog or some feedback to the user.
     }
   }
-
-
 
   void _showHelpDialog(String message) {
     showDialog(
@@ -111,18 +107,13 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
     );
   }
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
     if (questions.isEmpty) {
       return Scaffold(
-        body: Center(child: CircularProgressIndicator()), // Show a loading spinner until questions are fetched
+        body: Center(
+            child:
+                CircularProgressIndicator()), // Show a loading spinner until questions are fetched
       );
     }
 
@@ -132,7 +123,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Fill in the blanks'),
@@ -158,14 +149,15 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
           children: [
             SizedBox(height: 40.0),
             Container(
-              padding: EdgeInsets.all(15.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[800]!, width: 2.0),
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Text(currentQuestion['sentence'],
-                style: TextStyle(fontSize: 20.0),) // Increased text size),
-            ),
+                padding: EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[800]!, width: 2.0),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Text(
+                  currentQuestion['sentence'],
+                  style: TextStyle(fontSize: 20.0),
+                )),
             SizedBox(height: 25.0),
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -180,7 +172,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                           _showFeedbackDialog('Correct!', Colors.green[200]!);
                         } else {
                           score -= 2;
-                          if (score < 0) score = 0; // Ensure score doesn't go negative
+                          if (score < 0)
+                            score = 0; // Ensure score doesn't go negative
                           _showFeedbackDialog('Incorrect!', Colors.red[300]!);
                         }
                       });
@@ -190,7 +183,7 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                         padding: EdgeInsets.all(10.0),
                         child: Text(
                           word,
-                          style: TextStyle(fontSize: 18.0), // Increased text size
+                          style: TextStyle(fontSize: 18.0),
                         ),
                       ),
                     ),
@@ -201,28 +194,28 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
 
             // Add the assistant figure here
             GestureDetector(
-              onTap: (){ if (currentQuestion.containsKey('english')) {
-                _showHelpDialog(currentQuestion['english']);
-              }
-            },
-
-              child: Image.asset('assets/images/talkingtoucan.png',
-                width: 120,  // Adjust the width as needed
-                height: 120, // Adjust the height as needed
-              ), // Replace with your asset path
+              onTap: () {
+                if (currentQuestion.containsKey('english')) {
+                  _showHelpDialog(currentQuestion['english']);
+                }
+              },
+              child: Image.asset(
+                'assets/images/talkingtoucan.png',
+                width: 120,
+                height: 120,
+              ),
             ),
-            SizedBox(width: 10), // Some spacing between the image and the text
+            SizedBox(width: 10),
             Text(
               "Need help, click me",
               style: TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
-                fontSize: 16, // Adjust the font size if needed
+                fontSize: 16,
               ),
             ),
 
             Spacer(),
-
 
             Align(
               alignment: Alignment.bottomCenter,
@@ -246,7 +239,6 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
                           currentQuestionIndex++;
                         });
                       } else {
-                        // Show results dialog
                         _showResultsDialog();
                       }
                     },
@@ -277,7 +269,8 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
             children: [
               Text("Score: $score"),
               Text("Time Taken: ${timeTaken.inSeconds} seconds"),
-              Text("Average Time per Question: ${averageTimePerQuestion.toStringAsFixed(2)} seconds"),
+              Text(
+                  "Average Time per Question: ${averageTimePerQuestion.toStringAsFixed(2)} seconds"),
               Text("Total Correct: $totalCorrectAnswers"),
             ],
           ),
@@ -302,9 +295,6 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
     );
   }
 
-
-
-
   void _showFeedbackDialog(String message, Color color) {
     showDialog(
       context: context,
@@ -325,15 +315,13 @@ class _FillInTheBlanksScreenState extends State<FillInTheBlanksScreen> {
     );
   }
 
-
   void _resetGame() {
     setState(() {
       score = 0;
       currentQuestionIndex = 0;
       totalCorrectAnswers = 0;
       startTime = DateTime.now();
-      _fetchQuestionsFromFirestore(); // Fetch new questions or shuffle existing ones
+      _fetchQuestionsFromFirestore();
     });
   }
-
 }

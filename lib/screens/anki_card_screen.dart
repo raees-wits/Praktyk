@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:csv/csv.dart';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -19,10 +16,10 @@ class AnkiCardScreen extends StatefulWidget {
 class _AnkiCardScreenState extends State<AnkiCardScreen> {
   late AudioPlayer audioPlayer;
   int currentIndex = 0;
-  List<String> englishWords = []; // Add this line
-  List<String> afrikaansWords = []; // Add this line
-  List<String?> audioClipUrls = []; // Add this line
-  bool userEnteredAnswer = false; // Add this line
+  List<String> englishWords = [];
+  List<String> afrikaansWords = [];
+  List<String?> audioClipUrls = [];
+  bool userEnteredAnswer = false;
   String nextText = "Next";
 
   Color backgroundColor = Colors.orange[100]!;
@@ -33,7 +30,6 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
-    playAudio(); // Call the method to play audio
     fetchData();
   }
 
@@ -75,8 +71,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
             // Add the fetched data to the lists
             afrikaansWords.add(afrikaansWord.toString());
             englishWords.add(englishWord.toString());
-            audioClipUrls
-                .add(soundUrl?.toString()); // Handle null for audio clip URL
+            audioClipUrls.add(soundUrl?.toString());
           }
         });
 
@@ -88,7 +83,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
         });
       }
     } catch (error) {
-      // Handle error (show a message to the user, retry, etc.)
+      // Handle error
       print('Error fetching data: $error');
     }
   }
@@ -143,7 +138,6 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
           nextText = "Done";
         }
       } else {
-        // Optionally, show a message or perform an action when all cards are done
         Navigator.pop(context);
       }
     });
@@ -154,7 +148,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
-         backgroundColor: Colors.purple[100], 
+        backgroundColor: Colors.purple[100],
       ),
       backgroundColor: backgroundColor, // Set the background color
       body: Center(
@@ -185,7 +179,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
                       style: ElevatedButton.styleFrom(
                         shape: CircleBorder(),
                         padding: EdgeInsets.all(24.0),
-                        primary: buttonColor, // Set button background color
+                        primary: buttonColor,
                       ),
                     ),
                   },
