@@ -25,6 +25,10 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
   bool userEnteredAnswer = false; // Add this line
   String nextText = "Next";
 
+  Color backgroundColor = Colors.orange[100]!;
+  Color buttonColor = Colors.green;
+  Color textColor = Colors.white;
+
   @override
   void initState() {
     super.initState();
@@ -151,84 +155,91 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
       appBar: AppBar(
         title: Text(widget.category),
       ),
+      backgroundColor: backgroundColor, // Set the background color
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Type what you hear",
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Type what you hear",
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Column(
-              children: [
-                if (!userEnteredAnswer) ...{
-                  ElevatedButton(
-                    onPressed: () {
-                      // Play the audio clip from 'audioClipUrl'
-                      // Implement your audio playback logic here.
-                      playAudio();
-                    },
-                    child: Icon(
-                      Icons.volume_up,
-                      size: 48.0,
+              SizedBox(height: 40.0),
+              Column(
+                children: [
+                  if (!userEnteredAnswer) ...{
+                    ElevatedButton(
+                      onPressed: () {
+                        playAudio();
+                      },
+                      child: Icon(
+                        Icons.volume_up,
+                        size: 48.0,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(24.0),
+                        primary: buttonColor, // Set button background color
+                      ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(24.0),
+                  },
+                  if (userEnteredAnswer) ...{
+                    SizedBox(height: 40.0),
+                    Text(
+                      'English: ${englishWords[currentIndex]}',
+                      style: TextStyle(fontSize: 24.0),
                     ),
-                  ),
-                },
-                if (userEnteredAnswer) ...{
-                  SizedBox(height: 20.0),
-                  Text(
-                    'English: ${englishWords[currentIndex]}',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                  Text(
-                    'Afrikaans: ${afrikaansWords[currentIndex]}',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Play the audio clip from 'audioClipUrl'
-                      // Implement your audio playback logic here.
-                      playAudio();
-                    },
-                    child: Icon(
-                      Icons.volume_up,
-                      size: 48.0,
+                    SizedBox(height: 20.0),
+                    Text(
+                      'Afrikaans: ${afrikaansWords[currentIndex]}',
+                      style: TextStyle(fontSize: 24.0),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(24.0),
+                    SizedBox(height: 40.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        playAudio();
+                      },
+                      child: Icon(
+                        Icons.volume_up,
+                        size: 48.0,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(24.0),
+                        primary: buttonColor, // Set button background color
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Move to the next card
-                      moveToNextCard();
-                    },
-                    child: Text(nextText),
-                  ),
-                },
-                if (!userEnteredAnswer) ...{
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Show the AnkiModal when the button is pressed
-                      showAnkiModal();
-                    },
-                    child: Text("Enter your answer"),
-                  ),
-                },
-              ],
-            ),
-          ],
+                    ElevatedButton(
+                      onPressed: () {
+                        moveToNextCard();
+                      },
+                      child: Text(nextText),
+                      style: ElevatedButton.styleFrom(
+                        primary: buttonColor, // Set button background color
+                      ),
+                    ),
+                  },
+                  if (!userEnteredAnswer) ...{
+                    SizedBox(height: 40.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        showAnkiModal();
+                      },
+                      child: Text("Enter your answer"),
+                      style: ElevatedButton.styleFrom(
+                        primary: buttonColor, // Set button background color
+                      ),
+                    ),
+                  },
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

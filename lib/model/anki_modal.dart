@@ -23,6 +23,9 @@ class AnkiModal extends StatefulWidget {
 class _AnkiModalState extends State<AnkiModal> {
   late AudioPlayer audioPlayer;
   TextEditingController textController = TextEditingController();
+  Color backgroundColor = Colors.orange[100]!;
+  Color buttonColor = Colors.green;
+  Color textColor = Colors.white;
 
    @override
   void initState() {
@@ -41,10 +44,12 @@ class _AnkiModalState extends State<AnkiModal> {
       await audioPlayer.play(widget.audioClipUrl!);
     }
   }
-  @override
+   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Type what you hear'),
+      // Apply background color here
+      backgroundColor: backgroundColor,
+     
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -64,7 +69,9 @@ class _AnkiModalState extends State<AnkiModal> {
               Icons.volume_up,
               size: 48.0,
             ),
+            // Apply button style here
             style: ElevatedButton.styleFrom(
+              primary: buttonColor,
               shape: CircleBorder(),
               padding: EdgeInsets.all(24.0),
             ),
@@ -74,16 +81,20 @@ class _AnkiModalState extends State<AnkiModal> {
             controller: textController,
             decoration: InputDecoration(
               hintText: "Type your response here",
+              // Set text color
+              hintStyle: TextStyle(color: textColor),
             ),
           ),
           SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () {
               String userResponse = textController.text;
-              widget.onConfirm(userResponse); // Pass the user's response to the callback
-              Navigator.of(context).pop(); // Close the modal
+              widget.onConfirm(userResponse);
+              Navigator.of(context).pop();
             },
             child: Text("Confirm"),
+            // Apply button style here
+            style: ElevatedButton.styleFrom(primary: buttonColor),
           ),
         ],
       ),
