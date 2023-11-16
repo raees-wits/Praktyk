@@ -107,11 +107,6 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
             // Handle the user's response
             print('User response: $userResponse');
 
-            // Play the audio clip if available
-            //if (audioClipUrls[currentIndex] != null) {
-            //  await audioPlayer.play(audioClipUrls[currentIndex]!);
-            //}
-
             // Move to the next card
             setState(() {
               userEnteredAnswer =
