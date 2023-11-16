@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 class AnkiModal extends StatefulWidget {
   final String englishWord;
   final String afrikaansWord;
   final String? audioClipUrl; // Change the type to accept null
   final Function(String) onConfirm;
+  
 
   AnkiModal({
     required this.englishWord,
@@ -18,8 +21,26 @@ class AnkiModal extends StatefulWidget {
 }
 
 class _AnkiModalState extends State<AnkiModal> {
+  late AudioPlayer audioPlayer;
   TextEditingController textController = TextEditingController();
 
+   @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+  // Method to play audio
+  void playAudio() async {
+    if (widget.audioClipUrl != null) {
+      await audioPlayer.play(widget.audioClipUrl!);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -37,8 +58,7 @@ class _AnkiModalState extends State<AnkiModal> {
           SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () {
-              // Play the audio clip from 'widget.audioClipUrl'
-              // Implement your audio playback logic here.
+              playAudio(); // Play the audio clip
             },
             child: Icon(
               Icons.volume_up,
