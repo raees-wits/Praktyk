@@ -27,7 +27,7 @@ class _TeacherShortAnswerWidget extends State<TeacherShortAnswerWidget> {
     return Card(
       margin: EdgeInsets.all(10.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextButton(
               onPressed: () async {
@@ -45,10 +45,13 @@ class _TeacherShortAnswerWidget extends State<TeacherShortAnswerWidget> {
                         ));
               },
               child: Text('X')),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: GestureDetector(
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: GestureDetector(
                 onTap: () async {
+                  questionTxt.text = widget.text;
+                  answerTxt.text = widget.answer;
                   final result = (await showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -93,7 +96,9 @@ class _TeacherShortAnswerWidget extends State<TeacherShortAnswerWidget> {
                       color: Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
-                )),
+                ),
+              ),
+            ),
           )
         ],
       ),
