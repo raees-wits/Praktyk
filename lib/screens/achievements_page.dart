@@ -132,7 +132,6 @@ class AchievementsPage extends StatelessWidget {
                       trophyColor: Colors.green,
                       desc: "Complete 15 questions",
                     ),
-                    // Add the rest of your TrophyBar widgets based on your data structure
                   ],
                 ),
               ),
@@ -153,7 +152,6 @@ class AchievementsPage extends StatelessWidget {
               (route) => false,
             );
           } else {
-            // Handle the case where the current user is not available
             print('Current user not available');
           }
         },
@@ -178,7 +176,6 @@ class AchievementsPage extends StatelessWidget {
         return {};
       }
     } else {
-      // Handle the case where the current user is not available
       print('Current user not available');
       return {};
     }

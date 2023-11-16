@@ -18,7 +18,7 @@ class _CategoryTreeState extends State<CategoryTree> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String userId = CurrentUser().userId!;
 
-  get data => null; // Assuming CurrentUser is available in your imports
+  get data => null;
 
   @override
   void initState() {
@@ -29,12 +29,13 @@ class _CategoryTreeState extends State<CategoryTree> {
 
   Future<void> _fetchUserProgress() async {
     try {
-      DocumentSnapshot userDoc = await _firestore.collection('Users').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('Users').doc(userId).get();
 
       if (userDoc.exists && userDoc.data() != null) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        Map<String, dynamic> matchTheColumnMap = userData["MatchTheColumn"] as Map<String, dynamic>;
-
+        Map<String, dynamic> matchTheColumnMap =
+            userData["MatchTheColumn"] as Map<String, dynamic>;
 
         for (var entry in matchTheColumnMap.entries) {
           String categoryName = entry.key;
@@ -47,28 +48,23 @@ class _CategoryTreeState extends State<CategoryTree> {
             }
           }
         }
-
-
-        setState(() {}); // Refresh the UI
       }
     } catch (e) {
       print("Error fetching user progress: $e");
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          //color: Colors.orange, // Add the orange background color here
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               "All Categories",
               style: TextStyle(
-                color: Colors.white, // Optional: Text color
+                color: Colors.white,
               ),
             ),
           ),
@@ -80,36 +76,29 @@ class _CategoryTreeState extends State<CategoryTree> {
           final category = categories[index];
           Color bgColor = Colors.transparent;
 
-          // This is a static score value for demonstration purposes
           int score = category.progress * 10;
 
-
           return InkWell(
-            onTap: () {
-              // Add your onTap logic here if needed
-            },
+            onTap: () {},
             onHover: (isHovered) {
               if (isHovered) {
-                // Set the background color when hovered
-                bgColor = Colors.blue.withOpacity(0.1); // Adjust opacity
+                bgColor = Colors.blue.withOpacity(0.1);
               } else {
-                // Set the background color when not hovered
                 bgColor = Colors.transparent;
               }
             },
             child: Container(
-              color: bgColor, // Apply the background color to the container
+              color: bgColor,
               child: ListTile(
-                contentPadding:
-                EdgeInsets.all(16), // Add padding to the ListTile
+                contentPadding: EdgeInsets.all(16),
                 leading: Container(
-                  width: 48, // Adjust the width of the leading image
-                  height: 48, // Adjust the height of the leading image
+                  width: 48,
+                  height: 48,
                   child: Center(
                     child: Image.asset(
                       category.icon,
-                      width: 24, // Adjust the image size
-                      height: 24, // Adjust the image size
+                      width: 24,
+                      height: 24,
                     ),
                   ),
                 ),
@@ -129,30 +118,29 @@ class _CategoryTreeState extends State<CategoryTree> {
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 10), // Space between description and progress bar
+                    SizedBox(height: 10),
                     LinearProgressIndicator(
-                      value: category.progress / 10, // Convert the progress to a fraction
-                      backgroundColor: Colors.grey[300], // Background color of the progress bar
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // Foreground color of the progress bar
+                      value: category.progress / 10,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                     ),
-                    SizedBox(height: 10), // Space between progress bar and buttons
+                    SizedBox(height: 10),
                     Row(
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Navigate to the MatchTheColumnPage
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    MatchTheColumnPage(categoryName: category.name),
+                                builder: (context) => MatchTheColumnPage(
+                                    categoryName: category.name),
                               ),
                             );
                           },
                           child: Text("Start"),
                         ),
-                        SizedBox(width: 8), // Add some spacing between buttons and score
+                        SizedBox(width: 8),
                         Text(
-                          "Score: $score", // Display the user's score here
+                          "Score: $score",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

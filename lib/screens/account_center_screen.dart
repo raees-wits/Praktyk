@@ -19,7 +19,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
   late TextEditingController phoneController;
   late TextEditingController emailController2;
   late TextEditingController passwordController;
-  String userType = "Student"; // Default user type
+  String userType = "Student";
   String avatarPrompt = "Default";
   String avatarPromptTypeNumber = "1";
 
@@ -50,7 +50,6 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
     try {
       final User? currentUser = auth.currentUser;
       if (currentUser == null) {
-        // Handle the case where there is no user logged in.
         return;
       }
 
@@ -61,7 +60,6 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
         'lastName': lastNameController.text,
         'email': emailController.text,
         'phone': phoneController.text,
-        // Include additional fields as necessary
       };
 
       if (emailController2.text.isNotEmpty) {
@@ -70,12 +68,9 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
 
       await firestore.collection('Users').doc(userId).update(updateData);
 
-      // After updating, you may want to navigate or give some feedback
       Navigator.pop(context);
     } catch (e) {
-      // Handle error
       print("An error occurred1: $e");
-      // Here, you might want to show a Snackbar or a dialog with the error message
     }
   }
 
@@ -180,9 +175,9 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                         if (value == null ||
                             value.isEmpty ||
                             value.contains('@')) {
-                          return null; // valid or empty is allowed
+                          return null;
                         }
-                        return 'Please enter a valid email'; // invalid email
+                        return 'Please enter a valid email';
                       },
                     ),
                     Divider(color: Colors.black),
@@ -209,8 +204,7 @@ class _AccountCenterScreenState extends State<AccountCenterScreen> {
                     SizedBox(
                       width: 150,
                       child: ElevatedButton(
-                        onPressed:
-                            updateUserDetails, // This saves the data to Firestore
+                        onPressed: updateUserDetails,
                         style: ElevatedButton.styleFrom(
                           primary: Colors.deepPurpleAccent,
                           onPrimary: Colors.white,

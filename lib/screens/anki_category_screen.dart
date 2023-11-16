@@ -18,32 +18,29 @@ class _AnkiCategoryScreenState extends State<AnkiCategoryScreen> {
     fetchCategories();
   }
 
-Future<void> fetchCategories() async {
-  try {
-    final FirebaseStorage storage = FirebaseStorage.instance;
+  Future<void> fetchCategories() async {
+    try {
+      final FirebaseStorage storage = FirebaseStorage.instance;
 
-    // Reference to the 'Audio' folder in Firebase Storage
-    final Reference audioReference = storage.ref('Audio');
+      // Reference to the 'Audio' folder in Firebase Storage
+      final Reference audioReference = storage.ref('Audio');
 
-    // List items in the 'Audio' folder
-    final ListResult result = await audioReference.list();
+      // List items in the 'Audio' folder
+      final ListResult result = await audioReference.list();
 
-   
+      // Extract folder (category) names from the list
+      final List<String> categoryNames =
+          result.prefixes.map((prefix) => prefix.name).toList();
 
-    // Extract folder (category) names from the list
-    final List<String> categoryNames = result.prefixes.map((prefix) => prefix.name).toList();
+      setState(() {
+        categories = categoryNames;
+      });
 
-    setState(() {
-      categories = categoryNames;
-    });
-
-    // Output category names to logs
-   
-  } catch (error) {
-    print('Error fetching categories: $error');
+      // Output category names to logs
+    } catch (error) {
+      print('Error fetching categories: $error');
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +48,8 @@ Future<void> fetchCategories() async {
       appBar: AppBar(
         title: Text(
           "Choose a Category",
-           // App title color
         ),
-        backgroundColor: Colors.orange, // App bar background color
+        backgroundColor: Colors.orange,
       ),
       body: ListView.builder(
         itemCount: categories.length,
@@ -76,8 +72,7 @@ Future<void> fetchCategories() async {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AnkiCardScreen(category: category),
+                    builder: (context) => AnkiCardScreen(category: category),
                   ),
                 );
               },
