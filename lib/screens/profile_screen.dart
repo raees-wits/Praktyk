@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/current_user.dart';
 import 'account_center_screen.dart';
 import 'settings_screen.dart';
+import 'components/community_guidelines_screen.dart';
+import 'components/help_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -137,18 +139,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget bwTiles() {
     return Column(
       children: [
-        bwTile(Icons.help_outline, "Help"),
-        bwTile(Icons.info_outline, "Community Guidelines"),
+        bwTile(Icons.help_outline, "Help", () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HelpScreen()),
+          );
+        }),
+        bwTile(Icons.info_outline, "Community Guidelines", () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CommunityGuidelinesScreen()),
+          );
+        }),
       ],
     );
   }
 
-  Widget bwTile(IconData icon, String text) {
-    return colorTile(icon, Colors.black, text, blackAndWhite: true);
+  Widget bwTile(IconData icon, String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ListTile(
+        leading: Icon(icon, size: 30.0),
+        title: Text(text),
+        trailing: Icon(Icons.chevron_right),
+      ),
+    );
   }
 
-  Widget colorTile(IconData icon, Color color, String text,
-      {bool blackAndWhite = false}) {
+
+  Widget colorTile(IconData icon, Color color, String text, {bool blackAndWhite = false, VoidCallback? onTap})
+    {
     Color pickedColor = Color(0xfff3f4fe);
     return GestureDetector(
       onTap: () async {

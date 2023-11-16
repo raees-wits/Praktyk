@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _widgetOptions = [
     // Your Home screen widget here
     HomeScreenContent(),
-    //Text("Favourite Page"),
     LeaderBoardScreen(),
     CommunityScreen(),
     ProfileScreen(), // Your ProfileScreen widget here
@@ -88,19 +87,19 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.leaderboard_rounded),
             title: Text('Leaderboard'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: kblue,
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.message),
             title: Text('Community'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: korange,
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.person),
             title: Text('Profile'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: kpurple,
           ),
         ],
       ),

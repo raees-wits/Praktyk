@@ -260,13 +260,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {},
-                          child: const Text(
-                            "See All",
-                            style: TextStyle(fontSize: 16, color: kblue),
-                          ),
-                        ),
                       ],
                     ),
 
