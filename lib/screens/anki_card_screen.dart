@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-
 import '../model/anki_modal.dart';
 
 class AnkiCardScreen extends StatefulWidget {
@@ -20,10 +19,11 @@ class AnkiCardScreen extends StatefulWidget {
 class _AnkiCardScreenState extends State<AnkiCardScreen> {
   late AudioPlayer audioPlayer;
   int currentIndex = 0;
-  List<String> englishWords = [];  // Add this line
-  List<String> afrikaansWords = [];  // Add this line
-  List<String?> audioClipUrls = [];  // Add this line
-  bool userEnteredAnswer = false;  // Add this line
+  List<String> englishWords = []; // Add this line
+  List<String> afrikaansWords = []; // Add this line
+  List<String?> audioClipUrls = []; // Add this line
+  bool userEnteredAnswer = false; // Add this line
+  String nextText = "Next";
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
     playAudio(); // Call the method to play audio
     fetchData();
   }
+
   Future<void> fetchData() async {
     try {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -41,8 +42,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
           firestore.collection('Anki').doc(widget.category);
 
       // Fetch data from the document
-      final DocumentSnapshot ankiCardsSnapshot =
-          await categoryReference.get();
+      final DocumentSnapshot ankiCardsSnapshot = await categoryReference.get();
 
       if (ankiCardsSnapshot.exists) {
         // Extract data map from the document
@@ -62,15 +62,17 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
             final englishWord = value['${key}_eng'];
 
             // Construct the sound key dynamically based on available keys
-            final soundKey = value.keys
-                .firstWhere((k) => k.startsWith('sound_$key'), orElse: () => '');
+            final soundKey = value.keys.firstWhere(
+                (k) => k.startsWith('sound_$key'),
+                orElse: () => '');
 
             final soundUrl = value[soundKey];
 
             // Add the fetched data to the lists
             afrikaansWords.add(afrikaansWord.toString());
             englishWords.add(englishWord.toString());
-            audioClipUrls.add(soundUrl?.toString()); // Handle null for audio clip URL
+            audioClipUrls
+                .add(soundUrl?.toString()); // Handle null for audio clip URL
           }
         });
 
@@ -92,38 +94,41 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
       await audioPlayer.play(audioClipUrls[currentIndex]!);
     }
   }
+
   void showAnkiModal() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AnkiModal(
-        englishWord: englishWords[currentIndex],
-        afrikaansWord: afrikaansWords[currentIndex],
-        audioClipUrl: audioClipUrls[currentIndex],
-        onConfirm: (String userResponse) async {
-          // Handle the user's response
-          print('User response: $userResponse');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AnkiModal(
+          englishWord: englishWords[currentIndex],
+          afrikaansWord: afrikaansWords[currentIndex],
+          audioClipUrl: audioClipUrls[currentIndex],
+          onConfirm: (String userResponse) async {
+            // Handle the user's response
+            print('User response: $userResponse');
 
-          // Play the audio clip if available
-          if (audioClipUrls[currentIndex] != null) {
-            await audioPlayer.play(audioClipUrls[currentIndex]!);
-          }
+            // Play the audio clip if available
+            //if (audioClipUrls[currentIndex] != null) {
+            //  await audioPlayer.play(audioClipUrls[currentIndex]!);
+            //}
 
-          // Move to the next card
-          setState(() {
-            userEnteredAnswer = true; // Set to true when the user enters an answer
-            if (currentIndex < englishWords.length - 1) {
-              currentIndex++;
-            } else {
-              // Optionally, show a message or perform an action when all cards are done
-            }
-          });
-        },
-      );
-    },
-  );
-}
-    @override
+            // Move to the next card
+            setState(() {
+              userEnteredAnswer =
+                  true; // Set to true when the user enters an answer
+              if (currentIndex < englishWords.length - 1) {
+                //currentIndex++;
+              } else {
+                // Optionally, show a message or perform an action when all cards are done
+              }
+            });
+          },
+        );
+      },
+    );
+  }
+
+  @override
   void dispose() {
     // Release resources when the widget is disposed
     audioPlayer.dispose();
@@ -135,8 +140,12 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
       userEnteredAnswer = false; // Reset to false when moving to the next card
       if (currentIndex < englishWords.length - 1) {
         currentIndex++;
+        if (currentIndex == englishWords.length - 1) {
+          nextText = "Done";
+        }
       } else {
         // Optionally, show a message or perform an action when all cards are done
+        Navigator.pop(context);
       }
     });
   }
@@ -166,6 +175,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
                     onPressed: () {
                       // Play the audio clip from 'audioClipUrl'
                       // Implement your audio playback logic here.
+                      playAudio();
                     },
                     child: Icon(
                       Icons.volume_up,
@@ -192,6 +202,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
                     onPressed: () {
                       // Play the audio clip from 'audioClipUrl'
                       // Implement your audio playback logic here.
+                      playAudio();
                     },
                     child: Icon(
                       Icons.volume_up,
@@ -207,7 +218,7 @@ class _AnkiCardScreenState extends State<AnkiCardScreen> {
                       // Move to the next card
                       moveToNextCard();
                     },
-                    child: Text("Next"),
+                    child: Text(nextText),
                   ),
                 },
                 if (!userEnteredAnswer) ...{
