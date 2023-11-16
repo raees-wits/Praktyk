@@ -217,19 +217,19 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                           Expanded(
                             child: WinnerContainer(
                               leader: first.isEmpty ? null : first[0],
-                              color: Colors.green,
+                              color: Colors.yellow,
                             ),
                           ),
                           Expanded(
                             child: WinnerContainer(
                               leader: second.isEmpty ? null : second[0],
-                              color: Colors.orange,
+                              color: Colors.grey,
                             ),
                           ),
                           Expanded(
                             child: WinnerContainer(
                               leader: third.isEmpty ? null : third[0],
-                              color: Colors.blue,
+                              color: Colors.brown,
                             ),
                           ),
                         ],
