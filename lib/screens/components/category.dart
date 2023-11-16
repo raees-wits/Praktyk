@@ -40,7 +40,7 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(40.0),
       child: GestureDetector(
         onTap: () {
           if (product.title == "Games") {
@@ -115,9 +115,9 @@ class CategoryCard extends StatelessWidget {
           }
         },
         child: Container(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(150.0),
           decoration: BoxDecoration(
-              color: product.color, borderRadius: BorderRadius.circular(15.0)),
+              color: product.color, borderRadius: BorderRadius.circular(30.0)),
           child: Column(
             children: [
               Image.asset(

@@ -43,6 +43,7 @@ dependencies:
   csv: ^5.1.1
   audioplayers: ^0.20.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -71,6 +72,7 @@ flutter:
     - assets/images/
     - assets/images/talkingtoucan2.png
     - assets/images/talkingtoucan.png
+    - assets/images/Terms and Conditions/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

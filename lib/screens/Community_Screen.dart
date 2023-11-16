@@ -1,3 +1,4 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:flutter/material.dart';
 import '../model/current_user.dart';
 import 'components/Question.dart';
@@ -61,6 +62,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Community Page'),
+        backgroundColor: korange,
       ),
       body: ListView(
         children: [

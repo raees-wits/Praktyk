@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
+import 'package:e_learning_app/constants.dart';
 
 import '../screens/TeacherScreens/teacher_choice_screen.dart';
 import '../screens/category_tree.dart';
@@ -34,7 +35,7 @@ List<Product> products = [
     title: "Grammar Rules",
     image: "assets/images/grammarules.png",
     color: Color(0xFFff6374),
-    courses: 4,
+    courses: 9,
   ),
   Product(
       id: 3,
@@ -56,14 +57,14 @@ List<Product> products = [
     id: 4,
     title: "Games",
     image: "assets/images/games.png",
-    color: Color(0xFF9ba0fc),
+    color: Color(0xFFBA68C8),
     courses: 4,
   ),
   Product(
     id: 5,
     title: "Comprehension Texts",
     image: "assets/images/book2.png",
-    color: Color(0xFF9ba0fc),
+    color: kgreen,
     courses: 3,
   ),
 ];
