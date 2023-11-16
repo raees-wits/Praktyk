@@ -72,57 +72,68 @@ class _STOMPIScreenState extends State<STOMPIScreen> {
       appBar: AppBar(
         title: Text('STOMPIScreen'),
       ),
-      body: Column(
-        children: <Widget>[
-          // New text element added
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Using the following words, write them out in STOMPI format:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF9ba0fc),
+              Color(0xcc9ba0fc),
+              Color(0x999ba0fc),
+              Color(0x669ba0fc),
+            ],
+          ),
+        ),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Using the following words, write them out in STOMPI format:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          // Word buttons updated to be square
-          words == null
-              ? Expanded(child: Center(child: CircularProgressIndicator()))
-              : Wrap(
-            spacing: 8.0, // gap between adjacent chips
-            runSpacing: 4.0, // gap between lines
-            children: words!.map((word) => InputChip(
-              label: Text(word),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero), // Square shape
-              onPressed: () {
-                print('Word clicked: $word');
-                // Add functionality as needed.
-              },
-            )).toList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Type your answer here',
-                suffixIcon: IconButton(
-                  onPressed: _controller.clear,
-                  icon: Icon(Icons.clear),
+            words == null
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                : Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
+              children: words!.map((word) => InputChip(
+                label: Text(word),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                onPressed: () {
+                  print('Word clicked: $word');
+                },
+              )).toList(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Type your answer here',
+                  suffixIcon: IconButton(
+                    onPressed: _controller.clear,
+                    icon: Icon(Icons.clear),
+                  ),
+                ),
+                onSubmitted: (value) => checkAnswer(),
+              ),
+            ),
+            if (englishTranslation != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: ElevatedButton(
+                  onPressed: () => _showHelpDialog(englishTranslation!),
+                  child: Text('Show Translation'),
                 ),
               ),
-              onSubmitted: (value) => checkAnswer(),
-            ),
-          ),
-          if (englishTranslation != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: ElevatedButton(
-                onPressed: () => _showHelpDialog(englishTranslation!),
-                child: Text('Show Help'),
-              ),
-            ),
-          if (isCorrect != null)
-            Text(isCorrect! ? 'Correct!' : 'Wrong!', style: TextStyle(color: isCorrect! ? Colors.green : Colors.red, fontSize: 18)),
-        ],
+            if (isCorrect != null)
+              Text(isCorrect! ? 'Correct!' : 'Wrong!', style: TextStyle(color: isCorrect! ? Colors.green : Colors.red, fontSize: 18)),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: checkAnswer,
