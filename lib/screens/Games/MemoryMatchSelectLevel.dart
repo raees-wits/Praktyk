@@ -29,6 +29,7 @@ class _MemoryMatchLevelSelectState extends State<MemoryMatchLevelSelect> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Level'),
+        backgroundColor: Colors.yellow,
       ),
       body: Center(
         child: Column(

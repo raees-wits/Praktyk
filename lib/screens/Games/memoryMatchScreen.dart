@@ -143,6 +143,7 @@ class _MemoryMatchState extends State<MemoryMatch> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Memory Match Game - ${widget.level.capitalize()}'),
+        backgroundColor: Colors.yellow,
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
