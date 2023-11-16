@@ -21,7 +21,6 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
 
   @override
   void dispose() {
-    // Dispose of all the controllers when the widget is removed from the widget tree
     for (var controllerMap in controllers) {
       controllerMap['Active']?.dispose();
       controllerMap['Passive']?.dispose();
@@ -47,13 +46,11 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
           bottom: 80.0,
           child: FloatingActionButton(
             onPressed: () async {
-              // Get the current snapshot to merge with updates
               DocumentSnapshot snapshot = await _firestore.collection('Active-Passive').doc('Questions').get();
               List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
 
               List updatedQuestions = List.generate(currentQuestions.length, (index) {
                 Map<String, dynamic> question = Map.from(currentQuestions[index]);
-                // Update only the fields that we have controllers for
                 if (index < controllers.length) {
                   question['Active'] = controllers[index]['Active']!.text;
                   question['Passive'] = controllers[index]['Passive']!.text;
@@ -61,7 +58,6 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
                 return question;
               });
 
-              // If there are more controllers than existing questions, add the new ones
               if (controllers.length > currentQuestions.length) {
                 updatedQuestions.addAll(
                   controllers.getRange(currentQuestions.length, controllers.length).map((controllerMap) {
@@ -73,7 +69,6 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
                 );
               }
 
-              // Set the merged 'Questions' list to Firestore
               await _firestore.collection('Active-Passive').doc('Questions').set({'Questions': updatedQuestions});
             },
             tooltip: 'Save Changes',
@@ -137,26 +132,21 @@ class _TeacherActivePassiveScreenState extends State<TeacherActivePassiveScreen>
 
                               ElevatedButton(
                                 onPressed: () async {
-                                  // Step 1: Remove controller locally
                                   setState(() {
                                     controllers.removeAt(index);
                                   });
 
-                                  // Step 2: Update Firestore
                                   DocumentSnapshot snapshot = await _firestore.collection('Active-Passive').doc('Questions').get();
                                   List currentQuestions = (snapshot.data() as Map<String, dynamic>)['Questions'] ?? [];
-                                  // Assuming the 'Questions' array in the database directly correlates to the controllers array.
                                   if (currentQuestions.length > index) {
                                     currentQuestions.removeAt(index);
                                   }
 
-                                  // Save the updated list back to Firestore.
                                   await _firestore.collection('Active-Passive').doc('Questions').set({'Questions': currentQuestions});
                                 },
                                 child: Text('Delete Question'),
                                 style: ElevatedButton.styleFrom(primary: Colors.red),
                               ),
-
                             ],
                           ),
                           Divider(),

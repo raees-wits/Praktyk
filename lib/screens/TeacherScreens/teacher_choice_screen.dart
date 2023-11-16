@@ -2,7 +2,7 @@ import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
 import 'package:e_learning_app/screens/TeacherScreens/teacher_comprehension_screen.dart';
 import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:e_learning_app/screens/practise_vocab_screen.dart'; // ensure you import the PracticeVocabularyScreen
+import 'package:e_learning_app/screens/practise_vocab_screen.dart';
 
 class TeacherChoiceScreen extends StatelessWidget {
   final String screen;
@@ -11,17 +11,16 @@ class TeacherChoiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // A method to create a button with a gradient background
     Widget buildGradientButton(
         {required VoidCallback onPressed,
         required String text,
         required List<Color> colors}) {
       return Container(
-        width: double.infinity, // makes the buttons take up all available space
-        margin: EdgeInsets.all(8.0), // adds spacing around the buttons
+        width: double.infinity,
+        margin: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           borderRadius:
-              BorderRadius.circular(8.0), // if you want rounded corners
+              BorderRadius.circular(8.0),
           gradient: LinearGradient(
             colors: colors,
             begin: Alignment.topLeft,
@@ -47,14 +46,13 @@ class TeacherChoiceScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(
               horizontal:
-                  16.0), // Adds padding on the left and right of the buttons
+                  16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               buildGradientButton(
                 onPressed: () {
                   if (screen == "Vocabulary") {
-                    // Navigate to the PracticeVocabularyScreen when this is pressed
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -76,13 +74,13 @@ class TeacherChoiceScreen extends StatelessWidget {
                             builder: (context) => ComprehensionChoiceScreen()));
                   }
                 },
-                text: 'View Student Perspective', // change the button text
-                colors: [Colors.blue, Colors.purple], // colors for the gradient
+                text: 'View Student Perspective',
+                colors: [Colors.blue, Colors.purple],
               ),
               buildGradientButton(
                 onPressed: () {
                   if (screen == "Vocabulary") {
-                    // Navigate to the PracticeVocabularyScreen when this is pressed
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -109,7 +107,7 @@ class TeacherChoiceScreen extends StatelessWidget {
                 colors: [
                   Colors.green,
                   Colors.teal
-                ], // another set of colors for the gradient
+                ],
               ),
             ],
           ),
