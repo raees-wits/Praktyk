@@ -1,3 +1,4 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'anki_card_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -49,6 +50,7 @@ Future<void> fetchCategories() async {
     return Scaffold(
       appBar: AppBar(
         title: Text("Choose a Category"),
+        backgroundColor: korange,
       ),
       body: ListView.builder(
         itemCount: categories.length,
@@ -56,7 +58,7 @@ Future<void> fetchCategories() async {
           final category = categories[index];
           return Card(
             elevation: 5,
-            color: Colors.red[200], // Set the card color
+            color: Colors.deepOrange[200], // Set the card color
             child: ListTile(
               title: Text(
                 category,
