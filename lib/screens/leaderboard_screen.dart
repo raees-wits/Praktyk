@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_learning_app/screens/home_screen.dart';
 
 class LeaderBoardScreen extends StatefulWidget {
   @override
@@ -9,12 +10,18 @@ class LeaderBoardScreen extends StatefulWidget {
 class Leader {
   final String winnerName;
   final String rank;
+  final String rankInCircle;
   final String url;
+  final String avatarPrompt;
+  final String avatarPromptTypeNumber;
 
   Leader({
     required this.winnerName,
     required this.rank,
+    required this.rankInCircle,
     required this.url,
+    required this.avatarPrompt,
+    required this.avatarPromptTypeNumber,
   });
 }
 
@@ -23,10 +30,17 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   List<Leader> second = [];
   List<Leader> third = [];
   List<Map<String, dynamic>> contestants = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration(seconds: 4), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+
     queryLeaderboard();
   }
 
@@ -44,7 +58,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
           .orderBy('Total Questions Answered', descending: true)
           .get();
 
-      int count = 0; // Counter for the first three results
+      int count = 0;
 
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
@@ -52,24 +66,44 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         if (data != null) {
           String firstName = data['firstName'] ?? 'N/A';
           String grade = data['grade'] ?? 'N/A';
+          String avatarPrompt = data['avatarPrompt'] ?? 'default';
+          String avatarPromptTypeNumber = data['avatarPromptTypeNumber'] ?? '1';
+          int totalQuestionsAnswered = data['Total Questions Answered'] ?? 0;
+          totalQuestionsAnswered = totalQuestionsAnswered * 321;
+          String stringValue = totalQuestionsAnswered.toString();
 
           if (count == 0) {
             first.add(Leader(
                 winnerName: firstName,
-                rank: '1',
+                rank: stringValue,
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '1',
                 url: 'assets/images/games.png'));
           } else if (count == 1) {
             second.add(Leader(
                 winnerName: firstName,
-                rank: '2',
+                rank: stringValue,
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '2',
                 url: 'assets/images/games.png'));
           } else if (count == 2) {
             third.add(Leader(
                 winnerName: firstName,
-                rank: '3',
+                rank: stringValue,
+                avatarPrompt: avatarPrompt,
+                avatarPromptTypeNumber: avatarPromptTypeNumber,
+                rankInCircle: '3',
                 url: 'assets/images/games.png'));
           } else {
-            contestants.add({'firstName': firstName, 'grade': grade});
+            contestants.add({
+              'firstName': firstName,
+              'grade': grade,
+              'avatarPrompt': avatarPrompt,
+              'rank': stringValue,
+              'avatarPromptTypeNumber': avatarPromptTypeNumber
+            });
           }
 
           count++;
@@ -78,168 +112,183 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
 
       setState(() {});
     } catch (e) {
-      print('Error querying Firestore: $e');
+      // print('Error querying Firestore: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.white,
-        ),
-        actions: [
-          Icon(
-            Icons.grid_view,
-            color: Colors.white,
-          ),
-        ],
-      ),
-      body: ListView(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
+    return isLoading
+        ? LoadingScreen()
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.blue,
+              elevation: 0.0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.red,
+                ),
+                onPressed: () async {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
+              ),
+              actions: [
+                Icon(
+                  Icons.grid_view,
+                  color: Colors.red,
+                ),
+              ],
             ),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.yellow.shade600,
-                        Colors.orange,
-                        Colors.red,
-                      ],
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Container(
-                      height: 50.0,
+            body: SingleChildScrollView(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Column(
+                  children: [
+                    Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.black,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Regional',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            Text(
-                              '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            Text(
-                              'National',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
-                              ),
-                            ),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.yellow.shade600,
+                            Colors.orange,
+                            Colors.red,
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: first.isEmpty ? null : first[0],
-                          color: Colors.green,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: Colors.black,
+                          ),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Regional',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                Text(
+                                  '',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                Text(
+                                  'National',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: second.isEmpty ? null : second[0],
-                          color: Colors.orange,
-                        ),
-                      ),
-                      Expanded(
-                        child: WinnerContainer(
-                          leader: third.isEmpty ? null : third[0],
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
                     ),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.yellow.shade600,
-                        Colors.orange,
-                        Colors.red,
-                      ],
+                    SizedBox(
+                      height: 20.0,
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Container(
-                      height: 360.0,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: first.isEmpty ? null : first[0],
+                              color: Colors.yellow,
+                            ),
+                          ),
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: second.isEmpty ? null : second[0],
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Expanded(
+                            child: WinnerContainer(
+                              leader: third.isEmpty ? null : third[0],
+                              color: Colors.brown,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20.0),
                           topRight: Radius.circular(20.0),
                         ),
-                        color: Colors.purple,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.yellow.shade600,
+                            Colors.black,
+                            Colors.blue,
+                          ],
+                        ),
                       ),
-                      child: GridView.count(
-                        crossAxisCount: 1,
-                        childAspectRatio: 3.5,
-                        children: [
-                          for (var contestant in contestants)
-                            ContestantList(
-                              url: 'assets/images/games.png',
-                              firstName: contestant['firstName'],
-                              grade: contestant['grade'],
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          // Update the height based on your design needs
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
                             ),
-                        ],
+                            color: Colors.purple,
+                          ),
+                          child: GridView.count(
+                            crossAxisCount: 1,
+                            childAspectRatio: 3.5,
+                            children: [
+                              for (var contestant in contestants)
+                                ContestantList(
+                                  url:
+                                      'https://robohash.org/${contestant['avatarPrompt']}?set=set${contestant['avatarPromptTypeNumber']}',
+                                  firstName: contestant['firstName'],
+                                  grade: contestant['grade'],
+                                  rank: contestant['rank'],
+                                  avatarPrompt: contestant['avatarPrompt'],
+                                  avatarPromptTypeNumber:
+                                      contestant['avatarPromptTypeNumber'],
+                                ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 }
 
@@ -299,47 +348,44 @@ class WinnerContainer extends StatelessWidget {
             child: Stack(
               children: [
                 if (leader != null)
-                  Image.asset(
-                    leader!.url,
-                    height: 70.0,
-                    width: 105.0,
-                  ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50.0, left: 15.0),
-                    child: ClipOval(
-                      clipBehavior: Clip.antiAlias,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.yellow.shade600,
-                              Colors.orange,
-                              Colors.red,
-                            ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 50.0, left: 15.0),
+                      child: ClipOval(
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.yellow.shade600,
+                                Colors.orange,
+                                Colors.red,
+                              ],
+                            ),
+                            border: Border.all(
+                              color: Colors.amber,
+                            ),
                           ),
-                          border: Border.all(
-                            color: Colors.amber,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: ClipOval(
-                            clipBehavior: Clip.antiAlias,
-                            child: leader != null
-                                ? Image.asset(
-                                    leader!.url,
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.cover,
-                                  )
-                                : SizedBox.shrink(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: leader != null
+                                  //? Image.asset(
+                                  //  leader!.url,
+                                  ? Image.network(
+                                      "https://robohash.org/${leader?.avatarPrompt}?set=set${leader?.avatarPromptTypeNumber}",
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : SizedBox.shrink(),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 115.0, left: 45.0),
                   child: Container(
@@ -351,7 +397,8 @@ class WinnerContainer extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        leader?.rank ?? '1',
+                        //leader?.rank ?? '1',
+                        leader?.rankInCircle ?? '1',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -361,9 +408,13 @@ class WinnerContainer extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 150.0,
+            top: MediaQuery.of(context).size.height *
+                0.2, // Adjust the percentage as needed
+            left: MediaQuery.of(context).size.width *
+                0.1, // Adjust the percentage as needed
             child: Container(
-              width: 100.0,
+              width: MediaQuery.of(context).size.width *
+                  0.1, // Adjust the width percentage as needed
               child: Center(
                 child: Column(
                   children: [
@@ -395,15 +446,20 @@ class WinnerContainer extends StatelessWidget {
 }
 
 class ContestantList extends StatelessWidget {
-  final String url;
   final String firstName;
   final String grade;
+  final String url;
+  final String rank;
+  final String avatarPrompt;
+  final String avatarPromptTypeNumber;
 
-  ContestantList({
-    required this.url,
-    required this.firstName,
-    required this.grade,
-  });
+  ContestantList(
+      {required this.url,
+      required this.firstName,
+      required this.grade,
+      required this.avatarPrompt,
+      required this.rank,
+      required this.avatarPromptTypeNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -427,8 +483,8 @@ class ContestantList extends StatelessWidget {
         children: [
           ClipOval(
             clipBehavior: Clip.antiAlias,
-            child: Image.asset(
-              url ?? 'assets/4.jpg',
+            child: Image.network(
+              "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
               height: 60.0,
               width: 60.0,
               fit: BoxFit.fill,
@@ -459,7 +515,7 @@ class ContestantList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Rank: N/A',
+                'XP: $rank',
                 style: TextStyle(color: Colors.white),
               ),
               Icon(
@@ -469,6 +525,17 @@ class ContestantList extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
