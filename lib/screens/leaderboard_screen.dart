@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_learning_app/screens/home_screen.dart';
 
 class LeaderBoardScreen extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class LeaderBoardScreen extends StatefulWidget {
 class Leader {
   final String winnerName;
   final String rank;
-  final String rankInCircle; // Add this property
+  final String rankInCircle;
   final String url;
   final String avatarPrompt;
   final String avatarPromptTypeNumber;
@@ -17,7 +18,7 @@ class Leader {
   Leader({
     required this.winnerName,
     required this.rank,
-    required this.rankInCircle, // Add this property
+    required this.rankInCircle,
     required this.url,
     required this.avatarPrompt,
     required this.avatarPromptTypeNumber,
@@ -31,26 +32,15 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   List<Map<String, dynamic>> contestants = [];
   bool isLoading = true;
 
-  /*@override
-  void initState() {
-    super.initState();
-
-    
-    queryLeaderboard();
-  }*/
-
   @override
   void initState() {
     super.initState();
-    // Simulate data loading for 2 seconds (you can adjust the duration)
-    Future.delayed(Duration(seconds: 3), () {
-      // After the delay, set isLoading to false to show the main content
+    Future.delayed(Duration(seconds: 4), () {
       setState(() {
         isLoading = false;
       });
     });
 
-    // Fetch data
     queryLeaderboard();
   }
 
@@ -68,7 +58,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
           .orderBy('Total Questions Answered', descending: true)
           .get();
 
-      int count = 0; // Counter for the first three results
+      int count = 0;
 
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
@@ -129,14 +119,22 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? LoadingScreen() // Display the loading screen while data is loading
+        ? LoadingScreen()
         : Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.blue,
               elevation: 0.0,
-              leading: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.red,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.red,
+                ),
+                onPressed: () async {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
               ),
               actions: [
                 Icon(

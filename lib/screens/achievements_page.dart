@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Authentication
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:e_learning_app/screens/home_screen.dart';
 
 class AchievementsPage extends StatelessWidget {
@@ -11,7 +11,7 @@ class AchievementsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Achievements Page'),
+        title: Text('My Achievements'),
       ),
       body: FutureBuilder(
         future: _getUserData(),
@@ -20,6 +20,9 @@ class AchievementsPage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.data == null) {
+            // Handle the case where data is null
+            return Center(child: Text('No data available'));
           } else {
             Map<String, dynamic> userData =
                 snapshot.data as Map<String, dynamic>;
@@ -31,8 +34,9 @@ class AchievementsPage extends StatelessWidget {
                   children: [
                     TrophyBar(
                       trophyName: 'Match The Column A',
-                      achieved: userData['Questions Completed']
-                              ['Match The Column'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Match The Column'] ??
+                              0) >
                           3,
                       level: 1,
                       trophyColor: Colors.yellow,
@@ -40,8 +44,9 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Match The Column B',
-                      achieved: userData['Questions Completed']
-                              ['Match The Column'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Match The Column'] ??
+                              0) >
                           9,
                       level: 2,
                       trophyColor: Colors.green,
@@ -49,8 +54,9 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Fill In The blanks A',
-                      achieved: userData['Questions Completed']
-                              ['Fill In The Blanks'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Fill In The Blanks'] ??
+                              0) >
                           3,
                       level: 3,
                       trophyColor: Colors.yellow,
@@ -58,8 +64,9 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Fill In The Blanks B',
-                      achieved: userData['Questions Completed']
-                              ['Fill In The Blanks'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Fill In The Blanks'] ??
+                              0) >
                           9,
                       level: 4,
                       trophyColor: Colors.green,
@@ -67,33 +74,39 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Comprehension A',
-                      achieved:
-                          userData['Questions Completed']['Comprehension'] > 3,
-                      level: 4,
-                      trophyColor: Colors.yellow,
-                      desc: "Complete 3 questions",
-                    ),
-                    TrophyBar(
-                      trophyName: 'Comprehension B',
-                      achieved:
-                          userData['Questions Completed']['Comprehension'] > 9,
-                      level: 4,
-                      trophyColor: Colors.green,
-                      desc: "Complete 15 questions",
-                    ),
-                    TrophyBar(
-                      trophyName: 'Multiple Choices A',
-                      achieved: userData['Questions Completed']
-                              ['Multiple Choices'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Comprehension'] ??
+                              0) >
                           3,
                       level: 4,
                       trophyColor: Colors.yellow,
                       desc: "Complete 3 questions",
                     ),
                     TrophyBar(
-                      trophyName: 'Multiple Choices B',
-                      achieved: userData['Questions Completed']
-                              ['Multiple Choices'] >
+                      trophyName: 'Comprehension B',
+                      achieved: (userData['Questions Completed']
+                                  ?['Comprehension'] ??
+                              0) >
+                          9,
+                      level: 4,
+                      trophyColor: Colors.green,
+                      desc: "Complete 15 questions",
+                    ),
+                    TrophyBar(
+                      trophyName: 'Multiple Choice A',
+                      achieved: (userData['Questions Completed']
+                                  ?['Multiple Choice'] ??
+                              0) >
+                          3,
+                      level: 4,
+                      trophyColor: Colors.yellow,
+                      desc: "Complete 3 questions",
+                    ),
+                    TrophyBar(
+                      trophyName: 'Multiple Choice B',
+                      achieved: (userData['Questions Completed']
+                                  ?['Multiple Choice'] ??
+                              0) >
                           9,
                       level: 4,
                       trophyColor: Colors.green,
@@ -101,8 +114,9 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Short Questions A',
-                      achieved: userData['Questions Completed']
-                              ['Short Questions'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Short Questions'] ??
+                              0) >
                           3,
                       level: 4,
                       trophyColor: Colors.yellow,
@@ -110,8 +124,9 @@ class AchievementsPage extends StatelessWidget {
                     ),
                     TrophyBar(
                       trophyName: 'Short Questions B',
-                      achieved: userData['Questions Completed']
-                              ['Short Questions'] >
+                      achieved: (userData['Questions Completed']
+                                  ?['Short Questions'] ??
+                              0) >
                           9,
                       level: 4,
                       trophyColor: Colors.green,
@@ -159,6 +174,7 @@ class AchievementsPage extends StatelessWidget {
       if (userDoc.exists) {
         return userDoc.data() as Map<String, dynamic>;
       } else {
+        print("the coco");
         return {};
       }
     } else {
