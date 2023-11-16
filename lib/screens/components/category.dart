@@ -39,11 +39,9 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double scaleFactor = screenWidth / 1250; // Assuming 375 is the base screen width
 
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
         onTap: () {
           if (product.title == "Games") {
@@ -132,8 +130,8 @@ class CategoryCard extends StatelessWidget {
               ),
               Text(
                 product.title,
-                style:  TextStyle(
-                    fontSize: 18 * scaleFactor,
+                style:  const TextStyle(
+                    fontSize: 18,
                     color: Colors.white,
                     fontWeight: FontWeight.w600),
               ),
@@ -142,8 +140,8 @@ class CategoryCard extends StatelessWidget {
               ),
               Text(
                 "${product.courses} courses",
-                style:  TextStyle(
-                  fontSize: 15 *scaleFactor,
+                style: const TextStyle(
+                  fontSize: 15,
                   color: Colors.white,
                 ),
               ),
