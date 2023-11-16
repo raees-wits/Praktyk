@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -7,12 +6,12 @@ import 'dart:async';
 class FallingBubble extends StatefulWidget {
   final String word;
   final VoidCallback onTap;
-  final List<double> activeBubblePositions; // Add this line
+  final List<double> activeBubblePositions;
 
   FallingBubble({
     required this.word,
     required this.onTap,
-    required this.activeBubblePositions, // Add this line
+    required this.activeBubblePositions,
   });
 
   @override
@@ -27,13 +26,14 @@ class _FallingBubbleState extends State<FallingBubble> {
   @override
   void initState() {
     super.initState();
-    topPosition = -110.0; // Start above the screen
+    //for bubbles to start above screen
+    topPosition = -110.0;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    leftPosition = Random().nextDouble() * MediaQuery.of(context).size.width * 0.75; // Set a fixed left position
+    leftPosition = Random().nextDouble() * MediaQuery.of(context).size.width * 0.75;
     _startFalling();
   }
 
@@ -41,7 +41,7 @@ class _FallingBubbleState extends State<FallingBubble> {
 
 
   _startFalling() async {
-    // Calculate the number of possible segments based on bubble width plus padding
+    // Calculaion of the number of possible segments based on bubble width plus padding
     int numberOfSegments = MediaQuery.of(context).size.width ~/ 50.0;
     double segmentWidth = MediaQuery.of(context).size.width / numberOfSegments;
 
@@ -58,10 +58,11 @@ class _FallingBubbleState extends State<FallingBubble> {
 
     // Set the left position only once when the bubble is created
     if (leftPosition == null) {
-      leftPosition = segment * segmentWidth + (segmentWidth - 25.0) / 2; // Center the bubble in the segment;
+      // Center the bubble in the segment;
+      leftPosition = segment * segmentWidth + (segmentWidth - 25.0) / 2;
     }
 
-    final fallingDuration = Duration(seconds: 6); // Standardized falling duration
+    final fallingDuration = Duration(seconds: 6);
     await Future.delayed(Duration(milliseconds: Random().nextInt(8000)));
 
     setState(() {
@@ -78,7 +79,8 @@ class _FallingBubbleState extends State<FallingBubble> {
       widget.activeBubblePositions.remove(leftPosition);
 
     });
-    _startFalling();  // Continue the falling loop
+    //falling loop
+    _startFalling();
 
 
   }
@@ -93,7 +95,8 @@ class _FallingBubbleState extends State<FallingBubble> {
     return AnimatedPositioned(
       top: topPosition,
       left: leftPosition,
-      duration: Duration(seconds: 6), // This should match the fallingDuration
+      // This should match the fallingDuration
+      duration: Duration(seconds: 6),
       child: Bubble(
         word: widget.word,
         onTap: widget.onTap,
@@ -114,7 +117,7 @@ class Bubble extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16.0), // Increased padding
+        padding: EdgeInsets.all(16.0),
         constraints: BoxConstraints(
           minWidth: 100.0, // Minimum width
           minHeight: 100.0, // Minimum height
@@ -144,13 +147,14 @@ class FallingWordsGameScreen extends StatefulWidget {
 }
 
 class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
-  String displayedWord = "Loading..."; // Placeholder for the word to be found
+  // Placeholder for the word to be found
+  String displayedWord = "Loading...";
   int score = 0;
   List<Map<String, dynamic>> wordPairs = [];
   late Timer gameTimer;
   int timeLeft = 25; // 25 seconds
-  List<double> activeBubblePositions = []; // Add this line
-  List<String> bubbleWords = []; // Add this line at the top of your class
+  List<double> activeBubblePositions = [];
+  List<String> bubbleWords = [];
 
 
 
@@ -161,7 +165,7 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
     super.initState();
     _startGameTimer();
     _fetchWordsFromFirestore().then((_) {
-      _generateBubbleWords(); // Call this only after wordPairs is populated
+      _generateBubbleWords();
     });
   }
 
@@ -187,27 +191,25 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
           }
         }
       }
-
-      // Once words are fetched, set the initial displayed word and its translation
       _setInitialDisplayedWord();
     } catch (e) {
       print("Error fetching words: $e");
     }
   }
 
-
   //stopped here
-
 
   String currentTranslation = "";
 
   void _setInitialDisplayedWord() {
     if (wordPairs.isNotEmpty) {
       final randomPair = wordPairs[Random().nextInt(wordPairs.length)];
-      currentTranslation = randomPair["Answer"]; // Store the correct translation
+      // Store the current translation
+      currentTranslation = randomPair["Answer"];
       setState(() {
         displayedWord = randomPair["Question"];
-        _prepareBubbleWordsWithTranslation(currentTranslation); // Include the correct translation in bubble words
+        // Include the correct translation in bubble words
+        _prepareBubbleWordsWithTranslation(currentTranslation);
       });
     }
   }
@@ -241,7 +243,8 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
       // Randomly select a word pair
       final randomPair = wordPairs[Random().nextInt(wordPairs.length)];
       setState(() {
-        isQuestionDisplayed = Random().nextBool(); // Randomly decide to show question or answer
+        // Randomly decide to show question or answer
+        isQuestionDisplayed = Random().nextBool();
         displayedWord = isQuestionDisplayed ? randomPair["Question"] : randomPair["Answer"];
       });
 
@@ -258,7 +261,7 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
           timeLeft--;
         } else {
           timer.cancel();
-          _showResults(); // Call the method to show results when the time is up
+          _showResults();
         }
       });
     });
@@ -267,10 +270,10 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
   _showResults() {
     showDialog(
       context: context,
-      barrierDismissible: false, // User must tap button to close the dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.orangeAccent, // Adjust the color as needed
+          backgroundColor: Colors.orangeAccent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
@@ -280,8 +283,8 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
             TextButton(
               child: Text('Try Again'),
               onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-                _restartGame(); // Call the method to restart the game
+                Navigator.of(context).pop();
+                _restartGame();
               },
             ),
           ],
@@ -300,7 +303,7 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
         _generateBubbleWords(); // Regenerate bubble words after fetching
       });
     });
-    _startGameTimer(); // Restart the game timer
+    _startGameTimer();
   }
 
   @override
@@ -314,25 +317,17 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
     print("Displayed word: $displayedWord");
     print("Correct translation: $currentTranslation");
 
-    if (word == currentTranslation) { // Check against the correct translation
+    if (word == currentTranslation) {
       print("Correct answer tapped!");
       setState(() {
         score += 10;
-        _setInitialDisplayedWord(); // Refresh the displayed word and bubble words
+        // Refresh the displayed word and bubble words
+        _setInitialDisplayedWord();
       });
     } else {
       score -= 2;
       print("Tapped word does not match the correct translation.");
     }
-  }
-
-
-
-  void _clearAndGenerateNewBubbles() {
-    setState(() {
-      bubbleWords.clear(); // Clear the current words
-      _updateDisplayedWord(); // Generate new word and bubbles
-    });
   }
 
 
@@ -355,7 +350,6 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bubblesWords = _generateBubbleWords();
 
     return Scaffold(
 
@@ -372,7 +366,7 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
           child: Stack(
             children: [
               // Falling bubbles can be added here
-              for (String word in bubbleWords) // Use bubbleWords here
+              for (String word in bubbleWords)
                 FallingBubble(
                   word: word,
                   onTap: () => _bubbleTapped(word),
@@ -399,16 +393,19 @@ class _FallingWordsGameScreenState extends State<FallingWordsGameScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 16.0, right: 16.0), // Adjust padding as needed
+                  // Adjust padding as needed
+                  padding: EdgeInsets.only(top: 16.0, right: 16.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Use min to fit the content
-                    crossAxisAlignment: CrossAxisAlignment.end, // Align text to the right
+                    // Use min to fit the content
+                    mainAxisSize: MainAxisSize.min,
+                    // Align text to the right
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
                         "Time Left: $timeLeft",
                         style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 8.0), // Space between the timer and the score
+                      SizedBox(height: 8.0),
                       Text(
                         "Score: $score",
                         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
