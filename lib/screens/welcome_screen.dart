@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
                           BorderRadius.only(bottomRight: Radius.circular(50))),
                   child: Column(
                     children: [
-                      Expanded(child: Image.asset("assets/images/welcome.jpg",  fit: BoxFit.cover))
+                      Expanded(child: Image.asset("assets/images/welcome.jpg"))
                     ],
                   ),
                 )),
