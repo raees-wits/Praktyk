@@ -137,7 +137,7 @@ class _NegativeFormScreenState extends State<NegativeFormScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 10), // Add space between question number and additional text
+                  SizedBox(height: 10),
                   Text(
                     "Give the negative form of the following sentence:",
                     style: TextStyle(

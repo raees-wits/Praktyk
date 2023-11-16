@@ -21,10 +21,8 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
   String? selectedCategory;
   void addNewQuestion() {
     setState(() {
-      // Create a new question with default values.
       var newQuestion = Question(questionText: 'New question', answers: ['Correct answer', 'Wrong answer']);
 
-      // Add the new question to the list of questions.
       questions.add(newQuestion);
     });
   }
@@ -50,7 +48,7 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
     }
   }
 
-  // Fetch questions based on the selected category
+
   Future<void> fetchQuestions(String category) async {
     setState(() {
       questions = []; // This ensures all previous questions are removed before fetching new ones.
@@ -63,28 +61,22 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
           .get();
 
       if (docSnapshot.exists) {
-        // Extracting the 'questions' map from the document.
         Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-        Map<String, dynamic> questionsMap = data['Questions'] as Map<String, dynamic>; // Assuming 'Questions' is the key in the document.
+        Map<String, dynamic> questionsMap = data['Questions'] as Map<String, dynamic>;
 
         questionsMap.forEach((key, value) {
-          print('Question: $key\nAnswers: $value\n'); // Logging each question and its answers.
+          print('Question: $key\nAnswers: $value\n');
         });
         List<Question> loadedQuestions = [];
 
-        // Iterate through the question numbers, i.e., "1", "2", "3", etc.
         data.forEach((questionNumber, questionDetails) {
-          // questionDetails should be a map with the question text and answers.
           if (questionDetails is Map) {
             Map<String, dynamic> innerDetails = questionDetails as Map<String, dynamic>;
 
-            // Assuming there's only one entry in this map, as it contains one question and its answers.
             innerDetails.forEach((questionText, answers) {
-              // Verify that 'answers' is a List, as expected.
               if (answers is List) {
                 List<String> answerList = List<String>.from(answers);
 
-                // Create and add the question.
                 loadedQuestions.add(Question(questionText: questionText, answers: answerList));
               } else {
                 print("Unexpected data structure encountered for answers.");
@@ -96,7 +88,7 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
         });
 
         setState(() {
-          questions = loadedQuestions; // updating the state with the fetched questions
+          questions = loadedQuestions;
         });
       } else {
         print("No data exists for the selected category.");
@@ -107,37 +99,32 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
     }
   }
 
-  // Save updated questions to Firestore
   Future<void> saveQuestions() async {
     if (selectedCategory == null) {
-      // Handle this case, maybe show an alert dialog
       return;
     }
 
-    // Prepare the structure that you will send to Firestore.
-    // This map directly represents your 'Questions' field in the Firestore document.
     Map<String, List<String>> updatedQuestionsMap = {};
 
     for (var question in questions) {
       updatedQuestionsMap[question.questionText] = question.answers;
     }
 
-    // Prepare the final structure of the document.
+
     Map<String, dynamic> updatedData = {'Questions': updatedQuestionsMap};
 
     try {
-      // Here you would either update the existing document or set the data in a new document.
+
       await FirebaseFirestore.instance
           .collection('MultipleChoice')
           .doc(selectedCategory)
-          .set(updatedData, SetOptions(merge: true)); // This line ensures that the data is merged with the existing document, not overwrite everything.
+          .set(updatedData, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Questions updated successfully!')),
       );
     } catch (error) {
       print("An error occurred: $error");
-      // Possibly handle the error more gracefully, e.g., show a dialog to the user
     }
   }
 
@@ -198,10 +185,10 @@ class _TeacherMultipleChoiceState extends State<TeacherMultipleChoice> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton( // Correct property here
-        onPressed: addNewQuestion, // Your function to add a new question
+      floatingActionButton: FloatingActionButton(
+        onPressed: addNewQuestion,
         child: Icon(Icons.add),
-        backgroundColor: Colors.green, // Or any color you prefer
+        backgroundColor: Colors.green,
       ),
     );
   }}
@@ -283,13 +270,10 @@ class _QuestionEditorState extends State<QuestionEditor> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                // Add the new answer to the question's answers list.
                 widget.question.answers.add('New Answer');
 
-                // Create a new TextEditingController for the new answer.
                 TextEditingController newAnswerController = TextEditingController(text: 'New Answer');
 
-                // Add the new controller to the answerControllers list.
                 answerControllers.add(newAnswerController);
 
                 // Notify the parent widget about the change in the Question object.

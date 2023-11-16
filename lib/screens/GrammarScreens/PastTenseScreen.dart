@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
@@ -16,14 +16,13 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
   String? feedback;
   bool? isCorrect;
   double opacityLevel = 0.0;
-  bool isLoading = true; // Added to track loading state
+  bool isLoading = true;
 
-  List<Map<String, dynamic>> questions = []; // Store questions and answers
+  List<Map<String, dynamic>> questions = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch questions and answers from Firestore
     _fetchQuestionsFromFirestore();
   }
 
@@ -36,7 +35,7 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
       if (questionsList is List) {
         setState(() {
           questions = List<Map<String, dynamic>>.from(questionsList);
-          isLoading = false; // Data is loaded, set isLoading to false
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -53,19 +52,16 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
         feedback = "Correct!";
         isCorrect = true;
 
-        // Update the user's document in the "Users" collection
         final firestore = FirebaseFirestore.instance;
         final CollectionReference usersCollection = firestore.collection('Users');
 
         String? userId = CurrentUser().userId;
 
-        // Fetch the current 'Questions Completed.Past Tense' count
         usersCollection.doc(userId).get().then((docSnapshot) {
           if (docSnapshot.exists) {
             final userData = docSnapshot.data() as Map<String, dynamic>;
             final questionsCompleted = userData['Questions Completed']['Past Tense'] ?? 0;
 
-            // Compare with the current question number and update if necessary
             if (questionsCompleted <= currentQuestionIndex) {
               usersCollection.doc(userId).update({
                 'Questions Completed.Past Tense': currentQuestionIndex+1,
@@ -141,7 +137,7 @@ class _PastTenseScreenState extends State<PastTenseScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 10), // Add space between question number and additional text
+                  SizedBox(height: 10),
                   Text(
                     "Give the past tense of the following sentence:",
                     style: TextStyle(

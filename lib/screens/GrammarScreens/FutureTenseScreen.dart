@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
@@ -16,14 +16,13 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
   String? feedback;
   bool? isCorrect;
   double opacityLevel = 0.0;
-  bool isLoading = true; // Added to track loading state
+  bool isLoading = true;
 
-  List<Map<String, dynamic>> questions = []; // Store questions and answers
+  List<Map<String, dynamic>> questions = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch "Future Tense" questions and answers from Firestore
     _fetchQuestionsFromFirestore();
   }
 
@@ -36,7 +35,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
       if (questionsList is List) {
         setState(() {
           questions = List<Map<String, dynamic>>.from(questionsList);
-          isLoading = false; // Data is loaded, set isLoading to false
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -53,7 +52,6 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
         feedback = "Correct!";
         isCorrect = true;
 
-        // Update the user's document in the "Users" collection
         final firestore = FirebaseFirestore.instance;
         final CollectionReference usersCollection = firestore.collection('Users');
 
@@ -64,7 +62,6 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
             final userData = docSnapshot.data() as Map<String, dynamic>;
             final questionsCompleted = userData['Questions Completed']['Future Tense'] ?? 0;
 
-            // Compare with the current question number and update if necessary
             if (questionsCompleted <= currentQuestionIndex) {
               usersCollection.doc(userId).update({
                 'Questions Completed.Future Tense': currentQuestionIndex+1,
@@ -140,7 +137,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 10), // Add space between question number and additional text
+                  SizedBox(height: 10),
                   Text(
                     "Give the future tense of the following sentence:",
                     style: TextStyle(
@@ -159,7 +156,7 @@ class _FutureTenseScreenState extends State<FutureTenseScreen> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Text(
-                      questions[currentQuestionIndex]['Present Tense'], // Display "Present Tense" as the question
+                      questions[currentQuestionIndex]['Present Tense'],
                       style: TextStyle(
                         fontFamily: 'NunitoSans',
                         fontSize: 32,

@@ -11,12 +11,12 @@ class STOMPIScreen extends StatefulWidget {
 class _STOMPIScreenState extends State<STOMPIScreen> {
   List<String>? words;
   String? originalSentence;
-  String? englishTranslation; // Variable to hold English translation
+  String? englishTranslation;
   final TextEditingController _controller = TextEditingController();
   String userAnswer = '';
   bool? isCorrect;
-  int currentSentenceIndex = 0; // Current index of the sentence
-  List<DocumentSnapshot> validSentences = []; // List to hold valid sentences
+  int currentSentenceIndex = 0;
+  List<DocumentSnapshot> validSentences = [];
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _STOMPIScreenState extends State<STOMPIScreen> {
         return words.any((String word) => word.length >= 4);
       }).toList();
 
-      validSentences.shuffle(); // Randomize the order of sentences
+      validSentences.shuffle();
       loadCurrentSentence();
     } catch (e) {
       print('Error fetching sentence: $e');
@@ -49,12 +49,12 @@ class _STOMPIScreenState extends State<STOMPIScreen> {
     if (validSentences.isNotEmpty && currentSentenceIndex < validSentences.length) {
       final currentDocData = validSentences[currentSentenceIndex].data() as Map<String, dynamic>;
       originalSentence = currentDocData['afrikaans'];
-      englishTranslation = currentDocData['english']; // Fetch English translation
+      englishTranslation = currentDocData['english'];
 
       final splitWords = originalSentence!.split(' ');
       setState(() {
         words = splitWords..shuffle();
-        isCorrect = null; // Reset correctness info
+        isCorrect = null;
         _controller.clear(); // Clear previous answer
       });
     }
