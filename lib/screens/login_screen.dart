@@ -308,7 +308,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       buildLoginBtn(),
                       buildSignUpBtn(),
                       SizedBox(height: 10),
-                      buildSkipBtn(), // Add the skip button here
                     ],
                   ),
                 ),
