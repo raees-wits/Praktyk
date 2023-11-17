@@ -18,16 +18,17 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Map<String, String> originalPairs = {};
   int correctMatches = 0;
 
-  List<Color> questionButtonColors = []; // List to store colors of question buttons
-  List<Color> answerButtonColors = []; // List to store colors of answer buttons
+  // List to store colors of question buttons
+  List<Color> questionButtonColors = [];
+  // List to store colors of answer buttons
+  List<Color> answerButtonColors = [];
   int? selectedQuestionIndex;
   int? selectedAnswerIndex;
   int currentStartIndex = 0;
-
   bool showNextButton =false;
 
-  Map<String, dynamic>? questionsMap; // Store the questions map from the database
-
+  // Store the questions map from the database
+  Map<String, dynamic>? questionsMap;
   @override
   void initState() {
     super.initState();
@@ -52,7 +53,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   }
 
   Future<void> fetchNextSetOfQuestionsAndAnswers(int delta) async {
-    // Check for negative index
+
     if (currentStartIndex + delta < 0) {
       print("No more previous questions");
       return;
@@ -68,7 +69,6 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       resultMessage = "";
       showNextButton = false;
 
-      // Reset colors for question buttons
       questionButtonColors = List.generate(questions.length, (index) {
         switch (index) {
           case 0:
@@ -101,15 +101,32 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
   Future<void> updateMatchTheColumnCount(String userId, String categoryName, int incrementValue) async {
     try {
       final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
-      await userRef.set({
-        'MatchTheColumn': {
-          categoryName: FieldValue.increment(incrementValue),
+      final batch = FirebaseFirestore.instance.batch();
+
+      batch.set(
+        userRef,
+        {
+          'MatchTheColumn': {
+            categoryName: FieldValue.increment(incrementValue),
+          },
         },
-      }, SetOptions(merge: true));
+        SetOptions(merge: true),
+      );
+
+      batch.update(
+        userRef,
+        {
+          'Questions Completed.Match The Column': FieldValue.increment(incrementValue),
+        },
+      );
+
+      // Commit both updates in a single batch
+      await batch.commit();
     } catch (e) {
       print("Error updating MatchTheColumn count: $e");
     }
   }
+
 
 
   Future<void> fetchRandomQuestionsAndAnswers(int startIndex) async {
@@ -124,7 +141,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         final data = categoryDoc.data() as Map<String, dynamic>;
         final questionAnswerArray = data['Questions'] as List;
 
-        // Take 4 questions starting from the startIndex
+        // take 4 questions starting from the startIndex
         final selectedQuestionAnswerList = questionAnswerArray.skip(startIndex).take(4).toList();
 
         // Clear existing questions and answers
@@ -155,8 +172,9 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
           }
         });
 
+        // Initially, all answer buttons are white
         answerButtonColors = List.generate(answers.length, (index) {
-          return Colors.white; // Initially, all answer buttons are white
+          return Colors.white;
         });
 
         setState(() {});
@@ -213,7 +231,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     );
   }
 
-  String resultMessage = ""; // Store the result message
+  String resultMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -223,16 +241,16 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
       ),
       body: GestureDetector(
         onTap: () {
-          // Handle taps on the entire screen if needed
-        },
+          //currently nothing
+          },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 40), // Add spacing between the top of the page and the columns
+            const SizedBox(height: 40),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add padding on all sides
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
-                width: double.infinity, // Set the width to match the screen width
+                width: double.infinity,
                 child: Row(
                   children: [
                     // Left Column - Questions
@@ -240,20 +258,20 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.black, // Border color
-                            width: 2.0, // Border width (adjust as needed)
+                            color: Colors.black,
+                            width: 2.0,
                           ),
                         ),
                         child: buildQuestionColumn(),
                       ),
                     ),
-                    // Right column - Answers
+                    // Right column -> answers
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.black, // Border color
-                            width: 2.0, // Border width (adjust as needed)
+                            color: Colors.black,
+                            width: 2.0,
                           ),
                         ),
                         child: buildAnswerColumn(),
@@ -263,7 +281,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Add spacing between questions/answers and matchings
+            const SizedBox(height: 20),
             const Text(
               "Matchings:",
               style: TextStyle(
@@ -271,11 +289,9 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // Remove the outer Expanded widget from the "Matchings" section
             Column(
               children: [
                 Wrap(
-                  //runSpacing: 5.0, // Add spacing between rows
                   children: List.generate(questions.length, (index) {
                     final question = questions[index];
                     final matchingIndex = matchingPairs[index];
@@ -283,7 +299,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     matchingIndex != null ? answers[matchingIndex] : null;
 
                     return Container(
-                      width: MediaQuery.of(context).size.width / 2, // Set the width to half the screen width for 2 items per row
+                      width: MediaQuery.of(context).size.width / 2,
                       child: ListTile(
                         title: Text("$index. $question"),
                         subtitle: Text(
@@ -292,11 +308,10 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     );
                   }),
                 ),
-                const SizedBox(height: 10), // Add spacing between "Matchings" and "Confirm" button
+                const SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
                     checkMatchingPairs();
-                    // Display the result message when the button is clicked
                     setState(() {
                       resultMessage = "You have $correctMatches correct matches";
                     });
@@ -309,12 +324,11 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                     ),
                   ),
                 ),
-                // Display the result message under the button
                 Text(
                   resultMessage,
                   style: const TextStyle(
                     fontSize: 18,
-                    color: Colors.green, // You can choose your desired color
+                    color: Colors.green,
                   ),
                 ),
                 Container(
@@ -331,13 +345,13 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
                           backgroundColor: MaterialStateProperty.resolveWith<Color>(
                                 (Set<MaterialState> states) {
                               if (states.contains(MaterialState.disabled)) return Colors.grey;
-                              return Colors.blue; // Otherwise, return the primary color
+                              return Colors.blue;
                             },
                           ),
                         ),
-                        onPressed: currentStartIndex > 0 // Condition for the 'Previous' button
+                        onPressed: currentStartIndex > 0
                             ? () {
-                          fetchNextSetOfQuestionsAndAnswers(-4); // -4 for going back
+                          fetchNextSetOfQuestionsAndAnswers(-4);
                         }
                             : null, // Disable the button
                         child: const Text(
@@ -426,8 +440,7 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
     if (selectedQuestionIndex != null && selectedAnswerIndex != null) {
       matchingPairs[selectedQuestionIndex!] = selectedAnswerIndex!;
       answerButtonColors[selectedAnswerIndex!] = questionButtonColors[selectedQuestionIndex!];
-      // Remove the color change from here
-      // selectedQuestionIndex = null;
+
       selectedAnswerIndex = null;
     }
   }
@@ -445,13 +458,13 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         print("Selected Question X: ${index * 40.0}");
       },
       child: SizedBox(
-        width: double.infinity, // Set the width to match the column
-        height: 50, // Set your desired height
+        width: double.infinity,
+        height: 50,
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.black, // Border color
-              width: 1.0, // Border width
+              color: Colors.black,
+              width: 1.0,
             ),
             color: isMatched
                 ? questionButtonColors[index]
@@ -480,13 +493,13 @@ class _MatchTheColumnPageState extends State<MatchTheColumnPage> {
         print("Selected Answer X: ${(index + 2) * 40.0}");
       },
       child: SizedBox(
-        width: double.infinity, // Set the width to match the column
-        height: 50, // Set your desired height
+        width: double.infinity,
+        height: 50,
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.black, // Border color
-              width: 1.0, // Border width
+              color: Colors.black,
+              width: 1.0,
             ),
             color: selectedAnswerIndex == index
                 ? questionButtonColors[selectedQuestionIndex ?? 0]

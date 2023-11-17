@@ -1,18 +1,26 @@
+import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
+import 'package:e_learning_app/screens/TeacherScreens/teacher_comprehension_screen.dart';
+import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:e_learning_app/screens/practise_vocab_screen.dart'; // ensure you import the PracticeVocabularyScreen
+import 'package:e_learning_app/screens/practise_vocab_screen.dart';
 
 class TeacherChoiceScreen extends StatelessWidget {
-  const TeacherChoiceScreen({Key? key}) : super(key: key);
+  final String screen;
+
+  TeacherChoiceScreen({required this.screen});
 
   @override
   Widget build(BuildContext context) {
-    // A method to create a button with a gradient background
-    Widget buildGradientButton({required VoidCallback onPressed, required String text, required List<Color> colors}) {
+    Widget buildGradientButton(
+        {required VoidCallback onPressed,
+        required String text,
+        required List<Color> colors}) {
       return Container(
-        width: double.infinity, // makes the buttons take up all available space
-        margin: EdgeInsets.all(8.0), // adds spacing around the buttons
+        width: double.infinity,
+        margin: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0), // if you want rounded corners
+          borderRadius:
+              BorderRadius.circular(8.0),
           gradient: LinearGradient(
             colors: colors,
             begin: Alignment.topLeft,
@@ -36,31 +44,70 @@ class TeacherChoiceScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0), // Adds padding on the left and right of the buttons
+          padding: const EdgeInsets.symmetric(
+              horizontal:
+                  16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               buildGradientButton(
                 onPressed: () {
-                  // Navigate to the PracticeVocabularyScreen when this is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
-                  );
+                  if (screen == "Vocabulary") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PracticeVocabularyScreen(
+                                updateMode: '',
+                              )),
+                    );
+                  } else if (screen == "Grammar") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              GrammarRulesScreen(updateMode: '')),
+                    );
+                  } else if (screen == "Comprehension") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ComprehensionChoiceScreen()));
+                  }
                 },
-                text: 'View Student Perspective', // change the button text
-                colors: [Colors.blue, Colors.purple], // colors for the gradient
+                text: 'View Student Perspective',
+                colors: [Colors.blue, Colors.purple],
               ),
               buildGradientButton(
                 onPressed: () {
-                  // TODO: Navigate to the "Modify Questions" screen when this is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PracticeVocabularyScreen(updateMode: 'Modify',)),
-                  );
+                  if (screen == "Vocabulary") {
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PracticeVocabularyScreen(
+                                updateMode: 'Modify',
+                              )),
+                    );
+                  } else if (screen == "Grammar") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              GrammarRulesScreen(updateMode: 'Modify')),
+                    );
+                  } else if (screen == "Comprehension") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                TeacherComprehensionChoiceScreen()));
+                  }
                 },
                 text: 'Add/Modify Questions',
-                colors: [Colors.green, Colors.teal], // another set of colors for the gradient
+                colors: [
+                  Colors.green,
+                  Colors.teal
+                ],
               ),
             ],
           ),

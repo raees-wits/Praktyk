@@ -6,8 +6,9 @@ class Question {
   final String id;
   final String text;
   final String answer;
+  final int questionNo;
 
-  Question(this.id, this.text, this.answer);
+  Question(this.id, this.text, this.answer, this.questionNo);
 }
 
 class TeacherComprehensionQuestionScreen extends StatefulWidget {
@@ -63,8 +64,11 @@ class _TeacherComprehensionQuestionScreenState
     setState(() {
       questions = querySnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return Question(doc.id, data['Text'], data['Answer']);
+        return Question(
+            doc.id, data['Text'], data['Answer'], data['QuestionNo']);
       }).toList();
+
+      questions.sort((a, b) => a.questionNo.compareTo(b.questionNo));
 
       if (widget.questionNo < questions.length) {
         questionText = questions[widget.questionNo].text;
@@ -92,8 +96,6 @@ class _TeacherComprehensionQuestionScreenState
         child: Stack(
           children: <Widget>[
             Container(
-              height: double.infinity,
-              width: double.infinity,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -104,241 +106,240 @@ class _TeacherComprehensionQuestionScreenState
                     Color(0xFFfafad2),
                     Color(0xFFfcfcfa),
                   ])),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 20,
+              child: ListView(children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2))
+                      ]),
+                  child: TextField(
+                    controller: titleTxt,
+                    maxLines: null,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        titleTxt.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        labelText: 'The Comprehension Title',
+                        hintStyle: TextStyle(color: Colors.black38)),
+                    style: TextStyle(
+                      backgroundColor: Colors.white,
+                      color: Colors.black,
+                      fontSize: 15,
                     ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2))
-                          ]),
-                      child: TextField(
-                        controller: titleTxt,
-                        maxLines: null,
-                        onChanged: (String newValue) {
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Question " + (widget.questionNo + 1).toString(),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2))
+                      ]),
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: textTxt,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        textTxt.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        labelText: 'The Comprehension Text',
+                        hintStyle: TextStyle(color: Colors.black38)),
+                    style: TextStyle(
+                      backgroundColor: Colors.white,
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2))
+                      ]),
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: questionTxt,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        questionTxt.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        labelText: 'The Question',
+                        hintStyle: TextStyle(color: Colors.black38)),
+                    style: TextStyle(
+                      backgroundColor: Colors.white,
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2))
+                      ]),
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: answerTxt,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        answerTxt.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        labelText: 'The answer to the question',
+                        hintStyle: TextStyle(color: Colors.black38)),
+                    style: TextStyle(
+                      backgroundColor: Colors.white,
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Wrap(alignment: WrapAlignment.center, children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 2))
+                        ]),
+                    child: GestureDetector(
+                        onTap: () async {
                           setState(() {
-                            titleTxt.text = newValue;
+                            widget.comprehensionTitle = titleTxt.text;
+                            widget.comprehensionText = textTxt.text;
                           });
-                        },
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 15),
-                            labelText: 'The Comprehension Title',
-                            hintStyle: TextStyle(color: Colors.black38)),
-                        style: TextStyle(
-                          backgroundColor: Colors.white,
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Question " + (widget.questionNo + 1).toString(),
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2))
-                          ]),
-                      child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        controller: textTxt,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            textTxt.text = newValue;
-                          });
-                        },
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 15),
-                            labelText: 'The Comprehension Text',
-                            hintStyle: TextStyle(color: Colors.black38)),
-                        style: TextStyle(
-                          backgroundColor: Colors.white,
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2))
-                          ]),
-                      child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        controller: questionTxt,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            questionTxt.text = newValue;
-                          });
-                        },
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 15),
-                            labelText: 'The Question',
-                            hintStyle: TextStyle(color: Colors.black38)),
-                        style: TextStyle(
-                          backgroundColor: Colors.white,
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2))
-                          ]),
-                      child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        controller: answerTxt,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            answerTxt.text = newValue;
-                          });
-                        },
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 15),
-                            labelText: 'The answer to the question',
-                            hintStyle: TextStyle(color: Colors.black38)),
-                        style: TextStyle(
-                          backgroundColor: Colors.white,
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 2))
-                          ]),
-                      child: GestureDetector(
-                          onTap: () async {
-                            setState(() {
-                              widget.comprehensionTitle = titleTxt.text;
-                              widget.comprehensionText = textTxt.text;
+
+                          if (widget.comprehensionID == "") {
+                            var result = await FirebaseFirestore.instance
+                                .collection('ComprehensionQuestions')
+                                .add({
+                              'Text': textTxt.text,
+                              'Title': titleTxt.text
                             });
 
-                            if (widget.comprehensionID == "") {
-                              var result = await FirebaseFirestore.instance
-                                  .collection('ComprehensionQuestions')
-                                  .add({
-                                'Text': textTxt.text,
-                                'Title': titleTxt.text
-                              });
+                            setState(() {
+                              widget.comprehensionID = result.id;
+                            });
+                          } else {
+                            await FirebaseFirestore.instance
+                                .collection('ComprehensionQuestions')
+                                .doc(widget.comprehensionID)
+                                .update({
+                              'Text': textTxt.text,
+                              'Title': titleTxt.text
+                            });
+                          }
 
-                              setState(() {
-                                widget.comprehensionID = result.id;
-                              });
-                            } else {
-                              await FirebaseFirestore.instance
-                                  .collection('ComprehensionQuestions')
-                                  .doc(widget.comprehensionID)
-                                  .update({
-                                'Text': textTxt.text,
-                                'Title': titleTxt.text
-                              });
-                            }
-
-                            if (questionID == "") {
-                              isLast = true;
-                              nextText = "Done";
-                              await FirebaseFirestore.instance
-                                  .collection('ComprehensionQuestions')
-                                  .doc(widget.comprehensionID)
-                                  .collection("Questions")
-                                  .add({
-                                'Answer': answerTxt.text,
-                                'Text': questionTxt.text
-                              });
-                            } else {
-                              await FirebaseFirestore.instance
-                                  .collection('ComprehensionQuestions')
-                                  .doc(widget.comprehensionID)
-                                  .collection("Questions")
-                                  .doc(questionID)
-                                  .update({
-                                'Answer': answerTxt.text,
-                                'Text': questionTxt.text
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Save",
-                            style: TextStyle(
-                                color: Color(0xFFff6374), fontSize: 15),
-                          )),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    if (isLast)
+                          if (questionID == "") {
+                            isLast = true;
+                            nextText = "Done";
+                            await FirebaseFirestore.instance
+                                .collection('ComprehensionQuestions')
+                                .doc(widget.comprehensionID)
+                                .collection("Questions")
+                                .add({
+                              'Answer': answerTxt.text,
+                              'Text': questionTxt.text,
+                              'QuestionNo': widget.questionNo
+                            });
+                          } else {
+                            await FirebaseFirestore.instance
+                                .collection('ComprehensionQuestions')
+                                .doc(widget.comprehensionID)
+                                .collection("Questions")
+                                .doc(questionID)
+                                .update({
+                              'Answer': answerTxt.text,
+                              'Text': questionTxt.text,
+                              'QuestionNo': widget.questionNo
+                            });
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Data Saved")));
+                        },
+                        child: Text(
+                          "Save",
+                          style:
+                              TextStyle(color: Color(0xFFff6374), fontSize: 15),
+                        )),
+                  ),
+                ]),
+                SizedBox(
+                  height: 15,
+                ),
+                if (isLast)
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    children: <Widget>[
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         decoration: BoxDecoration(
@@ -374,91 +375,92 @@ class _TeacherComprehensionQuestionScreenState
                               style: TextStyle(
                                   color: Color(0xFFff6374), fontSize: 15),
                             )),
-                      ),
-                    Flexible(
-                        child: Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 6,
-                                          offset: Offset(0, 2))
-                                    ]),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "Prev",
-                                    style: TextStyle(
-                                        color: Color(0xFFff6374), fontSize: 15),
-                                  ),
-                                )),
-                            Text(
-                              "Question " + (widget.questionNo + 1).toString(),
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black26,
-                                        blurRadius: 6,
-                                        offset: Offset(0, 2))
-                                  ]),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (isLast) {
-                                    for (int i = 0; i < questions.length; i++) {
-                                      Navigator.pop(context);
-                                    }
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TeacherComprehensionQuestionScreen(
-                                                    comprehensionID:
-                                                        widget.comprehensionID,
-                                                    comprehensionTitle: widget
-                                                        .comprehensionTitle,
-                                                    comprehensionText: widget
-                                                        .comprehensionText,
-                                                    questionNo:
-                                                        widget.questionNo +
-                                                            1)));
-                                  }
-                                },
-                                child: Text(
-                                  nextText,
-                                  style: TextStyle(
-                                      color: Color(0xFFff6374), fontSize: 15),
-                                ),
+                      )
+                    ],
+                  ),
+                Flexible(
+                    child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 2))
+                                ]),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "Prev",
+                                style: TextStyle(
+                                    color: Color(0xFFff6374), fontSize: 15),
                               ),
+                            )),
+                        Text(
+                          "Question " + (widget.questionNo + 1).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2))
+                              ]),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (isLast) {
+                                for (int i = 0; i < questions.length; i++) {
+                                  Navigator.pop(context);
+                                }
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            TeacherComprehensionQuestionScreen(
+                                                comprehensionID:
+                                                    widget.comprehensionID,
+                                                comprehensionTitle:
+                                                    widget.comprehensionTitle,
+                                                comprehensionText:
+                                                    widget.comprehensionText,
+                                                questionNo:
+                                                    widget.questionNo + 1)));
+                              }
+                            },
+                            child: Text(
+                              nextText,
+                              style: TextStyle(
+                                  color: Color(0xFFff6374), fontSize: 15),
                             ),
-                          ]),
-                    )),
-                    SizedBox(
-                      height: 20,
-                    )
-                  ]),
-            )
+                          ),
+                        ),
+                      ]),
+                )),
+                SizedBox(
+                  height: 20,
+                )
+              ]),
+            ),
           ],
         ),
       ),

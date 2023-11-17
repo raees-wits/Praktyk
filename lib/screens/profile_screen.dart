@@ -1,9 +1,14 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/current_user.dart';
 import 'account_center_screen.dart';
 import 'settings_screen.dart';
+import 'package:e_learning_app/screens/achievements_page.dart';
+import 'components/community_guidelines_screen.dart';
+import 'components/help_screen.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -24,7 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String school = "";
   String userType = "Loading...";
   String email = "";
-
+  String avatarPrompt = "Default";
+  String avatarPromptTypeNumber = "1";
 
   @override
   void initState() {
@@ -34,11 +40,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _getUserInfo() async {
     User? currentUser = _auth.currentUser;
-    var userID = CurrentUser().userId!;
-    print(currentUser?.uid);
+    var userID = currentUser?.uid;
+    print('My userID: $userID');
     if (currentUser != null) {
       try {
-        DocumentSnapshot userDoc = await _firestore.collection('Users').doc(currentUser.uid).get();
+        DocumentSnapshot userDoc =
+            await _firestore.collection('Users').doc(currentUser.uid).get();
         var document = await FirebaseFirestore.instance
             .collection('Users')
             .doc(userID)
@@ -51,11 +58,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             firstName = document.data()?['firstName'];
             lastName = document.data()?['lastName'];
             name = "$firstName $lastName";
-            if (userType=='Student'){
+            if (userType == 'Student') {
               grade = document.data()?['grade'];
               school = document.data()?['school'];
             }
-
+            avatarPrompt = document.data()?['avatarPrompt'];
+            avatarPromptTypeNumber = document.data()?['avatarPromptTypeNumber'];
           });
         } else {
           // Document doesn't exist, handle it accordingly
@@ -92,10 +100,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget userTile() {
-    String url = "assets/images/profile.png";
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: AssetImage(url),
+      leading: Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+            color: kpurple, borderRadius: BorderRadius.circular(15.0)),
+        child: Image.network(
+          "https://robohash.org/$avatarPrompt?set=set$avatarPromptTypeNumber",
+        ),
       ),
       title: Text(
         name,
@@ -119,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         colorTile(Icons.person_outline, Colors.deepPurple, "Account Center"),
         colorTile(Icons.settings_outlined, Colors.blue, "Settings"),
-        colorTile(Icons.people_outline, Colors.pink, "Friends"),
+        colorTile(Icons.people_outline, Colors.pink, "Friends (COMING SOON)"),
         colorTile(Icons.star_outline, Colors.orange, "Achievements"),
       ],
     );
@@ -128,17 +141,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget bwTiles() {
     return Column(
       children: [
-        bwTile(Icons.help_outline, "Help"),
-        bwTile(Icons.info_outline, "Community Guidelines"),
+        bwTile(Icons.help_outline, "Help", () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HelpScreen()),
+          );
+        }),
+        bwTile(Icons.info_outline, "Community Guidelines", () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CommunityGuidelinesScreen()),
+          );
+        }),
       ],
     );
   }
 
-  Widget bwTile(IconData icon, String text) {
-    return colorTile(icon, Colors.black, text, blackAndWhite: true);
+  Widget bwTile(IconData icon, String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ListTile(
+        leading: Icon(icon, size: 30.0),
+        title: Text(text),
+        trailing: Icon(Icons.chevron_right),
+      ),
+    );
   }
 
-  Widget colorTile(IconData icon, Color color, String text, {bool blackAndWhite = false}) {
+
+  Widget colorTile(IconData icon, Color color, String text, {bool blackAndWhite = false, VoidCallback? onTap})
+    {
     Color pickedColor = Color(0xfff3f4fe);
     return GestureDetector(
       onTap: () async {
@@ -154,9 +186,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'lastName': lastName,
                   'email': email,
                   'phone': phone,
-                  'userType' : userType,
-                  'grade' : grade,
-                  'school' : school
+                  'userType': userType,
+                  'grade': grade,
+                  'school': school,
+                  'avatarPrompt': avatarPrompt,
+                  'avatarPromptTypeNumber': avatarPromptTypeNumber
                 },
               ),
             ),
@@ -164,20 +198,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // After returning from the Account Center Screen, update any information if necessary
           if (result != null) {
             setState(() {
-
               firstName = result['name'] ?? firstName;
-              lastName= result['name'] ?? lastName;
-              email= result['name'] ?? email;
-              phone= result['name'] ?? phone;
-              userType= result['name'] ?? userType;
-              grade= result['name'] ?? grade;
-              school= result['name'] ?? school;
+              lastName = result['name'] ?? lastName;
+              email = result['name'] ?? email;
+              phone = result['name'] ?? phone;
+              userType = result['name'] ?? userType;
+              grade = result['name'] ?? grade;
+              school = result['name'] ?? school;
             });
           }
         } else if (text == "Settings") {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
+        } else if (text == "Achievements") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AchievementsPage()),
           );
         }
         // You can add more conditions here for other tiles like "Friends" or "Achievements"

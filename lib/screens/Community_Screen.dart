@@ -1,3 +1,4 @@
+import 'package:e_learning_app/constants.dart';
 import 'package:flutter/material.dart';
 import '../model/current_user.dart';
 import 'components/Question.dart';
@@ -18,7 +19,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
   List<Question> questions = [];
   File? imageFile;
   bool isUploading = false; // Add a state variable for upload status
-  bool questionPosted = false; // Add a state variable for successful question posting
+  bool questionPosted =
+      false; // Add a state variable for successful question posting
+  bool postAnonymously = false;
 
   @override
   void initState() {
@@ -31,10 +34,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
     setState(() {
       questions = querySnapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+        String userName = data['userName'] ??
+            'Anonymous'; // Retrieve the user's name or default to 'Anonymous'
         return Question(
-          doc.id, // Use the document ID as the unique ID
+          doc.id,
           data['text'],
-          [], // You can add answers here if needed
+          [],
+          userName,
         );
       }).toList();
     });
@@ -57,128 +63,147 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Community Page'),
+        backgroundColor: korange,
       ),
       body: ListView(
         children: [
           if (CurrentUser().userType == 'Student')
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  margin: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
+            Container(
+              padding: EdgeInsets.all(16.0),
+              margin: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Text box for entering a question
+                  TextFormField(
+                    controller: questionController,
+                    decoration: InputDecoration(
+                      hintText: 'Write your question here...',
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Text box for entering a question
-                      TextFormField(
-                        controller: questionController,
-                        decoration: InputDecoration(
-                          hintText: 'Write your question here...',
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      // Button to submit the question
-                      ElevatedButton(
-                        onPressed: () async {
-                          // Handle question submission here
-                          String enteredQuestion = questionController.text;
-                          if (enteredQuestion.isNotEmpty) {
-                            setState(() {
-                              isUploading = true; // Set uploading status to true
-                              questionPosted = false; // Reset questionPosted status
-                            });
+                  SizedBox(height: 16.0),
+                  CheckboxListTile(
+                    title: Text('Post anonymously'),
+                    value: postAnonymously,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        postAnonymously = value ?? false;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  // Button to submit the question
+                  ElevatedButton(
+                    onPressed: () async {
+                      String enteredQuestion = questionController.text;
+                      if (enteredQuestion.isNotEmpty) {
+                        setState(() {
+                          isUploading = true;
+                          questionPosted = false;
+                        });
 
-                            if (imageFile != null) {
-                              final String fileName =
-                                  DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
-                              final Reference storageRef =
-                              FirebaseStorage.instance.ref().child('images/$fileName');
-                              final UploadTask uploadTask = storageRef.putFile(imageFile!);
+                        if (imageFile != null) {
+                          final String fileName =
+                              DateTime.now().millisecondsSinceEpoch.toString() +
+                                  '.jpg';
+                          final Reference storageRef = FirebaseStorage.instance
+                              .ref()
+                              .child('images/$fileName');
+                          final UploadTask uploadTask =
+                              storageRef.putFile(imageFile!);
 
-                              try {
-                                // Wait for the image upload to complete
-                                final TaskSnapshot snapshot =
+                          try {
+                            final TaskSnapshot snapshot =
                                 await uploadTask.whenComplete(() => null);
-
-                                // Get the download URL of the uploaded image
-                                final String imageUrl =
+                            final String imageUrl =
                                 await snapshot.ref.getDownloadURL();
 
-                                // Now, you can save the image URL along with the question to Firestore
-                                await firestore.collection('questions').add({
-                                  'text': enteredQuestion,
-                                  'timestamp': FieldValue.serverTimestamp(),
-                                  'imageUrl': imageUrl, // Save the image URL in Firestore
-                                });
+                            Map<String, dynamic> questionData = {
+                              'text': enteredQuestion,
+                              'timestamp': FieldValue.serverTimestamp(),
+                              'imageUrl': imageUrl,
+                            };
 
-                                // Clear the text field after submitting
-                                questionController.clear();
-                                // Reload questions to reflect the newly added one
-                                loadQuestions();
-                                clearUploadStatus();
-                                setState(() {
-                                  questionPosted = true; // Set questionPosted status to true
-                                });
-                              } catch (error) {
-                                print('Upload error: $error');
-                                clearUploadStatus();
-                              }
-                            } else {
-                              // If no image was selected, just save the question without an image
-                              await firestore.collection('questions').add({
-                                'text': enteredQuestion,
-                                'timestamp': FieldValue.serverTimestamp(),
-                              });
-
-                              // Clear the text field after submitting
-                              questionController.clear();
-                              // Reload questions to reflect the newly added one
-                              loadQuestions();
-                              clearUploadStatus();
-                              setState(() {
-                                questionPosted = true; // Set questionPosted status to true
-                              });
+                            if (!postAnonymously) {
+                              questionData['userName'] = CurrentUser()
+                                  .firstName; // Replace with actual user name retrieval logic
                             }
-                          }
-                        },
-                        child: Text('Submit'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final imagePicker = ImagePicker();
-                          final pickedImageFile =
-                          await imagePicker.pickImage(source: ImageSource.gallery);
 
-                          // Set the imageFile variable to the pickedImageFile
-                          if (pickedImageFile != null) {
-                            setState(() {
-                              imageFile = File(pickedImageFile.path);
-                            });
+                            await firestore
+                                .collection('questions')
+                                .add(questionData);
+                          } catch (error) {
+                            print('Upload error: $error');
+                          } finally {
+                            clearUploadStatus();
                           }
-                        },
-                        child: Text('Attach Image'),
-                      ),
-                      // Use a Stack to overlay loading indicator and message
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Show a loading indicator while uploading
-                          if (isUploading) CircularProgressIndicator(),
+                        } else {
+                          Map<String, dynamic> questionData = {
+                            'text': enteredQuestion,
+                            'timestamp': FieldValue.serverTimestamp(),
+                          };
 
-                          // Show "question successfully posted" message when uploading is done
-                          if (questionPosted) Text('Question successfully posted'),
-                        ],
-                      ),
+                          if (!postAnonymously) {
+                            questionData['userName'] = CurrentUser()
+                                .firstName; // Replace with actual user name retrieval logic
+                          }
+
+                          await firestore
+                              .collection('questions')
+                              .add(questionData);
+                        }
+
+                        questionController.clear();
+                        loadQuestions();
+                        setState(() {
+                          questionPosted = true;
+                          isUploading = false;
+                        });
+                      }
+                    },
+                    child: Text('Submit'),
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () async {
+                      final imagePicker = ImagePicker();
+                      final pickedImageFile = await imagePicker.pickImage(
+                          source: ImageSource.gallery);
+
+                      // Set the imageFile variable to the pickedImageFile
+                      if (pickedImageFile != null) {
+                        setState(() {
+                          imageFile = File(pickedImageFile.path);
+                        });
+                      }
+                    },
+                    child: Text('Attach Image'),
+                  ),
+                  // Use a Stack to overlay loading indicator and message
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Show a loading indicator while uploading
+                      if (isUploading) CircularProgressIndicator(),
+
+                      // Show "question successfully posted" message when uploading is done
+                      if (questionPosted) Text('Question successfully posted'),
                     ],
                   ),
-                ),
-
-              for (var question in questions)
+                ],
+              ),
+            ),
+          for (var question in questions)
             QuestionWidget(
-              questionId: question.id, // Use the ID of the question document as questionId
+              questionId: question
+                  .id, // Use the ID of the question document as questionId
               questionText: question.question,
+              askerName:
+                  question.userName, // Pass the user's name to QuestionWidget
             ),
         ],
       ),

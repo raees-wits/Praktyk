@@ -1,10 +1,12 @@
 import 'package:e_learning_app/model/product_model.dart';
+import 'package:e_learning_app/screens/GrammarScreens/GrammarRulesScreen.dart';
+import 'package:e_learning_app/screens/comprehension_choice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning_app/screens//practise_vocab_screen.dart';
-
 import '../../model/current_user.dart';
 import '../Games/game_selection_screen.dart';
 import '../TeacherScreens/teacher_choice_screen.dart';
+import '../anki_category_screen.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({
@@ -34,32 +36,77 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
         onTap: () {
-      if (product.title == "Games") {
-        // Navigating to gameSelectionScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const GameSelectionScreen()), // The new screen you're navigating to.
-        );
-      }else if (product.title == "Practise Vocabulary") {
+          if (product.title == "Games") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const GameSelectionScreen()),
+            );
+          } else if (product.title == "Pronounciation") {
+            // Pronounciation card to anki card
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AnkiCategoryScreen()),
+            );
+          } else if (product.title == "Practise Vocabulary") {
             if (CurrentUser().userType == "Teacher") {
               // If userType is "Teacher", navigate to TeacherChoiceScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Vocabulary')),
               );
             } else {
-              // If userType is not "Teacher" (e.g., "Student"), navigate to PracticeVocabularyScreen
+              // If userType is not "Teacher" (student), navigate to PracticeVocabularyScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PracticeVocabularyScreen(updateMode: '',)),
+                    builder: (context) => PracticeVocabularyScreen(
+                          updateMode: '',
+                        )),
+              );
+            }
+          } else if (product.title == "Grammar Rules") {
+            if (CurrentUser().userType == "Teacher") {
+              // If userType is "Teacher", navigate to TeacherChoiceScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Grammar')),
+              );
+            } else {
+              // otherwise, navigate to PracticeVocabularyScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GrammarRulesScreen(
+                          updateMode: '',
+                        )),
+              );
+            }
+          } else if (product.title == "Comprehension Texts") {
+            if (CurrentUser().userType == "Teacher") {
+              // If userType is "Teacher", navigate to TeacherChoiceScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TeacherChoiceScreen(screen: 'Comprehension')),
+              );
+            } else {
+              // otherwise, navigate to PracticeVocabularyScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ComprehensionChoiceScreen()),
               );
             }
           }
@@ -67,7 +114,7 @@ class CategoryCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-              color: product.color, borderRadius: BorderRadius.circular(15.0)),
+              color: product.color, borderRadius: BorderRadius.circular(30.0)),
           child: Column(
             children: [
               Image.asset(
@@ -79,7 +126,7 @@ class CategoryCard extends StatelessWidget {
               ),
               Text(
                 product.title,
-                style: const TextStyle(
+                style:  const TextStyle(
                     fontSize: 18,
                     color: Colors.white,
                     fontWeight: FontWeight.w600),

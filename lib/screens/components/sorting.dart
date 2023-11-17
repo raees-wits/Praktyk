@@ -1,6 +1,6 @@
+import 'package:e_learning_app/screens/achievements_page.dart';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
-import 'goals_overlay.dart'; // Import the GoalsOverlayWidget
 
 class Sorting extends StatelessWidget {
   final VoidCallback toggleGoalsOverlay;
@@ -12,10 +12,9 @@ class Sorting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack( // Wrap everything in a Stack
+    return Stack(
       children: [
         Row(
-          // Space between widgets
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
@@ -29,17 +28,25 @@ class Sorting extends StatelessWidget {
                 style: TextStyle(fontSize: 18.0, color: Colors.white),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-              child: const Text(
-                "Progress",
-                style: TextStyle(
-                  fontSize: 18.0,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AchievementsPage()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+                child: const Text(
+                  "Milestones",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
                 ),
               ),
             ),
             GestureDetector(
-              onTap: toggleGoalsOverlay, // Use the provided callback to toggle the overlay
+              onTap: toggleGoalsOverlay,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
                 child: const Text(
@@ -59,7 +66,6 @@ class Sorting extends StatelessWidget {
             ),
           ],
         ),
-        // Show the overlay when showGoalsOverlay is true
       ],
     );
   }

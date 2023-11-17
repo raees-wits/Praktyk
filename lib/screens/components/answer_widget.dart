@@ -7,6 +7,7 @@ class AnswerWidget extends StatefulWidget {
   final VoidCallback onUpvote;
   final VoidCallback onDownvote;
   final String? posterName;
+  final String userVote;
 
   AnswerWidget({
     required this.answer,
@@ -15,6 +16,7 @@ class AnswerWidget extends StatefulWidget {
     required this.onUpvote,
     required this.onDownvote,
     this.posterName,
+    required this.userVote,
   });
 
   @override
@@ -63,7 +65,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 style: TextStyle(fontSize:18.0),
               ),
             ),
-          SizedBox(height: 2), // Add spacing between answer text and vote buttons
+          SizedBox(height: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -72,6 +74,8 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 child: IconButton(
                   icon: Icon(Icons.thumb_up),
                   onPressed: widget.onUpvote,
+                  color: widget.userVote == 'upvote' ? Colors.blue : Colors.black, // Change color based on the user's vote
+
                 ),
               ),
               Text(
@@ -83,6 +87,8 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 child: IconButton(
                   icon: Icon(Icons.thumb_down),
                   onPressed: widget.onDownvote,
+                  color: widget.userVote == 'downvote' ? Colors.blue : Colors.black,
+
                 ),
               ),
             ],

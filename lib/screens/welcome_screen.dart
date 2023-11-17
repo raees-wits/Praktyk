@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: kblue,
       body: SafeArea(
         child: Column(
           children: [
@@ -21,23 +21,23 @@ class WelcomeScreen extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                      color: kblue,
+                      color: Color(0xFFFDD1C1),
                       borderRadius:
                           BorderRadius.only(bottomRight: Radius.circular(50))),
                   child: Column(
                     children: [
-                      Expanded(child: Image.asset("assets/images/welcome.png"))
+                      Expanded(child: Image.asset("assets/images/welcome.jpg"))
                     ],
                   ),
                 )),
             Expanded(
                 flex: 2,
                 child: Container(
-                  color: kblue,
+                  color:  Color(0xFFFDD1C1),
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: kblue,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(50),
                         )),
@@ -49,19 +49,21 @@ class WelcomeScreen extends StatelessWidget {
                           Text(
                             "Afrikaans Made Makliker",
                             style: TextStyle(
-                              fontSize: 28,
+                              fontSize: 40,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                           Spacer(),
                           Text(
-                            "Learn with pleasure \n,wherever you are!",
+                            "Learn with pleasure \n"
+                            "wherever you are!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black54,
                               wordSpacing: 2.5,
                               height: 1.5,
-                              fontSize: 16,
+                              fontSize: 24,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

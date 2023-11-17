@@ -201,6 +201,7 @@ class _HangmanGameScreenState extends State<HangmanGameScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Hangman Game'),
+        backgroundColor: Colors.orange,
       ),
       body: Column(
         children: [

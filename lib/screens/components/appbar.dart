@@ -18,11 +18,6 @@ class CustomeAppBar extends StatelessWidget {
               Icons.dashboard_rounded,
               color: kblue,
             )),
-        IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.search_rounded,
-            ))
       ],
     );
   }

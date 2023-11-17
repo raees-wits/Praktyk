@@ -144,7 +144,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (registrationType == "Student") ...[
                     buildTextField("School", schoolController, true),
                     const SizedBox(height: 20),
-                    buildTextField("Grade", gradeController, true),
+                    buildTextField("Grade", gradeController, true, validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a grade';
+                      }
+                      int? grade = int.tryParse(value);
+                      if (grade == null || grade < 6 || grade > 10) {
+                        return 'Grade must be a number between 6 and 10';
+                      }
+                      return null;
+                    }),
                     const SizedBox(height: 20),
                   ],
                   ElevatedButton(
@@ -165,6 +174,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'lastName': lastNameController.text,
                             'email': emailController.text,
                             'phone': phoneController.text,
+                            'Questions Completed': {
+                              'Comprehension': 0,
+                              'Fill In The Blanks': 0,
+                              'Match The Column': 0,
+                              'Multiple Choice': 0,
+                              'Short Questions': 0,
+                            },
                           };
 
                           if (registrationType == "Student") {

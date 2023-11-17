@@ -11,15 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:e_learning_app/model/current_user.dart';
 
-
-class LoginScreen extends StatefulWidget{
-
+class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -27,9 +24,9 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   bool isRememberMe = false;
 
-
   bool isValidEmail(String email) {
-    final RegExp regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    final RegExp regex =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     return regex.hasMatch(email);
   }
 
@@ -41,17 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  Widget buildEmail(){
+  Widget buildEmail() {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             'Email',
             style: TextStyle(
-                color: Colors.white,
-                fontSize:16,
-                fontWeight: FontWeight.bold
-            ),
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Container(
@@ -63,46 +57,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   BoxShadow(
                       color: Colors.black26,
                       blurRadius: 6,
-                      offset: Offset(0,2)
-                  )
-                ]
-            ),
+                      offset: Offset(0, 2))
+                ]),
             height: 60,
             child: TextField(
-              controller: emailController,  // <-- Add this line
+              controller: emailController, // <-- Add this line
               keyboardType: TextInputType.emailAddress,
-              style: TextStyle(
-                  color: Colors.black87
-              ),
+              style: TextStyle(color: Colors.black87),
               decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.only(top: 14),
                   prefixIcon: Icon(
-                      Icons.email,
-                      color: kpink,
+                    Icons.email,
+                    color: kpink,
                   ),
                   hintText: 'Email',
-                  hintStyle: TextStyle(
-                      color: Colors.black38
-                  )
-              ),
+                  hintStyle: TextStyle(color: Colors.black38)),
             ),
           )
-        ]
-    );
+        ]);
   }
 
-  Widget buildPassword(){
+  Widget buildPassword() {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             'Password',
             style: TextStyle(
-                color: Colors.white,
-                fontSize:16,
-                fontWeight: FontWeight.bold
-            ),
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Container(
@@ -114,59 +97,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   BoxShadow(
                       color: Colors.black26,
                       blurRadius: 6,
-                      offset: Offset(0,2)
-                  )
-                ]
-            ),
+                      offset: Offset(0, 2))
+                ]),
             height: 60,
             child: TextField(
               //obscure text to hide password
               controller: passwordController,
               obscureText: true,
-              style: TextStyle(
-                  color: Colors.black87
-              ),
+              style: TextStyle(color: Colors.black87),
               decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.only(top: 14),
-                  prefixIcon: Icon(
-                      Icons.lock,
-                      color: kpink
-                  ),
+                  prefixIcon: Icon(Icons.lock, color: kpink),
                   hintText: 'Password',
-                  hintStyle: TextStyle(
-                      color: Colors.black38
-                  )
-              ),
+                  hintStyle: TextStyle(color: Colors.black38)),
             ),
           )
-        ]
-    );
+        ]);
   }
 
-  Widget buildForgotPassBtn(){
+  Widget buildForgotPassBtn() {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () {
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ForgotPasswordScreen())
-          );
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
         },
         child: Text(
-            'Forgot Password?',
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold
-            ),
+          'Forgot Password?',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget buildRememberCb(){
+  Widget buildRememberCb() {
     return Container(
       height: 20,
       child: Row(
@@ -177,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
               value: isRememberMe,
               checkColor: Colors.green,
               activeColor: Colors.white,
-              onChanged: (bool? value){
+              onChanged: (bool? value) {
                 setState(() {
                   print("remember me pressed");
                   isRememberMe = value ?? false;
@@ -187,17 +153,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const Text(
             'Remember Me',
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  Widget buildLoginBtn(){
+  Widget buildLoginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -206,42 +169,36 @@ class _LoginScreenState extends State<LoginScreen> {
           if (isValidEmail(emailController.text)) {
             try {
               // authenticate against firebase
-              UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+              UserCredential userCredential =
+                  await _auth.signInWithEmailAndPassword(
                 email: emailController.text,
                 password: passwordController.text,
               );
 
               // Optionally, check if the user exists in the 'Users' collection
-              DocumentSnapshot userDoc = await _firestore.collection('Users').doc(userCredential.user!.uid).get();
+              DocumentSnapshot userDoc = await _firestore
+                  .collection('Users')
+                  .doc(userCredential.user!.uid)
+                  .get();
 
               if (userDoc.exists) {
-                CurrentUser().userId = userCredential.user!.uid; // Set the userId here
+                CurrentUser().userId =
+                    userCredential.user!.uid; // Set the userId here
                 String userType = userDoc['userType'];
                 CurrentUser().userType = userDoc['userType'];
                 CurrentUser().firstName = userDoc['firstName'];
 
-                if (userType == "Student") {
-                  // Navigate to student screen
-                  print("UserType1:"+ userType);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                } else {
-                  // Navigate to teacher screen
-                  print("UserType2:"+ userType);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TeacherHomeScreen()),
-                  );
-                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
               } else {
                 showMessage("User does not exist in the database");
               }
             } catch (e) {
               // Handle authentication error
-              showMessage("Error logging in. Please check your credentials. Details: $e");
+              showMessage(
+                  "Error logging in. Please check your credentials. Details: $e");
             }
           } else {
             // Display message for invalid email address
@@ -251,30 +208,23 @@ class _LoginScreenState extends State<LoginScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           padding: EdgeInsets.all(15),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15)
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
         child: Text(
           'LOGIN',
-          style:TextStyle(
-              color: kpink,
-              fontSize: 18,
-              fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(
+              color: kpink, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget buildSignUpBtn(){
+  Widget buildSignUpBtn() {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-            MaterialPageRoute(
-                builder: (context) => SignUpScreen())
-        );
+            context, MaterialPageRoute(builder: (context) => SignUpScreen()));
       },
       child: RichText(
         text: TextSpan(
@@ -284,16 +234,14 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
-                  fontWeight: FontWeight.w500
-              ),
+                  fontWeight: FontWeight.w500),
             ),
             TextSpan(
               text: 'Sign up',
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
-                  fontWeight: FontWeight.bold
-              ),
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -315,7 +263,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     // background color
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -330,56 +277,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      //BACKGROUND COLOR
-                      // after the 0x part, the opacity is controlled by
-                      //the following 2 characters
-                      //***this creates the colour gradient in the bg***
-                      //use color-hex.com for color selections
                       colors: [
                         Color(0x66ff6374),
                         Color(0x99ff6374),
                         Color(0xccff6374),
                         Color(0xFFff6374),
-                      ]
-                  ),
+                      ]),
                 ),
                 child: SingleChildScrollView(
-
                   //Physics parameter makes sign in page scrollable
 
                   physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 120
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 120),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-
-                      //sign in text below
                       Text(
                         'Sign In/Teken Aan',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 40,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                       ),
-
-                      //builds email input box on screen
-                      //note: sized boxes height parameter used for spacing in column
                       SizedBox(height: 50),
                       buildEmail(),
-
-                      //Password box on screen
                       SizedBox(height: 20),
                       buildPassword(),
                       buildForgotPassBtn(),
                       buildRememberCb(),
                       buildLoginBtn(),
                       buildSignUpBtn(),
-                      SizedBox(height: 10),  // Provide some spacing
-                      buildSkipBtn(),       // Add the skip button here
+                      SizedBox(height: 10),
                     ],
                   ),
                 ),

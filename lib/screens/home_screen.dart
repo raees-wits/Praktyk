@@ -1,9 +1,7 @@
-//import 'dart:ffi';
-
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:e_learning_app/constants.dart';
 import 'package:e_learning_app/model/product_model.dart';
-import 'package:e_learning_app/screens/profile_screen.dart'; // Import your ProfileScreen
+import 'package:e_learning_app/screens/profile_screen.dart';
 import 'package:e_learning_app/screens/home_screen_content.dart';
 import 'package:e_learning_app/screens/Community_Screen.dart';
 import 'package:e_learning_app/screens/leaderboard_screen.dart';
@@ -25,14 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
   late TextEditingController controller;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     controller = TextEditingController();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     controller.dispose();
 
     super.dispose();
@@ -40,22 +38,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
 
-  // Create a list of widgets to display conditionally based on the selected index
   final List<Widget> _widgetOptions = [
-    // Your Home screen widget here
     HomeScreenContent(),
-    //Text("Favourite Page"),
     LeaderBoardScreen(),
     CommunityScreen(),
-    ProfileScreen(), // Your ProfileScreen widget here
+    ProfileScreen(),
   ];
 
-  //Initialise Avatar properties
   String avatarPrompt = "Neo";
   String avatarPromptType = "Humans";
   String avatarPromptTypeNumber = '5';
-  List<DropdownMenuItem<String>> myAvatarTypes = <String>["Robots","Monsters","Heads","Kittens","Humans"]
-      .map<DropdownMenuItem<String>>((String value){
+  List<DropdownMenuItem<String>> myAvatarTypes = <String>[
+    "Robots",
+    "Monsters",
+    "Heads",
+    "Kittens",
+    "Humans"
+  ].map<DropdownMenuItem<String>>((String value) {
     return DropdownMenuItem<String>(
       value: value,
       child: Text(value),
@@ -65,11 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //bottom bar
-      // now we will use bottom bar package
       bottomNavigationBar: BottomNavyBar(
         selectedIndex: _selectedIndex,
-        showElevation: true, // use this to remove appBar's elevation
+        showElevation: true,
         onItemSelected: (index) => setState(() {
           _selectedIndex = index;
         }),
@@ -80,34 +77,39 @@ class _HomeScreenState extends State<HomeScreen> {
               activeColor: kpink,
               inactiveColor: Colors.grey[300]),
           BottomNavyBarItem(
-            icon: Icon(Icons.favorite_rounded),
-            title: Text('Favorite'),
+            icon: Icon(Icons.leaderboard_rounded),
+            title: Text('Leaderboard'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: kblue,
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.message),
             title: Text('Community'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: korange,
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.person),
             title: Text('Profile'),
             inactiveColor: Colors.grey[300],
-            activeColor: kpink,
+            activeColor: kpurple,
           ),
         ],
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),  // This line switches the content);
-
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/back2school.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
     );
   }
 
-
-  void confirmPrompt(){
+  void confirmPrompt() {
     Navigator.of(context).pop(controller.text);
     controller.clear();
   }
-
 }
