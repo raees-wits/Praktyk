@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           SwitchListTile(
-            title: Text('Dark Mode'),
+            title: Text('Dark Mode (COMING SOON)'),
             value: isDarkMode,
             onChanged: (value) {
               setState(() {
